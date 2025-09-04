@@ -1,0 +1,41 @@
+baseURL = "/"
+languageCode = "ko-kr"
+title = "개인 포트폴리오"
+# 테마를 사용하지 않고 커스텀 레이아웃을 사용합니다.
+# theme = ""
+
+# GitHub Pages 프로젝트 사이트 호환을 위해 상대/정규화 URL 활성화
+relativeURLs = true
+canonifyURLs = true
+
+paginate = 10
+
+[params]
+  author = ""
+  description = "개인 포트폴리오"
+  socials = [
+    { name = "GitHub", url = "https://github.com/" },
+    { name = "LinkedIn", url = "https://www.linkedin.com/" },
+    { name = "Email", url = "mailto:your@email" }
+  ]
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    name = "Projects"
+    url = "/projects/"
+    weight = 2
+  [[menu.main]]
+    name = "About"
+    url = "/about/"
+    weight = 3
+  [[menu.main]]
+    name = "Contact"
+    url = "/contact/"
+    weight = 4

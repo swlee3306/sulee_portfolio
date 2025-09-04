@@ -1,0 +1,165 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "프레임워크 선정 및 초기 프로젝트 세팅",
+        "description": "정적 사이트 중심(Next.js/Astro/SvelteKit 중 선택)으로 레포/호스팅 환경에 맞춰 결정. TypeScript, ESLint, Prettier, 경로 구조, 환경변수 템플릿(.env.example) 구성.",
+        "details": "- 후보 비교 및 결정 기준 기록\n- TypeScript 초기 설정(tsconfig)\n- ESLint/Prettier 설정 및 스크립트\n- src/ 디렉토리 구조, 공통 컴포넌트/레이아웃 폴더 구성\n- 개발 서버 실행 확인",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "디자인 시스템/레이아웃 기초 구축",
+        "description": "글로벌 레이아웃 헤더/푸터/그리드, 컬러/타이포 스케일, 간단한 테마 토글(선택)",
+        "details": "- 공통 레이아웃 컴포넌트\n- 브레이크포인트/그리드 시스템\n- 다크/라이트 토글(선택)\n- 기본 접근성 지침 반영",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "콘텐츠 스키마 정의 및 더미 데이터 준비",
+        "description": "Project/Post/Profile 스키마 정의 및 Markdown 더미 콘텐츠 작성",
+        "details": "- Project: id,title,summary,description(md),techTags[],period,thumbnail,links,featured\n- Post: id,title,slug,content(md),tags[],date,cover\n- Profile: name,title,bio,skills[],socials,resumeUrl\n- /content 디렉토리 구성 및 샘플",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "홈 페이지(MVP) 구현",
+        "description": "대표 프로젝트 하이라이트 섹션과 핵심 CTA 구성",
+        "details": "- 히어로 섹션(한 줄 소개, CTA)\n- 대표 프로젝트 3~6개 그리드\n- 최근 글(선택)\n- 성능 최적화(LCP 이미지)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "프로젝트 목록/필터/검색",
+        "description": "프로젝트 카드 리스트 + 태그/텍스트 필터",
+        "details": "- 태그 필터(멀티 선택)\n- 텍스트 검색(제목/요약)\n- 정렬(최신/추천)\n- 빈 상태/로딩 상태 UI",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "프로젝트 상세 페이지",
+        "description": "문제/역할/성과/기술/스크린샷/데모 링크 포함 상세 뷰",
+        "details": "- Markdown 렌더링 및 이미지 최적화\n- 이전/다음 프로젝트 내비게이션\n- 공유 메타/OG 이미지",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "소개(About) 페이지 + 이력서 링크",
+        "description": "한 줄 소개, 상세 이력 요약, 다운로드 가능한 이력서 링크",
+        "details": "- 소셜 링크 컴포넌트(GitHub/LinkedIn/Email)\n- 이력서 PDF 업로드/링크\n- 키 스킬 배지",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "연락(Contact) 폼 구현",
+        "description": "스팸 방지와 제출 알림 포함의 폼 구현",
+        "details": "- 필드 검증 및 접근성(aria-invalid 등)\n- 외부 폼 서비스(Netlify Forms/Formspree) 또는 mailto 대안\n- 성공/실패 토스트 알림",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "SEO/메타/사이트맵 기본 설정",
+        "description": "기본 메타 태그, OG/Twitter 카드, robots.txt, sitemap.xml",
+        "details": "- 페이지별 title/description\n- 구조화 데이터(선택)\n- RSS(블로그 도입 시)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "성능 최적화(이미지/코드 스플리팅)",
+        "description": "Lighthouse 90+ 목표로 최적화",
+        "details": "- 이미지 최적화(LQIP/blur)\n- 코드 스플리팅/지연 로딩\n- 폰트 최적화\n- 메트릭 측정(Web Vitals)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 11,
+        "title": "접근성 개선(A11y) 초안",
+        "description": "색 대비, 키보드 탐색, aria 속성 점검",
+        "details": "- 포커스 스타일\n- landmark/aria-label\n- 스크린리더 테스트 체크리스트",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 12,
+        "title": "배포/CI 설정",
+        "description": "Vercel/Netlify/GitHub Pages 중 선택하여 배포 파이프라인 구성",
+        "details": "- 빌드 스크립트/환경변수\n- 프리뷰 배포(PR)\n- 캐시 최적화 설정",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 13,
+        "title": "분석/모니터링 도입",
+        "description": "Google Analytics/umami 등 간단한 트래킹",
+        "details": "- 쿠키 배너(필요 시)\n- 이벤트 트래킹\n- 성능 로그",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 14,
+        "title": "블로그(선택) MVP",
+        "description": "목록/상세, 태그/검색, 코드 하이라이트, RSS",
+        "details": "- MD 렌더링\n- 구문 하이라이트\n- 태그/검색\n- OG 이미지",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-04T08:22:39.876Z",
+      "description": "Default tasks context",
+      "updated": "2025-09-04T08:32:31.657Z"
+    }
+  }
+}

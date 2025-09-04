@@ -1,0 +1,5 @@
+<footer class="site-footer">
+  <div class="container">
+    <p>© {{ now.Format "2006" }} {{ with .Site.Params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}</p>
+  </div>
+</footer>

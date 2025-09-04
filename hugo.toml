@@ -13,6 +13,7 @@ paginate = 10
 [params]
   author = ""
   description = "개인 포트폴리오"
+  ogImage = "/images/og-default.svg"
   socials = [
     { name = "GitHub", url = "https://github.com/" },
     { name = "LinkedIn", url = "https://www.linkedin.com/" },
@@ -21,6 +22,9 @@ paginate = 10
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
+
+[taxonomies]
+  tag = "tags"
 
 [menu]
   [[menu.main]]

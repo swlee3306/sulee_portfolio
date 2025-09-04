@@ -5,6 +5,26 @@
 <title>{{ $title }}</title>
 <meta name="description" content="{{ with .Params.description }}{{ . }}{{ else }}{{ .Site.Params.description }}{{ end }}">
 <link rel="canonical" href="{{ .Permalink }}">
+
+{{/* Open Graph / Twitter Cards */}}
+{{- $desc := cond (isset .Params "description") .Params.description .Site.Params.description -}}
+{{- $image := .Site.Params.ogImage -}}
+{{- if .Params.cover -}}
+  {{- $image = .Params.cover -}}
+{{- else if .Params.thumbnail -}}
+  {{- $image = .Params.thumbnail -}}
+{{- end -}}
+<meta property="og:type" content="{{ if .IsHome }}website{{ else }}article{{ end }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:description" content="{{ $desc }}">
+{{ if $image }}<meta property="og:image" content="{{ $image | relURL }}">{{ end }}
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+{{ if $image }}<meta name="twitter:image" content="{{ $image | relURL }}">{{ end }}
+
 <link rel="stylesheet" href="{{ "/css/styles.css" | relURL }}">
 {{ with .OutputFormats.Get "RSS" -}}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ .RelPermalink }}">

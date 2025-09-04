@@ -14,6 +14,10 @@ paginate = 10
   author = ""
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
+  formspreeEndpoint = "" # 예: https://formspree.io/f/xxxxxx
+  [params.analytics]
+    ga4 = ""           # 예: G-XXXXXXX
+    plausibleDomain = "" # 예: yourdomain.com
   socials = [
     { name = "GitHub", url = "https://github.com/" },
     { name = "LinkedIn", url = "https://www.linkedin.com/" },

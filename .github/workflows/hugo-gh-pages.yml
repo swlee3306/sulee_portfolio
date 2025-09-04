@@ -27,13 +27,12 @@ jobs:
           hugo-version: '0.125.7'
           extended: true
 
-      - name: Setup Pages
-        id: pages
-        uses: actions/configure-pages@v5
-
       - name: Build
+        env:
+          BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
         run: |
-          hugo --minify --baseURL "${{ steps.pages.outputs.base_url }}"
+          echo "Using baseURL=$BASE_URL"
+          hugo --minify --baseURL "$BASE_URL"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -47,6 +46,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

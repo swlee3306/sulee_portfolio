@@ -11,12 +11,14 @@
           </a>
         {{ end }}
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
         {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}{{ if .Summary }}<p>{{ .Summary }}</p>{{ end }}{{ end }}
         {{ with .Params.techTags }}
           <ul class="tags">
             {{ range . }}<li>{{ . }}</li>{{ end }}
           </ul>
         {{ end }}
+        <p><a class="btn" href="{{ .RelPermalink }}">자세히 보기</a></p>
       </article>
     {{ end }}
   </div>

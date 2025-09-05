@@ -8,8 +8,9 @@ description: "소개 페이지"
 ## 기술 스택
 - 언어: Go(주), Shell Script, C/C++(검증 경험)
 - 플랫폼/인프라: Kubernetes(K8s), OpenStack, Linux, Cloud
-- 수집/관측: SNMP, IPMI, Logstash, OpenSearch, MariaDB, NetApp 스토리지
-- 웹/네트워킹: API, Nginx
+- 수집/관측: SNMP, IPMI, Logstash, OpenSearch, MariaDB, InfluxDB, NetApp 스토리지, Prometheus prompb
+- 웹/네트워킹: REST API, Nginx, Gin(Web)
+- 데이터/미들웨어: GORM(ORM), Redis(Pub/Sub), CSV 로깅/로테이션
 - 도구: Docker, Ansible Tower, Postman, Bitbucket, GitHub Actions, Hugo
 
 ## 작업 하이라이트
@@ -25,6 +26,22 @@ description: "소개 페이지"
 - 스토리지/에이전트 운영 고도화 (2023.05–2023.12)
   - NetApp API 연동, 데이터 유효성 검사/에러 핸들링, InfluxDB·PostgreSQL 설계
   - Ansible Tower 자동 설치, K8s 기반 수집 환경 표준화
+
+### 하드웨어/네트워크 수집 고도화 (2025)
+- 서버/스위치/스토리지 관측 강화
+  - IPMI 기반 호스트 FRU·전원·기본 메타/메트릭 수집 파이프라인 정비
+  - 스위치 수집 고도화: 모델/온도/CPU·MEM, 인터페이스·ARP·VLAN·LLDP, 포트 사용량(누적→분당 delta) 계산
+  - 포트↔NIC 매핑(PortToNic) 주기 수집으로 물리/논리 토폴로지 해석 정확도 향상
+- 클라우드/인프라 연계
+  - OpenStack API 연동: 네트워크/서브넷/서버 상세 수집 및 VM-네트워크 매핑(tb: cb_network_vlan, cb_vm_network_vlan)
+  - 전역 설정(DB 테이블) → 모듈별 런타임 설정 주입으로 운영 일관성 확보
+- 신뢰성/운영 자동화
+  - 장애/재시도·백오프·에러 핸들링 플로우 표준화, 수집 데이터 유효성 검사 강화
+  - Redis Pub/Sub 기반 정책·캐시 갱신 및 재연결 루틴, 모듈 온/오프 환경변수 제어
+  - K8s 워크로드로 Collector 운영(배포/스케일 자동화), Docker 이미지로 표준 패키징
+- 데이터 파이프라인/가시화
+  - Logstash→OpenSearch·MariaDB 적재, CSV·DB 이중 로그 수집/로테이션 및 웹 뷰 제공
+  - Prometheus prompb 메시지 추출/퍼블리시 경로 구성으로 모니터링 연계성 확보
 
 자세한 프로젝트 목록과 코드는 `Projects` 페이지에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-Info-collector`, `APITestProgram` 등이 있습니다.
 

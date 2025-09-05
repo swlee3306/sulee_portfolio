@@ -5,7 +5,8 @@
   {{ with .Params.cover }}
     {{ if $.Site.Params.useWebp }}
       {{ $cover := . }}
-      {{ $webp := replaceRE "\\.(jpg|jpeg|png)$" ".webp" $cover }}
+      {{ $ext := path.Ext $cover }}
+      {{ $webp := replace $cover $ext ".webp" }}
       <picture>
         <source type="image/webp" srcset="{{ $webp | relURL }}" />
         <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />

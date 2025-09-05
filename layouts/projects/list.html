@@ -20,7 +20,8 @@
           <a href="{{ $.RelPermalink }}">
             {{ if $.Site.Params.useWebp }}
               {{ $thumb := . }}
-              {{ $webp := replaceRE "\.(jpg|jpeg|png)$" ".webp" $thumb }}
+              {{ $ext := path.Ext $thumb }}
+              {{ $webp := replace $thumb $ext ".webp" }}
               <picture>
                 <source type="image/webp" srcset="{{ $webp | relURL }}" />
                 <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />

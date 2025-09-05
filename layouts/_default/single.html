@@ -3,7 +3,16 @@
   <h1>{{ .Title }}</h1>
   {{ with .Params.summary }}<p class="summary">{{ . }}</p>{{ end }}
   {{ with .Params.cover }}
-    <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+    {{ if $.Site.Params.useWebp }}
+      {{ $cover := . }}
+      {{ $webp := replaceRE "\\.(jpg|jpeg|png)$" ".webp" $cover }}
+      <picture>
+        <source type="image/webp" srcset="{{ $webp | relURL }}" />
+        <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+      </picture>
+    {{ else }}
+      <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+    {{ end }}
   {{ end }}
   <div class="content">
     {{ .Content }}

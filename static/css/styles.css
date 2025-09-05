@@ -39,6 +39,19 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Skip link: visible on keyboard focus */
+.skip-link:focus {
+  position: static !important;
+  display: inline-block;
+  padding: 6px 10px;
+  margin: 8px;
+  background: #fff;
+  color: #000;
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  z-index: 1000;
+}
+
 /* 레이아웃 */
 .container { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
 .site-header { border-bottom: 1px solid var(--border); background: var(--surface); backdrop-filter: saturate(120%) blur(4px); }

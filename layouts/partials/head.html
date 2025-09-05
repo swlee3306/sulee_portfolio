@@ -35,9 +35,10 @@
 <meta name="twitter:description" content="{{ $desc }}">
 {{ if $image }}<meta name="twitter:image" content="{{ $image | relURL }}">{{ end }}
 
-<!-- Preload critical CSS then load normally -->
-<link rel="preload" as="style" href="{{ "/css/styles.css" | relURL }}">
-<link rel="stylesheet" href="{{ "/css/styles.css" | relURL }}">
+<!-- Preload critical CSS then load normally (with cache-busting) -->
+{{ $css := (printf "%s?v=%d" (relURL "/css/styles.css") (now.Unix)) }}
+<link rel="preload" as="style" href="{{ $css }}">
+<link rel="stylesheet" href="{{ $css }}">
 {{ with .OutputFormats.Get "RSS" -}}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ .RelPermalink }}">
 {{- end }}

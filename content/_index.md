@@ -20,4 +20,4 @@ description: "경력, 프로젝트, 글을 한눈에 확인할 수 있는 개인
 - go_crud: REST API 기반 CRUD 예제(학습/실험용)
 - Goplayground: Go 학습과 실험을 위한 코드 플레이그라운드
 
-프로젝트 전체 목록과 상세 설명은 `Projects`에서 확인할 수 있습니다.
+프로젝트 전체 목록과 상세 설명은 `Projects` 에서 확인할 수 있습니다.

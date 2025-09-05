@@ -38,7 +38,7 @@
             {{ range . }}<li class="tag-pill">{{ . }}</li>{{ end }}
           </ul>
         {{ end }}
-        <p><a class="btn" href="{{ .RelPermalink }}">자세히 보기</a></p>
+        <p><a class="btn" href="{{ .RelPermalink }}" aria-label="프로젝트 {{ .Title }} 자세히 보기">자세히 보기</a></p>
       </article>
     {{ end }}
   </div>

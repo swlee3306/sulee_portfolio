@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>common-sdk | 개인 포트폴리오</title>
+<meta name="description" content="개인 포트폴리오">
+<link rel="canonical" href="//localhost:1313/projects/common-sdk/">
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../favicon.svg">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="//localhost:1313/projects/common-sdk/">
+<meta property="og:title" content="common-sdk | 개인 포트폴리오">
+<meta property="og:description" content="개인 포트폴리오">
+<meta property="og:image" content="/images/og-default.svg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="common-sdk | 개인 포트폴리오">
+<meta name="twitter:description" content="개인 포트폴리오">
+<meta name="twitter:image" content="/images/og-default.svg">
+
+<link rel="stylesheet" href="../../css/styles.css">
+
+
+
+
+
+
+
+
+
+  </head>
+  <body>
+    <header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../../">개인 포트폴리오</a>
+    <nav>
+      <ul>
+        
+          <li><a href="../../">Home</a></li>
+        
+          <li><a href="../../projects/">Projects</a></li>
+        
+          <li><a href="../../about/">About</a></li>
+        
+          <li><a href="../../contact/">Contact</a></li>
+        
+      </ul>
+    </nav>
+  </div>
+</header>
+
+    <main class="container">
+      
+<article class="article">
+  <h1>common-sdk</h1>
+  <p class="summary">sdk 모음</p>
+  <div class="content">
+    <h2 id="개요">개요</h2>
+<p>프로젝트 간 공통으로 재사용되는 유틸리티/SDK 모음입니다. 로깅, 설정 로딩, HTTP 클라이언트, 에러 처리, 간단한 헬퍼 등을 패키지화하여 개발 생산성을 높입니다.</p>
+<p><a class="btn" href="https://github.com/swlee3306/common-sdk" target="_blank" rel="noopener">GitHub 저장소 열기 →</a></p>
+<h2 id="구성예상">구성(예상)</h2>
+<ul>
+<li>로깅 래퍼: 구조화 로그, 레벨 필터링</li>
+<li>설정 로더: <code>.yml/.env</code> 등 환경 의존 설정 로딩</li>
+<li>HTTP 클라이언트: 공통 헤더/타임아웃/리트라이 전략</li>
+<li>에러/응답 유틸: 표준화된 에러 타입/응답 포맷</li>
+</ul>
+<h2 id="사용-아이디어초안">사용 아이디어(초안)</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/swlee3306/common-sdk/logx&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;github.com/swlee3306/common-sdk/conf&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cfg</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">conf</span>.<span style="color:#a6e22e">Load</span>(<span style="color:#e6db74">&#34;setting.yml&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logger</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">logx</span>.<span style="color:#a6e22e">New</span>(<span style="color:#a6e22e">cfg</span>.<span style="color:#a6e22e">LogLevel</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">logger</span>.<span style="color:#a6e22e">Info</span>(<span style="color:#e6db74">&#34;start&#34;</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>README가 없어 현재는 모듈 구성/패키지 경로가 변동될 수 있습니다. 실제 코드를 기준으로 문서를 보강할 예정입니다.</p>
+
+  </div>
+  
+    <ul class="tags">
+      <li>Go</li>
+    </ul>
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container">
+    <p>© 2025 개인 포트폴리오</p>
+  </div>
+</footer>
+
+  </body>
+</html>

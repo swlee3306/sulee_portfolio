@@ -33,12 +33,13 @@ description: "소개 페이지"
 - 단순함과 자동화: 반복 업무의 자동화, 간결하고 이해 가능한 코드
 - 성능과 품질: 벤치마크, 로깅, 테스트를 통한 지속적 개선
 
-이력서는 PDF로 다운로드하실 수 있습니다.
+이력서는 요청 시 제공해 드립니다(개인정보 보호를 위해 다운로드 버튼은 임시 비활성화되었습니다).
 
 <div class="btn-group" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
   <a class="btn" href="/projects/">Projects 보러 가기</a>
   <a class="btn" href="https://github.com/swlee3306" target="_blank" rel="noopener">GitHub 프로필</a>
   <a class="btn" href="mailto:swlee3306@gmail.com">이메일 보내기</a>
-  <!-- 이력서 파일이 준비되면 아래 링크를 실제 파일 경로로 교체하세요 (예: /files/resume.pdf) -->
+  <!-- 이력서 다운로드 버튼(임시 비활성화)
   <a class="btn" href="/files/resume.pdf" target="_blank" rel="noopener" aria-label="이력서 PDF 다운로드">이력서 다운로드 (PDF)</a>
+  -->
 </div>

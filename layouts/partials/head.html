@@ -10,6 +10,10 @@
 <link rel="icon" href="{{ "/favicon.svg" | relURL }}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{ "/favicon.svg" | relURL }}">
 
+<!-- Resource Hints: speed up third-party badge loads (GitHub Shields) -->
+<link rel="dns-prefetch" href="//img.shields.io">
+<link rel="preconnect" href="https://img.shields.io" crossorigin>
+
 {{ with .Params.robots }}<meta name="robots" content="{{ . }}">{{ end }}
 
 {{/* Open Graph / Twitter Cards */}}
@@ -31,6 +35,8 @@
 <meta name="twitter:description" content="{{ $desc }}">
 {{ if $image }}<meta name="twitter:image" content="{{ $image | relURL }}">{{ end }}
 
+<!-- Preload critical CSS then load normally -->
+<link rel="preload" as="style" href="{{ "/css/styles.css" | relURL }}">
 <link rel="stylesheet" href="{{ "/css/styles.css" | relURL }}">
 {{ with .OutputFormats.Get "RSS" -}}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ .RelPermalink }}">

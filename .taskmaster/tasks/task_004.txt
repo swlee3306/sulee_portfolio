@@ -1,0 +1,14 @@
+# Task ID: 4
+# Title: 홈 페이지(MVP) 구현
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: 대표 프로젝트 하이라이트 섹션과 핵심 CTA 구성
+# Details:
+- 히어로 섹션(한 줄 소개, CTA)
+- 대표 프로젝트 3~6개 그리드
+- 최근 글(선택)
+- 성능 최적화(LCP 이미지)
+
+# Test Strategy:
+

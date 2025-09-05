@@ -1,0 +1,142 @@
+{{ define "main" }}
+<section class="section">
+  {{ if not .IsHome }}
+    <h1>{{ .Title }}</h1>
+  {{ end }}
+  {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+
+  <!-- Filters: Search + Tag selection -->
+  <div id="project-filters" class="filters" style="margin: 10px 0 20px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+    <input id="searchInput" type="search" placeholder="프로젝트 검색 (제목/요약)" style="flex:1; min-width:220px; padding:8px 10px; border:1px solid var(--border); border-radius:8px;" aria-label="프로젝트 검색" inputmode="search" autocomplete="off" />
+    <div id="tagFilters" class="tags" style="display:flex; gap:8px; flex-wrap:wrap;" role="group" aria-label="태그 필터"></div>
+    <button id="clearFilters" class="btn" type="button" aria-label="필터 초기화">필터 초기화</button>
+  </div>
+  <p id="resultsInfo" class="meta" aria-live="polite" style="margin: -8px 0 12px 0;"></p>
+
+  <div class="cards" id="projectCards">
+    {{ range .Paginator.Pages }}
+      <article class="card" data-title="{{ .Title | plainify | lower }}" data-summary="{{ (cond (ne .Params.summary "") .Params.summary .Summary) | plainify | lower }}" data-tags="{{ delimit .Params.techTags "," | lower }}">
+        {{ with .Params.thumbnail }}
+          <a href="{{ $.RelPermalink }}">
+            <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          </a>
+        {{ end }}
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
+        {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}{{ if .Summary }}<p>{{ .Summary }}</p>{{ end }}{{ end }}
+
+        {{ with .Params.repo }}
+          {{ $repoURL := . }}
+          {{ $repoPath := replace $repoURL "https://github.com/" "" }}
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img alt="GitHub stars" src="https://img.shields.io/github/stars/{{ $repoPath }}?style=social" loading="lazy" decoding="async">
+            <img alt="Top language" src="https://img.shields.io/github/languages/top/{{ $repoPath }}" loading="lazy" decoding="async">
+          </div>
+        {{ end }}
+        {{ with .Params.techTags }}
+          <ul class="tags">
+            {{ range . }}<li class="tag-pill">{{ . }}</li>{{ end }}
+          </ul>
+        {{ end }}
+        <p><a class="btn" href="{{ .RelPermalink }}">자세히 보기</a></p>
+      </article>
+    {{ end }}
+  </div>
+
+  <nav class="pagination">
+    {{ template "_internal/pagination.html" . }}
+  </nav>
+</section>
+
+<script>
+(function(){
+  const $ = (sel, root=document) => root.querySelector(sel);
+  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+  const cards = $$('#projectCards .card');
+  const searchInput = $('#searchInput');
+  const tagFiltersEl = $('#tagFilters');
+  const clearBtn = $('#clearFilters');
+  const resultsInfo = $('#resultsInfo');
+
+  // No results element
+  const noResults = document.createElement('div');
+  noResults.id = 'noResults';
+  noResults.className = 'content';
+  noResults.style.display = 'none';
+  noResults.innerHTML = '<p>검색/필터 조건에 해당하는 결과가 없습니다.</p>';
+  const cardsContainer = $('#projectCards');
+  cardsContainer.parentNode.insertBefore(noResults, cardsContainer.nextSibling);
+
+  // Collect all tags from cards
+  const allTags = new Set();
+  cards.forEach(card => {
+    (card.dataset.tags || '').split(',').filter(Boolean).forEach(t => allTags.add(t.trim()));
+  });
+  const selected = new Set();
+
+  // Render tag filter buttons
+  const makeBtn = (tag) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn';
+    btn.textContent = tag;
+    btn.setAttribute('data-tag', tag);
+    btn.setAttribute('aria-label', `태그 필터: ${tag}`);
+    btn.setAttribute('aria-pressed', 'false');
+    btn.style.padding = '6px 10px';
+    btn.addEventListener('click', () => {
+      if (selected.has(tag)) selected.delete(tag); else selected.add(tag);
+      btn.classList.toggle('active', selected.has(tag));
+      btn.setAttribute('aria-pressed', String(selected.has(tag)));
+      filter();
+    });
+    return btn;
+  };
+  Array.from(allTags).sort().forEach(tag => tagFiltersEl.appendChild(makeBtn(tag)));
+
+  // Clear filters
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    selected.clear();
+    $$('#tagFilters .btn').forEach(b => b.classList.remove('active'));
+    filter();
+  });
+
+  // Filtering logic
+  const filter = () => {
+    const q = (searchInput.value || '').toLowerCase().trim();
+    cards.forEach(card => {
+      const title = card.dataset.title || '';
+      const summary = card.dataset.summary || '';
+      const tags = (card.dataset.tags || '').split(',').filter(Boolean);
+      const textMatch = !q || title.includes(q) || summary.includes(q);
+      const tagsMatch = selected.size === 0 || Array.from(selected).every(t => tags.includes(t));
+      card.style.display = (textMatch && tagsMatch) ? '' : 'none';
+    });
+
+    // Update results info and no-results state
+    const visibleCount = cards.filter(c => c.style.display !== 'none').length;
+    if (resultsInfo) resultsInfo.textContent = `${visibleCount}개 결과`;
+    noResults.style.display = visibleCount === 0 ? '' : 'none';
+  };
+
+  // Debounce helper
+  const debounce = (fn, ms=150) => {
+    let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn.apply(null, args), ms); };
+  };
+  const debouncedFilter = debounce(filter, 150);
+
+  searchInput.addEventListener('input', debouncedFilter);
+  // Init once
+  filter();
+})();
+</script>
+
+<style>
+/* Optional: active state for selected tag buttons */
+#tagFilters .btn.active { border-color: var(--brand); box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+
+/* Focus styles for accessibility */
+#project-filters .btn:focus-visible, #project-filters input:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+</style>
+{{ end }}

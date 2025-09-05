@@ -1,0 +1,15 @@
+# Task ID: 1
+# Title: 프레임워크 선정 및 초기 프로젝트 세팅
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: 정적 사이트 중심(Next.js/Astro/SvelteKit 중 선택)으로 레포/호스팅 환경에 맞춰 결정. TypeScript, ESLint, Prettier, 경로 구조, 환경변수 템플릿(.env.example) 구성.
+# Details:
+- 후보 비교 및 결정 기준 기록
+- TypeScript 초기 설정(tsconfig)
+- ESLint/Prettier 설정 및 스크립트
+- src/ 디렉토리 구조, 공통 컴포넌트/레이아웃 폴더 구성
+- 개발 서버 실행 확인
+
+# Test Strategy:
+

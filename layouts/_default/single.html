@@ -2,9 +2,21 @@
 <article class="article">
   <h1>{{ .Title }}</h1>
   {{ with .Params.summary }}<p class="summary">{{ . }}</p>{{ end }}
+  {{ with .Params.cover }}
+    <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  {{ end }}
   <div class="content">
     {{ .Content }}
   </div>
+  {{ with .Params.repo }}
+    {{ $repoURL := . }}
+    {{ $repoPath := replace $repoURL "https://github.com/" "" }}
+    <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+      <img alt="GitHub stars" src="https://img.shields.io/github/stars/{{ $repoPath }}?style=social" loading="lazy" decoding="async">
+      <img alt="Top language" src="https://img.shields.io/github/languages/top/{{ $repoPath }}" loading="lazy" decoding="async">
+      <a class="btn" href="{{ $repoURL }}" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+    </div>
+  {{ end }}
   {{ with .Params.techTags }}
     <ul class="tags">
       {{ range . }}<li>{{ . }}</li>{{ end }}

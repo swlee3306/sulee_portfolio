@@ -1,0 +1,14 @@
+# Task ID: 3
+# Title: 콘텐츠 스키마 정의 및 더미 데이터 준비
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Project/Post/Profile 스키마 정의 및 Markdown 더미 콘텐츠 작성
+# Details:
+- Project: id,title,summary,description(md),techTags[],period,thumbnail,links,featured
+- Post: id,title,slug,content(md),tags[],date,cover
+- Profile: name,title,bio,skills[],socials,resumeUrl
+- /content 디렉토리 구성 및 샘플
+
+# Test Strategy:
+

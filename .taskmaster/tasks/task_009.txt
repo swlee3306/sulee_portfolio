@@ -1,0 +1,13 @@
+# Task ID: 9
+# Title: SEO/메타/사이트맵 기본 설정
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: 기본 메타 태그, OG/Twitter 카드, robots.txt, sitemap.xml
+# Details:
+- 페이지별 title/description
+- 구조화 데이터(선택)
+- RSS(블로그 도입 시)
+
+# Test Strategy:
+

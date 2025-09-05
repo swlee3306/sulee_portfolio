@@ -9,7 +9,7 @@
       <article class="card">
         {{ with .Params.thumbnail }}
           <a href="{{ $.RelPermalink }}">
-            <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" />
+            <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           </a>
         {{ end }}
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>

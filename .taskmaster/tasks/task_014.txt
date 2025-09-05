@@ -1,0 +1,14 @@
+# Task ID: 14
+# Title: 블로그(선택) MVP
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: 목록/상세, 태그/검색, 코드 하이라이트, RSS
+# Details:
+- MD 렌더링
+- 구문 하이라이트
+- 태그/검색
+- OG 이미지
+
+# Test Strategy:
+

@@ -1,0 +1,14 @@
+# Task ID: 2
+# Title: 디자인 시스템/레이아웃 기초 구축
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: 글로벌 레이아웃 헤더/푸터/그리드, 컬러/타이포 스케일, 간단한 테마 토글(선택)
+# Details:
+- 공통 레이아웃 컴포넌트
+- 브레이크포인트/그리드 시스템
+- 다크/라이트 토글(선택)
+- 기본 접근성 지침 반영
+
+# Test Strategy:
+

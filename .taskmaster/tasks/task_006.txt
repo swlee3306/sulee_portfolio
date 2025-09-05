@@ -1,0 +1,13 @@
+# Task ID: 6
+# Title: 프로젝트 상세 페이지
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: 문제/역할/성과/기술/스크린샷/데모 링크 포함 상세 뷰
+# Details:
+- Markdown 렌더링 및 이미지 최적화
+- 이전/다음 프로젝트 내비게이션
+- 공유 메타/OG 이미지
+
+# Test Strategy:
+

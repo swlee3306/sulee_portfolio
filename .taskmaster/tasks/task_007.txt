@@ -1,0 +1,13 @@
+# Task ID: 7
+# Title: 소개(About) 페이지 + 이력서 링크
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: 한 줄 소개, 상세 이력 요약, 다운로드 가능한 이력서 링크
+# Details:
+- 소셜 링크 컴포넌트(GitHub/LinkedIn/Email)
+- 이력서 PDF 업로드/링크
+- 키 스킬 배지
+
+# Test Strategy:
+

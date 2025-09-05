@@ -18,7 +18,7 @@
         "description": "글로벌 레이아웃 헤더/푸터/그리드, 컬러/타이포 스케일, 간단한 테마 토글(선택)",
         "details": "- 공통 레이아웃 컴포넌트\n- 브레이크포인트/그리드 시스템\n- 다크/라이트 토글(선택)\n- 기본 접근성 지침 반영",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -29,7 +29,7 @@
         "description": "Project/Post/Profile 스키마 정의 및 Markdown 더미 콘텐츠 작성",
         "details": "- Project: id,title,summary,description(md),techTags[],period,thumbnail,links,featured\n- Post: id,title,slug,content(md),tags[],date,cover\n- Profile: name,title,bio,skills[],socials,resumeUrl\n- /content 디렉토리 구성 및 샘플",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -40,7 +40,7 @@
         "description": "대표 프로젝트 하이라이트 섹션과 핵심 CTA 구성",
         "details": "- 히어로 섹션(한 줄 소개, CTA)\n- 대표 프로젝트 3~6개 그리드\n- 최근 글(선택)\n- 성능 최적화(LCP 이미지)",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -51,10 +51,47 @@
         "description": "프로젝트 카드 리스트 + 태그/텍스트 필터",
         "details": "- 태그 필터(멀티 선택)\n- 텍스트 검색(제목/요약)\n- 정렬(최신/추천)\n- 빈 상태/로딩 상태 UI",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "프로젝트 섹션 리스트 템플릿 확인 및 데이터 구조 파악",
+            "description": "현재 projects 섹션의 리스트 레이아웃/콘텐츠 메타 구조 확인",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 2,
+            "title": "클라이언트 사이드 검색/필터 UI 추가",
+            "description": "프로젝트 목록 상단에 검색 인풋과 태그 필터 버튼 추가 (Hugo 템플릿 + JS)",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 3,
+            "title": "필터 로직 구현",
+            "description": "프로젝트 카드 데이터(JSON 스니펫) 생성 또는 DOM 기반 필터링 구현",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 4,
+            "title": "모바일 반응형 및 접근성 점검",
+            "description": "키보드 탐색, 라벨링, 색 대비 확인",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          }
+        ]
       },
       {
         "id": 6,
@@ -62,7 +99,7 @@
         "description": "문제/역할/성과/기술/스크린샷/데모 링크 포함 상세 뷰",
         "details": "- Markdown 렌더링 및 이미지 최적화\n- 이전/다음 프로젝트 내비게이션\n- 공유 메타/OG 이미지",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -73,7 +110,7 @@
         "description": "한 줄 소개, 상세 이력 요약, 다운로드 가능한 이력서 링크",
         "details": "- 소셜 링크 컴포넌트(GitHub/LinkedIn/Email)\n- 이력서 PDF 업로드/링크\n- 키 스킬 배지",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -84,7 +121,7 @@
         "description": "스팸 방지와 제출 알림 포함의 폼 구현",
         "details": "- 필드 검증 및 접근성(aria-invalid 등)\n- 외부 폼 서비스(Netlify Forms/Formspree) 또는 mailto 대안\n- 성공/실패 토스트 알림",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -95,7 +132,7 @@
         "description": "기본 메타 태그, OG/Twitter 카드, robots.txt, sitemap.xml",
         "details": "- 페이지별 title/description\n- 구조화 데이터(선택)\n- RSS(블로그 도입 시)",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -106,7 +143,7 @@
         "description": "Lighthouse 90+ 목표로 최적화",
         "details": "- 이미지 최적화(LQIP/blur)\n- 코드 스플리팅/지연 로딩\n- 폰트 최적화\n- 메트릭 측정(Web Vitals)",
         "testStrategy": "",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -159,7 +196,7 @@
     "metadata": {
       "created": "2025-09-04T08:22:39.876Z",
       "description": "Default tasks context",
-      "updated": "2025-09-04T08:32:31.657Z"
+      "updated": "2025-09-05T01:57:53.963Z"
     }
   }
 }

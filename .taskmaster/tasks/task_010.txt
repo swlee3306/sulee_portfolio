@@ -1,0 +1,14 @@
+# Task ID: 10
+# Title: 성능 최적화(이미지/코드 스플리팅)
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: Lighthouse 90+ 목표로 최적화
+# Details:
+- 이미지 최적화(LQIP/blur)
+- 코드 스플리팅/지연 로딩
+- 폰트 최적화
+- 메트릭 측정(Web Vitals)
+
+# Test Strategy:
+

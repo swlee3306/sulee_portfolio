@@ -1,0 +1,13 @@
+# Task ID: 8
+# Title: 연락(Contact) 폼 구현
+# Status: pending
+# Dependencies: None
+# Priority: medium
+# Description: 스팸 방지와 제출 알림 포함의 폼 구현
+# Details:
+- 필드 검증 및 접근성(aria-invalid 등)
+- 외부 폼 서비스(Netlify Forms/Formspree) 또는 mailto 대안
+- 성공/실패 토스트 알림
+
+# Test Strategy:
+

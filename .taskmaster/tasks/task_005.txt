@@ -1,0 +1,40 @@
+# Task ID: 5
+# Title: 프로젝트 목록/필터/검색
+# Status: in-progress
+# Dependencies: None
+# Priority: medium
+# Description: 프로젝트 카드 리스트 + 태그/텍스트 필터
+# Details:
+- 태그 필터(멀티 선택)
+- 텍스트 검색(제목/요약)
+- 정렬(최신/추천)
+- 빈 상태/로딩 상태 UI
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. 프로젝트 섹션 리스트 템플릿 확인 및 데이터 구조 파악 [in-progress]
+### Dependencies: None
+### Description: 현재 projects 섹션의 리스트 레이아웃/콘텐츠 메타 구조 확인
+### Details:
+
+
+## 2. 클라이언트 사이드 검색/필터 UI 추가 [pending]
+### Dependencies: None
+### Description: 프로젝트 목록 상단에 검색 인풋과 태그 필터 버튼 추가 (Hugo 템플릿 + JS)
+### Details:
+
+
+## 3. 필터 로직 구현 [pending]
+### Dependencies: None
+### Description: 프로젝트 카드 데이터(JSON 스니펫) 생성 또는 DOM 기반 필터링 구현
+### Details:
+
+
+## 4. 모바일 반응형 및 접근성 점검 [pending]
+### Dependencies: None
+### Description: 키보드 탐색, 라벨링, 색 대비 확인
+### Details:
+
+

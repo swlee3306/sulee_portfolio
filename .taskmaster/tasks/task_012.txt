@@ -1,0 +1,13 @@
+# Task ID: 12
+# Title: 배포/CI 설정
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Vercel/Netlify/GitHub Pages 중 선택하여 배포 파이프라인 구성
+# Details:
+- 빌드 스크립트/환경변수
+- 프리뷰 배포(PR)
+- 캐시 최적화 설정
+
+# Test Strategy:
+

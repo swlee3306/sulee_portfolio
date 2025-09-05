@@ -2,28 +2,11 @@
 <section class="section">
   <h1>{{ .Title }}</h1>
   {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
-
-  {{ $endpoint := .Site.Params.formspreeEndpoint }}
-  {{ if $endpoint }}
-    <form action="{{ $endpoint }}" method="POST">
-      <label for="name">이름</label>
-      <input type="text" id="name" name="name" required>
-
-      <label for="email">이메일</label>
-      <input type="email" id="email" name="email" required>
-
-      <label for="message">메시지</label>
-      <textarea id="message" name="message" required></textarea>
-
-      <button class="btn" type="submit">보내기</button>
-    </form>
+  {{ $email := .Site.Params.email }}
+  {{ if $email }}
+    <p>문의는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a> 해 주세요.</p>
   {{ else }}
-    {{ $email := .Site.Params.email }}
-    {{ if $email }}
-      <p>문의는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a>해 주세요.</p>
-    {{ else }}
-      <p>문의는 이메일로 연락해 주세요.</p>
-    {{ end }}
+    <p>문의는 이메일로 연락해 주세요.</p>
   {{ end }}
 </section>
 {{ end }}

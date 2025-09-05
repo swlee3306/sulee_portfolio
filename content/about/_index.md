@@ -3,29 +3,37 @@ title: "About"
 description: "소개 페이지"
 ---
 
-안녕하세요. 실사용 환경에서 동작하는 시스템 도구와 백엔드 서비스를 만드는 것을 좋아하는 개발자입니다. Go를 중심으로 신뢰성과 성능을 중시하며, 운영 환경의 요구를 코드로 해결하는 데 집중합니다. 실험과 학습을 좋아하고, 반복되는 작업은 자동화하고, 모니터링과 테스트를 통해 품질을 관리합니다.
+안녕하세요. 실사용 환경에서 확장 가능하고 관측 가능한 데이터 수집/백엔드 시스템을 만드는 개발자 이상욱입니다. 현재 오케스트로(Platform Service Dev 1)에서 클라우드 빌링·미터링, 하드웨어/스토리지 수집, K8s·OpenStack 기반 데이터 파이프라인 구축 업무를 수행하고 있습니다(총 경력 약 4년 8개월). Go를 중심으로 신뢰성과 성능, 자동화와 운영 편의성을 중시합니다.
 
 ## 기술 스택
-- 언어: Go (주), Shell Script
-- 영역: 시스템 정보 수집, 네트워크/프로토콜(SNMP), API 백엔드, 자동화 스크립트
-- 기타: GitHub Actions, GitHub Pages, Hugo
+- 언어: Go(주), Shell Script, C/C++(검증 경험)
+- 플랫폼/인프라: Kubernetes(K8s), OpenStack, Linux, Cloud
+- 수집/관측: SNMP, IPMI, Logstash, OpenSearch, MariaDB, NetApp 스토리지
+- 웹/네트워킹: API, Nginx
+- 도구: Docker, Ansible Tower, Postman, Bitbucket, GitHub Actions, Hugo
 
 ## 작업 하이라이트
-- make-snmprec: SNMP를 이용해 데이터를 수집하고 시뮬레이션용 .snmprec 파일로 변환하는 도구
-- system-Info-collector: 다양한 시스템 정보를 수집·저장하는 유틸리티
-- APITestProgram: 네트워크가 제한된 환경에서도 API 테스트를 쉽게 할 수 있도록 돕는 프로그램
-- ssh_commend: 여러 VM에 SSH로 접속해 CPU/메모리/디스크 등 메트릭을 수집
-- go_crud: REST API 방식으로 DB CRUD를 제공하는 학습/예제 프로젝트
-- Goplayground: Go 언어 학습과 실험용 예제 모음
+- 클라우드 빌링/미터링 데이터 수집 Collector (2024.08–2024.10)
+  - 상품별 맞춤 일별 데이터 수집 기능 설계/구현, 빌링 측정 데이터 협의 및 제공 담당
+  - 운영 환경에서 정확한 집계와 안정성을 목표로 파이프라인 구조 설계
+- 하드웨어/네트워크 장비 수집 Collector (2024.08–2024.10)
+  - IPMI·SNMP 기반 서버·스위치·스토리지 상태·메트릭 수집, 물리 토폴로지 연계
+  - Kubernetes 상 수집 워크로드 운용(kubernetes-collector 등), 운영 자동화
+- 한국신용정보원 메트릭 수집 자동화 (2024.04–2024.07)
+  - VM(CPU/Memory/Disk/Network) 에이전트 자동 설치 프로그램 개발, 배포 간소화
+  - NetApp 스토리지 메트릭 수집 및 데이터 적재(Logstash/OpenSearch/MariaDB)
+- 스토리지/에이전트 관련 추가 경험 (2023.05–2023.12)
+  - NetApp 수집 API 연동, 데이터 유효성 검사/오류 처리, InfluxDB·PostgreSQL 저장 설계
+  - Ansible Tower를 활용한 자동 설치/운영, K8s 기반 수집 환경 표준화
 
-자세한 프로젝트 목록과 코드들은 Projects 페이지에서 확인하실 수 있습니다.
+자세한 프로젝트 목록과 코드는 `Projects` 페이지에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-Info-collector`, `APITestProgram` 등이 있습니다.
 
 ## 관심사와 가치
 - 운영 환경에 강한 도구와 서비스: 실패에 강하고 관측 가능한 시스템
 - 단순함과 자동화: 반복 업무의 자동화, 간결하고 이해 가능한 코드
 - 성능과 품질: 벤치마크, 로깅, 테스트를 통한 지속적 개선
 
-이력서는 상단 메뉴에서 확인하실 수 있으며, 추후 PDF 파일로 업데이트될 예정입니다.
+이력서는 PDF로 다운로드하실 수 있습니다.
 
 <div class="btn-group" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
   <a class="btn" href="/projects/">Projects 보러 가기</a>

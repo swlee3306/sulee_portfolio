@@ -15,7 +15,6 @@ canonifyURLs = true
   author = ""
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
-  formspreeEndpoint = "" # 예: https://formspree.io/f/xxxxxx
   email = "swlee3306@gmail.com"
   [params.analytics]
     ga4 = ""           # 예: G-XXXXXXX

@@ -32,5 +32,5 @@ description: "소개 페이지"
   <a class="btn" href="https://github.com/swlee3306" target="_blank" rel="noopener">GitHub 프로필</a>
   <a class="btn" href="mailto:swlee3306@gmail.com">이메일 보내기</a>
   <!-- 이력서 파일이 준비되면 아래 링크를 실제 파일 경로로 교체하세요 (예: /files/resume.pdf) -->
-  <!-- <a class="btn" href="/files/resume.pdf" target="_blank" rel="noopener">이력서 다운로드 (PDF)</a> -->
+  <a class="btn" href="/files/resume.pdf" target="_blank" rel="noopener" aria-label="이력서 PDF 다운로드">이력서 다운로드 (PDF)</a>
 </div>

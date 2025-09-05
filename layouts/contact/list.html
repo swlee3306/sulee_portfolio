@@ -18,7 +18,12 @@
       <button class="btn" type="submit">보내기</button>
     </form>
   {{ else }}
-    <p>문의는 <a class="btn" href="mailto:your@email">이메일로 연락</a>해 주세요.</p>
+    {{ $email := .Site.Params.email }}
+    {{ if $email }}
+      <p>문의는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a>해 주세요.</p>
+    {{ else }}
+      <p>문의는 이메일로 연락해 주세요.</p>
+    {{ end }}
   {{ end }}
 </section>
 {{ end }}

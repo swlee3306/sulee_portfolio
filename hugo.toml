@@ -15,13 +15,14 @@ paginate = 10
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
   formspreeEndpoint = "" # 예: https://formspree.io/f/xxxxxx
+  email = "swlee3306@gmail.com"
   [params.analytics]
     ga4 = ""           # 예: G-XXXXXXX
     plausibleDomain = "" # 예: yourdomain.com
   socials = [
-    { name = "GitHub", url = "https://github.com/" },
+    { name = "GitHub", url = "https://github.com/swlee3306" },
     { name = "LinkedIn", url = "https://www.linkedin.com/" },
-    { name = "Email", url = "mailto:your@email" }
+    { name = "Email", url = "mailto:swlee3306@gmail.com" }
   ]
 
 [outputs]

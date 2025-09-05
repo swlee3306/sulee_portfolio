@@ -27,7 +27,7 @@ description: "소개 페이지"
 - 성능과 품질: 벤치마크, 로깅, 테스트를 통한 지속적 개선
 
 ## 연락처
-- Email: you@example.com
+- Email: swlee3306@gmail.com
 - GitHub: https://github.com/swlee3306
 
 이력서는 상단 메뉴 또는 아래 링크에서 확인할 수 있습니다.

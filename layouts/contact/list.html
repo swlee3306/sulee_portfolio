@@ -3,39 +3,10 @@
   <h1>{{ .Title }}</h1>
   {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
   {{ $email := .Site.Params.email }}
-  {{ $form := .Site.Params.formspreeEndpoint }}
-
-  {{ if $form }}
-    <form action="{{ $form }}" method="POST" style="max-width:640px">
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <label style="flex:1 1 240px">
-          이름
-          <input type="text" name="name" required aria-required="true" placeholder="성함" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px;" />
-        </label>
-        <label style="flex:1 1 240px">
-          이메일
-          <input type="email" name="email" required aria-required="true" placeholder="your@email.com" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px;" />
-        </label>
-      </div>
-      <label style="display:block; margin-top:10px;">
-        메시지
-        <textarea name="message" rows="6" required aria-required="true" placeholder="내용을 입력해 주세요" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px;"></textarea>
-      </label>
-      <!-- Honeypot field -->
-      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" />
-      <!-- Optional: redirect after submit
-      <input type="hidden" name="_redirect" value="/contact/" /> -->
-      <button class="btn" type="submit" style="margin-top:10px">메시지 보내기</button>
-    </form>
-    {{ if $email }}
-      <p style="margin-top:10px">또는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a> 하실 수 있습니다.</p>
-    {{ end }}
+  {{ if $email }}
+    <p>문의는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a> 해 주세요.</p>
   {{ else }}
-    {{ if $email }}
-      <p>문의는 <a class="btn" href="mailto:{{ $email }}">이메일로 연락</a> 해 주세요.</p>
-    {{ else }}
-      <p>문의는 이메일로 연락해 주세요.</p>
-    {{ end }}
+    <p>문의는 이메일로 연락해 주세요.</p>
   {{ end }}
 </section>
 {{ end }}

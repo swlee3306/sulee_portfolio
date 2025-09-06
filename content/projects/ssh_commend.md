@@ -1,6 +1,6 @@
 ---
 title: "ssh_commend"
-summary: "여러 VM에 SSH로 접속하여 CPU/메모리/디스크 등 시스템 데이터를 수집하는 프로그램"
+summary: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 techTags: ["Go", "Shell"]
 date: 2024-07-10
 thumbnail: "/images/og-default.svg"

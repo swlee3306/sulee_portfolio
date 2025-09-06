@@ -1,6 +1,6 @@
 ---
 title: "go_crud"
-summary: "API 방식을 이용한 Database 기본 CRUD 프로그램"
+summary: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
 techTags: ["Go", "Shell", "Batchfile"]
 date: 2024-11-11
 thumbnail: "/images/og-default.svg"

@@ -22,10 +22,15 @@
               {{ $thumb := . }}
               {{ $ext := path.Ext $thumb }}
               {{ $webp := replace $thumb $ext ".webp" }}
-              <picture>
-                <source type="image/webp" srcset="{{ $webp | relURL }}" />
+              {{ $webpStatic := printf "static%s" $webp }}
+              {{ if fileExists $webpStatic }}
+                <picture>
+                  <source type="image/webp" srcset="{{ $webp | relURL }}" />
+                  <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                </picture>
+              {{ else }}
                 <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
-              </picture>
+              {{ end }}
             {{ else }}
               <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
             {{ end }}
@@ -33,7 +38,7 @@
         {{ end }}
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
         {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
-        {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}{{ if .Summary }}<p>{{ .Summary }}</p>{{ end }}{{ end }}
+        {{ with .Params.summary }}<p class="summary-text">{{ . }}</p>{{ else }}{{ if .Summary }}<p class="summary-text">{{ .Summary }}</p>{{ end }}{{ end }}
 
         {{ with .Params.repo }}
           {{ $repoURL := . }}

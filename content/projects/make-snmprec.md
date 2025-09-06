@@ -4,8 +4,8 @@ summary: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는
 description: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
 techTags: ["Go"]
 date: 2025-06-24
-thumbnail: "/images/sample-thumb.svg"
-cover: "/images/sample-thumb.svg"
+thumbnail: "/images/og-default.svg"
+cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/make-snmprec"
 ---
 

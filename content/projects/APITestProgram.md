@@ -1,6 +1,6 @@
 ---
 title: "APITestProgram"
-summary: "인터넷이 없는 환경에서도 편하게 API 테스트 요청을 처리하기 위한 프로그램"
+summary: "오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트"
 techTags: ["Go", "Shell"]
 date: 2024-11-13
 thumbnail: "/images/og-default.svg"

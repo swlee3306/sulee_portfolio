@@ -4,8 +4,8 @@ summary: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 description: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 techTags: ["Go", "Shell"]
 date: 2024-07-10
-thumbnail: "/images/sample-thumb.svg"
-cover: "/images/sample-thumb.svg"
+thumbnail: "/images/og-default.svg"
+cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/ssh_commend"
 ---
 

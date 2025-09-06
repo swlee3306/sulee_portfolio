@@ -4,8 +4,8 @@ summary: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
 description: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
 techTags: ["Go", "Shell", "Batchfile"]
 date: 2024-11-11
-thumbnail: "/images/sample-thumb.svg"
-cover: "/images/sample-thumb.svg"
+thumbnail: "/images/og-default.svg"
+cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/go_crud"
 ---
 

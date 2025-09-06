@@ -4,8 +4,8 @@ summary: "오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클�
 description: "오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트"
 techTags: ["Go", "Shell"]
 date: 2024-11-13
-thumbnail: "/images/og-default.svg"
-cover: "/images/og-default.svg"
+thumbnail: "/images/sample-thumb.svg"
+cover: "/images/sample-thumb.svg"
 repo: "https://github.com/swlee3306/APITestProgram"
 ---
 

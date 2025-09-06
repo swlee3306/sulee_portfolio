@@ -1,6 +1,6 @@
 ---
 title: "make-snmprec"
-summary: "snmp 를 이용한 데이터 수집을 통해 시뮬레이션용(.snmprec) 파일로 변환 하는 프로그램"
+summary: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
 techTags: ["Go"]
 date: 2025-06-24
 thumbnail: "/images/og-default.svg"

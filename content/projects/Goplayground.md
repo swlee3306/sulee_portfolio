@@ -1,6 +1,6 @@
 ---
 title: "Goplayground"
-summary: "Go 언어 학습과 연습을 위한 다양한 예제 모음"
+summary: "Go 학습/실습을 위한 예제 모음(HTTP·DB·동시성 포함)"
 techTags: ["Go"]
 date: 2024-02-26
 thumbnail: "/images/og-default.svg"

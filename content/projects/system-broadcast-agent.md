@@ -1,6 +1,6 @@
 ---
 title: "system-broadcast-agent"
-summary: "시스템 브로드캐스트 에이전트"
+summary: "Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스"
 techTags: ["Go"]
 date: 2025-05-23
 thumbnail: "/images/og-default.svg"

@@ -1,6 +1,6 @@
 baseURL = "https://swlee3306.github.io/sulee_portfolio/"
 languageCode = "ko-kr"
-title = "Developer’s Note"
+title = "Dev Note by sw'Lee"
 # 테마를 사용하지 않고 커스텀 레이아웃을 사용합니다.
 # theme = ""
 
@@ -17,6 +17,7 @@ canonifyURLs = true
   ogImage = "/images/og-default.svg"
   email = "swlee3306@gmail.com"
   useWebp = false # WebP 이미지가 준비되면 true로 설정하여 <picture> 사용
+  brand = "Dev Note by sw'Lee"
   [params.analytics]
     ga4 = ""           # 예: G-XXXXXXX
     plausibleDomain = "" # 예: yourdomain.com

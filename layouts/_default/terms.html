@@ -1,0 +1,18 @@
+{{ define "main" }}
+<section class="section">
+  {{ if not .IsHome }}
+    <h1>{{ .Title }}</h1>
+  {{ end }}
+  {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+
+  <div class="cards" aria-label="용어 목록">
+    {{ range .Data.Terms.Alphabetical }}
+      <article class="card">
+        <h2 style="margin: .2em 0 .4em;"><a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a></h2>
+        <p class="meta">{{ .Count }}개 항목</p>
+        <p><a class="btn" href="{{ .Page.RelPermalink }}" aria-label="{{ .Page.Title }} 태그의 문서 보기">자세히 보기</a></p>
+      </article>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

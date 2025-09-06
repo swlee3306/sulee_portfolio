@@ -1,6 +1,7 @@
 ---
 title: "ssh_commend"
 summary: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
+description: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 techTags: ["Go", "Shell"]
 date: 2024-07-10
 thumbnail: "/images/og-default.svg"

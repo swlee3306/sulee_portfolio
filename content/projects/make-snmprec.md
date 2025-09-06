@@ -1,6 +1,7 @@
 ---
 title: "make-snmprec"
 summary: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
+description: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
 techTags: ["Go"]
 date: 2025-06-24
 thumbnail: "/images/og-default.svg"

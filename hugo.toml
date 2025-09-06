@@ -29,6 +29,13 @@ canonifyURLs = true
 [outputs]
   home = ["HTML", "RSS", "RobotsTXT"]
 
+[outputFormats]
+  [outputFormats.RobotsTXT]
+    mediaType = "text/plain"
+    baseName = "robots"
+    isPlainText = true
+    notAlternative = true
+
 [taxonomies]
   tag = "tags"
 

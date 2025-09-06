@@ -93,7 +93,6 @@
     btn.setAttribute('data-tag', tag);
     btn.setAttribute('aria-label', `태그 필터: ${tag}`);
     btn.setAttribute('aria-pressed', 'false');
-    btn.style.padding = '6px 10px';
     btn.addEventListener('click', () => {
       if (selected.has(tag)) selected.delete(tag); else selected.add(tag);
       btn.classList.toggle('active', selected.has(tag));

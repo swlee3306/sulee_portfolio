@@ -1,149 +1,25 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>go_crud | 개인 포트폴리오</title>
-<meta name="description" content="개인 포트폴리오">
-<link rel="canonical" href="//localhost:1313/projects/go_crud/">
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../../favicon.svg">
-
-
-
-<meta property="og:type" content="article">
-<meta property="og:url" content="//localhost:1313/projects/go_crud/">
-<meta property="og:title" content="go_crud | 개인 포트폴리오">
-<meta property="og:description" content="개인 포트폴리오">
-<meta property="og:image" content="/images/og-default.svg">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="go_crud | 개인 포트폴리오">
-<meta name="twitter:description" content="개인 포트폴리오">
-<meta name="twitter:image" content="/images/og-default.svg">
-
-<link rel="stylesheet" href="../../css/styles.css">
-
-
-
-
-
-
-
-
-
-  </head>
-  <body>
-    <header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="../../">개인 포트폴리오</a>
-    <nav>
-      <ul>
-        
-          <li><a href="../../">Home</a></li>
-        
-          <li><a href="../../projects/">Projects</a></li>
-        
-          <li><a href="../../about/">About</a></li>
-        
-          <li><a href="../../contact/">Contact</a></li>
-        
-      </ul>
-    </nav>
-  </div>
-</header>
-
-    <main class="container">
-      
-<article class="article">
-  <h1>go_crud</h1>
-  <p class="summary">API 방식을 이용한 Database 기본 CRUD 프로그램</p>
-  
-    <img class="cover" src="../../images/og-default.svg" alt="go_crud cover image" loading="lazy" decoding="async" width="1200" height="675" />
-  
-  <div class="content">
-    <h2 id="개요">개요</h2>
-<p><code>go_crud</code>는 REST API를 통해 데이터베이스의 기본 CRUD(Create, Read, Update, Delete)를 제공하는 학습/예제 프로젝트입니다. 라우팅, 환경설정, DB 액세스 계층 분리를 통해 실전과 유사한 구조를 연습할 수 있습니다.</p>
-<p><a class="btn" href="https://github.com/swlee3306/go_crud" target="_blank" rel="noopener">GitHub 저장소 열기 →</a></p>
-<h2 id="주요-기능">주요 기능</h2>
-<ul>
-<li>Create/Read/Update/Delete API 제공</li>
-<li>Go 모듈 기반 의존성 관리와 라우팅 유틸 정리</li>
-<li>환경파일(<code>setting.yml</code>)을 통한 설정 관리</li>
-</ul>
-<h2 id="설치">설치</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/swlee3306/go_crud.git
-</span></span><span style="display:flex;"><span>cd go_crud
-</span></span><span style="display:flex;"><span>go mod tidy
-</span></span></code></pre></div><p>DB 연결 설정(<code>config.yaml</code> 또는 설정 파일)에 DSN을 환경에 맞게 입력합니다.</p>
-<h2 id="실행">실행</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>go run main.go
-</span></span></code></pre></div><p>기본 엔드포인트: <code>http://localhost:8080</code></p>
-<h2 id="api-엔드포인트-예시">API 엔드포인트 예시</h2>
-<h3 id="create">Create</h3>
-<ul>
-<li>Endpoint: <code>POST /api/v1/datastore/data/insert</code></li>
-<li>Request Body:</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">0</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;ip&#34;</span>: <span style="color:#e6db74">&#34;1.1.1.2&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;hostname&#34;</span>: <span style="color:#e6db74">&#34;test7&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;user&#34;</span>: <span style="color:#e6db74">&#34;tst7&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;pwd&#34;</span>: <span style="color:#e6db74">&#34;12344&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;hello7&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="read">Read</h3>
-<ul>
-<li>Endpoint: <code>GET /api/v1/datastore/data/search</code></li>
-<li>Response:</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{ <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span> }
-</span></span></code></pre></div><h3 id="update">Update</h3>
-<ul>
-<li>Endpoint: <code>PUT /api/v1/datastore/data/update</code></li>
-<li>Request Body:</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;ip&#34;</span>: <span style="color:#e6db74">&#34;1.1.1.2&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;hostname&#34;</span>: <span style="color:#e6db74">&#34;test7&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;user&#34;</span>: <span style="color:#e6db74">&#34;tst7&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;pwd&#34;</span>: <span style="color:#e6db74">&#34;12344&#34;</span>,
-</span></span><span style="display:flex;"><span>  <span style="color:#f92672">&#34;message&#34;</span>: <span style="color:#e6db74">&#34;hello7&#34;</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="delete">Delete</h3>
-<ul>
-<li>Endpoint: <code>DELETE /api/v1/datastore/data/delete</code></li>
-<li>Response:</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-json" data-lang="json"><span style="display:flex;"><span>{ <span style="color:#f92672">&#34;id&#34;</span>: <span style="color:#ae81ff">1</span> }
-</span></span></code></pre></div>
-  </div>
-  
-    
-    
-    <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
-      <img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/go_crud?style=social" loading="lazy" decoding="async">
-      <img alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/go_crud" loading="lazy" decoding="async">
-      <a class="btn" href="https://github.com/swlee3306/go_crud" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
-    </div>
-  
-  
-    <ul class="tags">
-      <li>Go</li><li>Shell</li><li>Batchfile</li>
-    </ul>
-  
-</article>
-
-    </main>
-    <footer class="site-footer">
-  <div class="container">
-    <p>© 2025 개인 포트폴리오</p>
-  </div>
-</footer>
-
-  </body>
-</html>
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>go_crud | 개인 포트폴리오</title><meta name=description content="개인 포트폴리오"><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/projects/go_crud/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/projects/go_crud/"><meta property="og:title" content="go_crud | 개인 포트폴리오"><meta property="og:description" content="개인 포트폴리오"><meta property="og:image" content="/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="go_crud | 개인 포트폴리오"><meta name=twitter:description content="개인 포트폴리오"><meta name=twitter:image content="/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1757134660"><link rel=stylesheet href="../../css/styles.css?v=1757134660"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script></head><body><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../>개인 포트폴리오</a><nav><ul><li><a href=../../>Home</a></li><li><a href=../../projects/>Projects</a></li><li><a href=../../about/>About</a></li><li><a href=../../contact/>Contact</a></li></ul></nav></div></header><main id=main-content role=main class=container><article class=article><h1>go_crud</h1><p class=summary>API 방식을 이용한 Database 기본 CRUD 프로그램</p><img class=cover src=../../images/og-default.svg alt="go_crud cover image" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px"><div class=content><h2 id=개요>개요</h2><p><code>go_crud</code>는 REST API를 통해 데이터베이스의 기본 CRUD(Create, Read, Update, Delete)를 제공하는 학습/예제 프로젝트입니다. 라우팅, 환경설정, DB 액세스 계층 분리를 통해 실전과 유사한 구조를 연습할 수 있습니다.</p><p><a class=btn href=https://github.com/swlee3306/go_crud target=_blank rel=noopener>GitHub 저장소 열기 →</a></p><h2 id=주요-기능>주요 기능</h2><ul><li>Create/Read/Update/Delete API 제공</li><li>Go 모듈 기반 의존성 관리와 라우팅 유틸 정리</li><li>환경파일(<code>setting.yml</code>)을 통한 설정 관리</li></ul><h2 id=설치>설치</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>git clone https://github.com/swlee3306/go_crud.git
+</span></span><span style=display:flex><span>cd go_crud
+</span></span><span style=display:flex><span>go mod tidy
+</span></span></code></pre></div><p>DB 연결 설정(<code>config.yaml</code> 또는 설정 파일)에 DSN을 환경에 맞게 입력합니다.</p><h2 id=실행>실행</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span>go run main.go
+</span></span></code></pre></div><p>기본 엔드포인트: <code>http://localhost:8080</code></p><h2 id=api-엔드포인트-예시>API 엔드포인트 예시</h2><h3 id=create>Create</h3><ul><li>Endpoint: <code>POST /api/v1/datastore/data/insert</code></li><li>Request Body:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;id&#34;</span>: <span style=color:#ae81ff>0</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;ip&#34;</span>: <span style=color:#e6db74>&#34;1.1.1.2&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;hostname&#34;</span>: <span style=color:#e6db74>&#34;test7&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;user&#34;</span>: <span style=color:#e6db74>&#34;tst7&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;pwd&#34;</span>: <span style=color:#e6db74>&#34;12344&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;message&#34;</span>: <span style=color:#e6db74>&#34;hello7&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=read>Read</h3><ul><li>Endpoint: <code>GET /api/v1/datastore/data/search</code></li><li>Response:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{ <span style=color:#f92672>&#34;id&#34;</span>: <span style=color:#ae81ff>1</span> }
+</span></span></code></pre></div><h3 id=update>Update</h3><ul><li>Endpoint: <code>PUT /api/v1/datastore/data/update</code></li><li>Request Body:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;id&#34;</span>: <span style=color:#ae81ff>1</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;ip&#34;</span>: <span style=color:#e6db74>&#34;1.1.1.2&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;hostname&#34;</span>: <span style=color:#e6db74>&#34;test7&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;user&#34;</span>: <span style=color:#e6db74>&#34;tst7&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;pwd&#34;</span>: <span style=color:#e6db74>&#34;12344&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;message&#34;</span>: <span style=color:#e6db74>&#34;hello7&#34;</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=delete>Delete</h3><ul><li>Endpoint: <code>DELETE /api/v1/datastore/data/delete</code></li><li>Response:</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{ <span style=color:#f92672>&#34;id&#34;</span>: <span style=color:#ae81ff>1</span> }
+</span></span></code></pre></div></div><div class=meta style=display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px><img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/go_crud?style=social" loading=lazy decoding=async>
+<img alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/go_crud loading=lazy decoding=async>
+<a class=btn href=https://github.com/swlee3306/go_crud target=_blank rel=noopener aria-label="swlee3306/go_crud GitHub 저장소 열기">GitHub 저장소 열기 →</a></div><ul class=tags><li>Go</li><li>Shell</li><li>Batchfile</li></ul></article></main><footer class=site-footer><div class=container><p>© 2025 이상욱</p></div></footer></body></html>

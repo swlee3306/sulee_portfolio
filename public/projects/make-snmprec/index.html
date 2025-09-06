@@ -1,115 +1,12 @@
-<!DOCTYPE html>
-<html lang="ko">
-  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
-    <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>make-snmprec | 개인 포트폴리오</title>
-<meta name="description" content="개인 포트폴리오">
-<link rel="canonical" href="//localhost:1313/projects/make-snmprec/">
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../../favicon.svg">
-
-
-
-<meta property="og:type" content="article">
-<meta property="og:url" content="//localhost:1313/projects/make-snmprec/">
-<meta property="og:title" content="make-snmprec | 개인 포트폴리오">
-<meta property="og:description" content="개인 포트폴리오">
-<meta property="og:image" content="/images/og-default.svg">
-
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="make-snmprec | 개인 포트폴리오">
-<meta name="twitter:description" content="개인 포트폴리오">
-<meta name="twitter:image" content="/images/og-default.svg">
-
-<link rel="stylesheet" href="../../css/styles.css">
-
-
-
-
-
-
-
-
-
-  </head>
-  <body>
-    <header class="site-header">
-  <div class="container nav">
-    <a class="brand" href="../../">개인 포트폴리오</a>
-    <nav>
-      <ul>
-        
-          <li><a href="../../">Home</a></li>
-        
-          <li><a href="../../projects/">Projects</a></li>
-        
-          <li><a href="../../about/">About</a></li>
-        
-          <li><a href="../../contact/">Contact</a></li>
-        
-      </ul>
-    </nav>
-  </div>
-</header>
-
-    <main class="container">
-      
-<article class="article">
-  <h1>make-snmprec</h1>
-  <p class="summary">snmp 를 이용한 데이터 수집을 통해 시뮬레이션용(.snmprec) 파일로 변환 하는 프로그램</p>
-  
-    <img class="cover" src="../../images/og-default.svg" alt="make-snmprec cover image" loading="lazy" decoding="async" width="1200" height="675" />
-  
-  <div class="content">
-    <h2 id="개요">개요</h2>
-<p>SNMP 장비로부터 데이터를 수집하여 시뮬레이터에서 사용할 수 있는 <code>.snmprec</code> 포맷으로 변환하는 도구입니다. 테스트/개발 환경에서 실제 장비 없이도 SNMP 응답을 재현할 수 있도록 도와줍니다.</p>
-<p><a class="btn" href="https://github.com/swlee3306/make-snmprec" target="_blank" rel="noopener">GitHub 저장소 열기 →</a></p>
-<h2 id="snmprec-이란">.snmprec 이란?</h2>
-<p><code>.snmprec</code>는 Net-SNMP의 <code>snmpsimd.py</code> 등 시뮬레이터에서 사용되는 레코드 파일 형식입니다. OID와 값, 타입을 라인 단위로 기록해 시뮬레이터가 동일한 응답을 재현할 수 있게 합니다.</p>
-<h2 id="기능예상">기능(예상)</h2>
-<ul>
-<li>지정된 대상 장비/커뮤니티/버전으로 SNMP Walk 수행</li>
-<li>수집된 OID-값을 <code>.snmprec</code> 포맷으로 직렬화</li>
-<li>샘플/필터링 옵션(특정 OID 트리만 포함 등)</li>
-</ul>
-<h2 id="사용-아이디어초안">사용 아이디어(초안)</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 대상 장비에서 walk → .snmprec 생성</span>
-</span></span><span style="display:flex;"><span>make-snmprec <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --target 192.168.0.10 <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --community public <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --version 2c <span style="color:#ae81ff">\
-</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --out device.snmprec
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시뮬레이터에서 device.snmprec 사용</span>
-</span></span><span style="display:flex;"><span>snmpsimd.py --data-dir<span style="color:#f92672">=</span>./ --agent-udpv4-endpoint<span style="color:#f92672">=</span>127.0.0.1:1161
-</span></span></code></pre></div><p>프로젝트 README 미존재로 상세 사용법은 추후 보강 예정입니다.</p>
-
-  </div>
-  
-    
-    
-    <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
-      <img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading="lazy" decoding="async">
-      <img alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/make-snmprec" loading="lazy" decoding="async">
-      <a class="btn" href="https://github.com/swlee3306/make-snmprec" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
-    </div>
-  
-  
-    <ul class="tags">
-      <li>Go</li>
-    </ul>
-  
-</article>
-
-    </main>
-    <footer class="site-footer">
-  <div class="container">
-    <p>© 2025 개인 포트폴리오</p>
-  </div>
-</footer>
-
-  </body>
-</html>
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>make-snmprec | 개인 포트폴리오</title><meta name=description content="개인 포트폴리오"><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/"><meta property="og:title" content="make-snmprec | 개인 포트폴리오"><meta property="og:description" content="개인 포트폴리오"><meta property="og:image" content="/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="make-snmprec | 개인 포트폴리오"><meta name=twitter:description content="개인 포트폴리오"><meta name=twitter:image content="/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1757134660"><link rel=stylesheet href="../../css/styles.css?v=1757134660"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script></head><body><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../>개인 포트폴리오</a><nav><ul><li><a href=../../>Home</a></li><li><a href=../../projects/>Projects</a></li><li><a href=../../about/>About</a></li><li><a href=../../contact/>Contact</a></li></ul></nav></div></header><main id=main-content role=main class=container><article class=article><h1>make-snmprec</h1><p class=summary>snmp 를 이용한 데이터 수집을 통해 시뮬레이션용(.snmprec) 파일로 변환 하는 프로그램</p><img class=cover src=../../images/og-default.svg alt="make-snmprec cover image" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px"><div class=content><h2 id=개요>개요</h2><p>SNMP 장비로부터 데이터를 수집하여 시뮬레이터에서 사용할 수 있는 <code>.snmprec</code> 포맷으로 변환하는 도구입니다. 테스트/개발 환경에서 실제 장비 없이도 SNMP 응답을 재현할 수 있도록 도와줍니다.</p><p><a class=btn href=https://github.com/swlee3306/make-snmprec target=_blank rel=noopener>GitHub 저장소 열기 →</a></p><h2 id=snmprec-이란>.snmprec 이란?</h2><p><code>.snmprec</code>는 Net-SNMP의 <code>snmpsimd.py</code> 등 시뮬레이터에서 사용되는 레코드 파일 형식입니다. OID와 값, 타입을 라인 단위로 기록해 시뮬레이터가 동일한 응답을 재현할 수 있게 합니다.</p><h2 id=기능예상>기능(예상)</h2><ul><li>지정된 대상 장비/커뮤니티/버전으로 SNMP Walk 수행</li><li>수집된 OID-값을 <code>.snmprec</code> 포맷으로 직렬화</li><li>샘플/필터링 옵션(특정 OID 트리만 포함 등)</li></ul><h2 id=사용-아이디어초안>사용 아이디어(초안)</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 대상 장비에서 walk → .snmprec 생성</span>
+</span></span><span style=display:flex><span>make-snmprec <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --target 192.168.0.10 <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --community public <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --version 2c <span style=color:#ae81ff>\
+</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --out device.snmprec
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e># 시뮬레이터에서 device.snmprec 사용</span>
+</span></span><span style=display:flex><span>snmpsimd.py --data-dir<span style=color:#f92672>=</span>./ --agent-udpv4-endpoint<span style=color:#f92672>=</span>127.0.0.1:1161
+</span></span></code></pre></div><p>프로젝트 README 미존재로 상세 사용법은 추후 보강 예정입니다.</p></div><div class=meta style=display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px><img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading=lazy decoding=async>
+<img alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/make-snmprec loading=lazy decoding=async>
+<a class=btn href=https://github.com/swlee3306/make-snmprec target=_blank rel=noopener aria-label="swlee3306/make-snmprec GitHub 저장소 열기">GitHub 저장소 열기 →</a></div><ul class=tags><li>Go</li></ul></article></main><footer class=site-footer><div class=container><p>© 2025 이상욱</p></div></footer></body></html>

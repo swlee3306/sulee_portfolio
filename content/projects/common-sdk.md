@@ -1,6 +1,7 @@
 ---
 title: "common-sdk"
 summary: "프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)"
+description: "프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)"
 techTags: ["Go"]
 date: 2025-05-30
 thumbnail: "/images/og-default.svg"

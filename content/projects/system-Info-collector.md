@@ -1,6 +1,7 @@
 ---
 title: "system-Info-collector"
 summary: "시스템 정보 수집 및 REST API·메트릭 노출 에이전트"
+description: "시스템 정보 수집 및 REST API·메트릭 노출 에이전트"
 techTags: ["Go", "Shell"]
 date: 2025-04-02
 thumbnail: "/images/og-default.svg"

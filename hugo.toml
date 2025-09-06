@@ -1,6 +1,6 @@
 baseURL = "https://swlee3306.github.io/sulee_portfolio/"
 languageCode = "ko-kr"
-title = "개인 포트폴리오"
+title = "Developer’s Note"
 # 테마를 사용하지 않고 커스텀 레이아웃을 사용합니다.
 # theme = ""
 

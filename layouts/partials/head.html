@@ -10,6 +10,8 @@
 <link rel="icon" href="{{ "/favicon.svg" | relURL }}" type="image/svg+xml">
 <link rel="apple-touch-icon" href="{{ "/favicon.svg" | relURL }}">
 
+{{ with .Site.Params.author }}<meta name="author" content="{{ . }}">{{ end }}
+
 <!-- Resource Hints: speed up third-party badge loads (GitHub Shields) -->
 <link rel="dns-prefetch" href="//img.shields.io">
 <link rel="preconnect" href="https://img.shields.io" crossorigin>
@@ -42,5 +44,21 @@
 {{ with .OutputFormats.Get "RSS" -}}
   <link rel="alternate" type="application/rss+xml" title="RSS" href="{{ .RelPermalink }}">
 {{- end }}
+
+{{/* Lightweight JSON-LD: Person */}}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "{{ .Site.Params.author }}",
+  "url": "{{ .Site.BaseURL }}",
+  "sameAs": [
+    {{- range $i, $s := .Site.Params.socials -}}
+      {{- if $i }}, {{ end -}}
+      "{{ $s.url }}"
+    {{- end -}}
+  ]
+}
+</script>
 
 {{ partial "analytics.html" . }}

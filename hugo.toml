@@ -12,7 +12,7 @@ canonifyURLs = true
   pagerSize = 10
 
 [params]
-  author = ""
+  author = "이상욱"
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
   email = "swlee3306@gmail.com"
@@ -27,7 +27,7 @@ canonifyURLs = true
   ]
 
 [outputs]
-  home = ["HTML", "RSS"]
+  home = ["HTML", "RSS", "RobotsTXT"]
 
 [taxonomies]
   tag = "tags"

@@ -1,0 +1,43 @@
+{{ define "main" }}
+<section class="section">
+  {{ if not .IsHome }}
+    <h1>{{ .Title }}</h1>
+  {{ end }}
+  {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+
+  <div class="cards">
+    {{ range .Paginator.Pages }}
+      <article class="card">
+        {{ with .Params.thumbnail }}
+          <a href="{{ $.RelPermalink }}">
+            {{ if $.Site.Params.useWebp }}
+              {{ $thumb := . }}
+              {{ $ext := path.Ext $thumb }}
+              {{ $webp := replace $thumb $ext ".webp" }}
+              <picture>
+                <source type="image/webp" srcset="{{ $webp | relURL }}" />
+                <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+              </picture>
+            {{ else }}
+              <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            {{ end }}
+          </a>
+        {{ end }}
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
+        {{ with .Params.summary }}<p>{{ . }}</p>{{ else }}{{ if .Summary }}<p>{{ .Summary }}</p>{{ end }}{{ end }}
+        {{ with .Params.techTags }}
+          <ul class="tags">
+            {{ range . }}<li>{{ . }}</li>{{ end }}
+          </ul>
+        {{ end }}
+        <p><a class="btn" href="{{ .RelPermalink }}" aria-label="프로젝트 {{ .Title }} 자세히 보기">자세히 보기</a></p>
+      </article>
+    {{ end }}
+  </div>
+
+  <nav class="pagination">
+    {{ template "_internal/pagination.html" . }}
+  </nav>
+</section>
+{{ end }}

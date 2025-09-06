@@ -16,7 +16,7 @@ canonifyURLs = true
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
   email = "swlee3306@gmail.com"
-  useWebp = false # WebP 이미지가 준비되면 true로 설정하여 <picture> 사용
+  useWebp = true # .webp가 존재할 때만 <picture> 사용, 없으면 원본으로 폴백
   brand = "Dev Note by sw'Lee"
   [params.analytics]
     ga4 = ""           # 예: G-XXXXXXX

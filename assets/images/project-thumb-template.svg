@@ -23,6 +23,6 @@
     {{ .Title }}
   </text>
   <text x="32" y="{{ $subtitleY }}" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="{{ $subtitleSize }}" font-weight="600" fill="{{ $subtitleColor }}">
-    {{ or .Site.Params.brand "Dev Note by sw\'Lee" }}
+    {{ or .Site.Params.brand "Dev Note by sw'Lee" }}
   </text>
 </svg>

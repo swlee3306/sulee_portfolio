@@ -7,10 +7,14 @@
   <div class="cards">
     {{ range .Paginator.Pages }}
       <article class="card">
-        {{ with .Params.thumbnail }}
-          <a href="{{ $.RelPermalink }}">
+        {{ $thumb := .Params.thumbnail }}
+        {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+        <a href="{{ $.RelPermalink }}">
+          {{ if $needsDynamic }}
+            {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+            <img class="thumb" src="{{ $tpl.RelPermalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          {{ else }}
             {{ if $.Site.Params.useWebp }}
-              {{ $thumb := . }}
               {{ $ext := path.Ext $thumb }}
               {{ $webp := replace $thumb $ext ".webp" }}
               {{ $webpStatic := printf "static%s" $webp }}
@@ -23,10 +27,10 @@
                 <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
               {{ end }}
             {{ else }}
-              <img class="thumb" src="{{ . | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+              <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
             {{ end }}
-          </a>
-        {{ end }}
+          {{ end }}
+        </a>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
         {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
         {{ with .Params.summary }}<p class="summary-text">{{ . }}</p>{{ else }}{{ if .Summary }}<p class="summary-text">{{ .Summary }}</p>{{ end }}{{ end }}

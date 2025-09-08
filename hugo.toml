@@ -18,6 +18,11 @@ canonifyURLs = true
   email = "swlee3306@gmail.com"
   useWebp = true # .webp가 존재할 때만 <picture> 사용, 없으면 원본으로 폴백
   brand = "Dev Note by sw'Lee"
+  # Brand tones for dynamic SVG thumbnails
+  gradientStart = "#7c3aed"    # 브랜드 그라데이션 시작(보라)
+  gradientEnd   = "#0ea5e9"    # 브랜드 그라데이션 끝(하늘)
+  titleColor    = "#ffffff"     # 제목 글자색
+  subtitleColor = "#e2e8f0"     # 서브타이틀 글자색
   [params.analytics]
     ga4 = ""           # 예: G-XXXXXXX
     plausibleDomain = "" # 예: yourdomain.com

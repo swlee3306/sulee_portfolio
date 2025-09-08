@@ -12,7 +12,7 @@
         <a href="{{ $.RelPermalink }}">
           {{ if $needsDynamic }}
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
-            <img class="thumb" src="{{ $tpl.RelPermalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
             {{ if $.Site.Params.useWebp }}
               {{ $ext := path.Ext $thumb }}

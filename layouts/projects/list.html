@@ -23,21 +23,7 @@
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
             <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
-            {{ if $.Site.Params.useWebp }}
-              {{ $ext := path.Ext $thumb }}
-              {{ $webp := replace $thumb $ext ".webp" }}
-              {{ $webpStatic := printf "static%s" $webp }}
-              {{ if fileExists $webpStatic }}
-                <picture>
-                  <source type="image/webp" srcset="{{ $webp | relURL }}" />
-                  <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
-                </picture>
-              {{ else }}
-                <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
-              {{ end }}
-            {{ else }}
-              <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
-            {{ end }}
+            <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ end }}
         </a>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>

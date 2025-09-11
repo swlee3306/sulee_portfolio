@@ -16,7 +16,7 @@ canonifyURLs = true
   description = "개인 포트폴리오"
   ogImage = "/images/og-default.svg"
   email = "swlee3306@gmail.com"
-  useWebp = true # .webp가 존재할 때만 <picture> 사용, 없으면 원본으로 폴백
+  useWebp = false # .webp 전역 비활성화
   brand = "Dev Note by sw'Lee"
   # Brand tones for dynamic SVG thumbnails
   gradientStart = "#7c3aed"    # 브랜드 그라데이션 시작(보라)

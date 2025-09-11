@@ -3,22 +3,7 @@
   <h1>{{ .Title }}</h1>
   {{ with .Params.summary }}<p class="summary">{{ . }}</p>{{ end }}
   {{ with .Params.cover }}
-    {{ if $.Site.Params.useWebp }}
-      {{ $cover := . }}
-      {{ $ext := path.Ext $cover }}
-      {{ $webp := replace $cover $ext ".webp" }}
-      {{ $webpStatic := printf "static%s" $webp }}
-      {{ if fileExists $webpStatic }}
-        <picture>
-          <source type="image/webp" srcset="{{ $webp | relURL }}" />
-          <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
-        </picture>
-      {{ else }}
-        <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
-      {{ end }}
-    {{ else }}
-      <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
-    {{ end }}
+    <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
   {{ end }}
   <div class="content">
     {{ .Content }}

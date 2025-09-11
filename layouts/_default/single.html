@@ -7,10 +7,15 @@
       {{ $cover := . }}
       {{ $ext := path.Ext $cover }}
       {{ $webp := replace $cover $ext ".webp" }}
-      <picture>
-        <source type="image/webp" srcset="{{ $webp | relURL }}" />
+      {{ $webpStatic := printf "static%s" $webp }}
+      {{ if fileExists $webpStatic }}
+        <picture>
+          <source type="image/webp" srcset="{{ $webp | relURL }}" />
+          <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+        </picture>
+      {{ else }}
         <img class="cover" src="{{ $cover | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
-      </picture>
+      {{ end }}
     {{ else }}
       <img class="cover" src="{{ . | relURL }}" alt="{{ $.Title }} cover image" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
     {{ end }}

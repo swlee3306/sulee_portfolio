@@ -52,6 +52,5 @@
     {{ template "_internal/pagination.html" . }}
   </nav>
 </section>
-{{ $script := resources.Get "js/projects-list.js" }}
-<script src="{{ $script.RelPermalink }}" defer></script>
+<script src="{{ "js/projects-list.js" | relURL }}" defer></script>
 {{ end }}

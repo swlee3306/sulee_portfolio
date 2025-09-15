@@ -12,8 +12,8 @@
     {{ $repoURL := . }}
     {{ $repoPath := replace $repoURL "https://github.com/" "" }}
     <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
-      <img alt="GitHub stars" src="https://img.shields.io/github/stars/{{ $repoPath }}?style=social" loading="lazy" decoding="async">
-      <img alt="Top language" src="https://img.shields.io/github/languages/top/{{ $repoPath }}" loading="lazy" decoding="async">
+      <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/{{ $repoPath }}?style=social" loading="lazy" decoding="async">
+      <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/{{ $repoPath }}" loading="lazy" decoding="async">
       <a class="btn" href="{{ $repoURL }}" target="_blank" rel="noopener" aria-label="{{ $repoPath }} GitHub 저장소 열기">GitHub 저장소 열기 →</a>
     </div>
   {{ end }}

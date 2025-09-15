@@ -1,0 +1,38 @@
+{{ define "main" }}
+<article class="article">
+  {{/* Hero card area (same rules as list cards) */}}
+  {{ $thumb := .Params.thumbnail }}
+  {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+  <div class="hero-card-wrap" style="margin-bottom:16px;">
+    {{ if $needsDynamic }}
+      {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+      <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" style="border-radius:16px;" />
+    {{ else }}
+      <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" style="border-radius:16px;" />
+    {{ end }}
+  </div>
+
+  <h1>{{ .Title }}</h1>
+  {{ with .Params.summary }}<p class="summary">{{ . }}</p>{{ end }}
+
+  <div class="content">
+    {{ .Content }}
+  </div>
+
+  {{ with .Params.repo }}
+    {{ $repoURL := . }}
+    {{ $repoPath := replace $repoURL "https://github.com/" "" }}
+    <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+      <img alt="GitHub stars" src="https://img.shields.io/github/stars/{{ $repoPath }}?style=social" loading="lazy" decoding="async">
+      <img alt="Top language" src="https://img.shields.io/github/languages/top/{{ $repoPath }}" loading="lazy" decoding="async">
+      <a class="btn" href="{{ $repoURL }}" target="_blank" rel="noopener" aria-label="{{ $repoPath }} GitHub 저장소 열기">GitHub 저장소 열기 →</a>
+    </div>
+  {{ end }}
+
+  {{ with .Params.techTags }}
+    <ul class="tags">
+      {{ range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  {{ end }}
+</article>
+{{ end }}

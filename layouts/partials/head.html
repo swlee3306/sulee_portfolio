@@ -62,3 +62,24 @@
 </script>
 
 {{ partial "analytics.html" . }}
+
+{{/* JSON-LD for Project detail pages (SoftwareSourceCode) */}}
+{{ if eq .Section "projects" }}
+  {{- $author := .Site.Params.author -}}
+  {{- $repo := .Params.repo -}}
+  {{- $tags := .Params.techTags -}}
+  {{- $pl := cond (gt (len $tags) 0) (index $tags 0) "" -}}
+  {{- $data := dict
+      "@context" "https://schema.org"
+      "@type" "SoftwareSourceCode"
+      "name" .Title
+      "description" $desc
+      "url" .Permalink
+      "image" ($image | absURL)
+      "datePublished" (.Date.Format "2006-01-02")
+      "author" (dict "@type" "Person" "name" $author)
+  -}}
+  {{- if $repo }}{{ $data = merge $data (dict "codeRepository" $repo) }}{{ end -}}
+  {{- if $pl }}{{ $data = merge $data (dict "programmingLanguage" $pl) }}{{ end -}}
+  <script type="application/ld+json">{{ $data | jsonify | safeHTML }}</script>
+{{ end }}

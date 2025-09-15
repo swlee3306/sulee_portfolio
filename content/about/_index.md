@@ -43,7 +43,7 @@ description: "소개 페이지"
   - Logstash→OpenSearch·MariaDB 적재, CSV·DB 이중 로그 수집/로테이션 및 웹 뷰 제공
   - Prometheus prompb 메시지 추출/퍼블리시 경로 구성으로 모니터링 연계성 확보
 
-자세한 프로젝트 목록과 코드는 `Projects` 페이지에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-Info-collector`, `APITestProgram` 등이 있습니다.
+자세한 프로젝트 목록과 코드는 {{< relref "/projects" >}}에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-Info-collector`, `APITestProgram` 등이 있습니다.
 
 ## 관심사와 가치
 - 운영 환경에 강한 도구와 서비스: 실패에 강하고 관측 가능한 시스템
@@ -53,10 +53,10 @@ description: "소개 페이지"
 이력서는 요청 시 제공해 드립니다(개인정보 보호를 위해 다운로드 버튼은 임시 비활성화되었습니다).
 
 <div class="btn-group" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
-  <a class="btn" href="/projects/">Projects 보러 가기</a>
+  <a class="btn" href="{{< relref "/projects" >}}">Projects 보러 가기</a>
   <a class="btn" href="https://github.com/swlee3306" target="_blank" rel="noopener">GitHub 프로필</a>
   <a class="btn" href="mailto:swlee3306@gmail.com">이메일 보내기</a>
   <!-- 이력서 다운로드 버튼(임시 비활성화)
-  <a class="btn" href="/files/resume.pdf" target="_blank" rel="noopener" aria-label="이력서 PDF 다운로드">이력서 다운로드 (PDF)</a>
+  <a class="btn" href="{{ "files/resume.pdf" | relURL }}" target="_blank" rel="noopener" aria-label="이력서 PDF 다운로드">이력서 다운로드 (PDF)</a>
   -->
 </div>

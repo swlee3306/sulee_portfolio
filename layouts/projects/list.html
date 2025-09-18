@@ -6,16 +6,17 @@
   {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
 
   <!-- Filters: Search + Tag selection -->
-  <div id="project-filters" class="filters" style="margin: 10px 0 20px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+  <div id="project-filters" class="filters" style="margin: 10px 0 20px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;" role="group" aria-labelledby="filters-heading" aria-controls="projectCards resultsInfo">
+    <h2 id="filters-heading" class="visually-hidden" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">프로젝트 필터</h2>
     <input id="searchInput" type="search" placeholder="프로젝트 검색 (제목/요약)" style="flex:1; min-width:220px; padding:8px 10px; border:1px solid var(--border); border-radius:8px;" aria-label="프로젝트 검색" inputmode="search" autocomplete="off" />
     <div id="tagFilters" class="tags" style="display:flex; gap:8px; flex-wrap:wrap;" role="group" aria-label="태그 필터"></div>
     <button id="clearFilters" class="btn" type="button" aria-label="필터 초기화">필터 초기화</button>
   </div>
-  <p id="resultsInfo" class="meta" aria-live="polite" style="margin: -8px 0 12px 0;"></p>
+  <p id="resultsInfo" class="meta" aria-live="polite" role="status" style="margin: -8px 0 12px 0;"></p>
 
-  <div class="cards" id="projectCards">
+  <div class="cards" id="projectCards" role="list">
     {{ range .Paginator.Pages }}
-      <article class="card" data-title="{{ .Title | plainify | lower }}" data-summary="{{ (cond (ne .Params.summary "") .Params.summary .Summary) | plainify | lower }}" data-tags="{{ delimit .Params.techTags "," | lower }}">
+      <article class="card" role="listitem" data-title="{{ .Title | plainify | lower }}" data-summary="{{ (cond (ne .Params.summary "") .Params.summary .Summary) | plainify | lower }}" data-tags="{{ delimit .Params.techTags "," | lower }}">
         {{ $thumb := .Params.thumbnail }}
         {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
         <a href="{{ $.RelPermalink }}">
@@ -23,7 +24,29 @@
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
             <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
-            <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            {{/* Try responsive pipeline if an assets/ counterpart exists and is not SVG */}}
+            {{ $ext := path.Ext $thumb }}
+            {{ $isSVG := eq (lower $ext) ".svg" }}
+            {{ $assetsPath := printf "assets%s" $thumb }}
+            {{ if and (not $isSVG) (fileExists $assetsPath) }}
+              {{ $res := resources.Get (printf "%s" (replace $thumb "/" "/")) }}
+              {{ if $res }}
+                {{ $img640 := $res | images.Fit "640x360" }}
+                {{ $img960 := $res | images.Fit "960x540" }}
+                {{ $img1200 := $res | images.Fit "1200x675" }}
+                <img class="thumb"
+                     src="{{ $img640.RelPermalink }}"
+                     srcset="{{ $img640.RelPermalink }} 640w, {{ $img960.RelPermalink }} 960w, {{ $img1200.RelPermalink }} 1200w"
+                     sizes="(max-width: 700px) 100vw, 640px"
+                     width="640" height="360"
+                     alt="{{ $.Title }} thumbnail"
+                     loading="lazy" decoding="async" />
+              {{ else }}
+                <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+              {{ end }}
+            {{ else }}
+              <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            {{ end }}
           {{ end }}
         </a>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>

@@ -21,7 +21,8 @@
         {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
         <a href="{{ .RelPermalink }}">
           {{ if $needsDynamic }}
-            {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+            {{ $key := md5 .Permalink }}
+            {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
             <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
             {{/* Try responsive pipeline if an assets/ counterpart exists and is not SVG */}}

@@ -6,16 +6,39 @@
   <div class="cards" role="list">
     {{ range .Paginator.Pages }}
       <article class="card" role="listitem">
-        {{/* Prefer cover; fallback to thumbnail; else dynamic SVG */}}
+        {{/* Prefer cover; fallback to thumbnail (project-style pipeline) */}}
         {{ $cover := .Params.cover }}
-        {{ $thumb := cond (ne $cover "") $cover .Params.thumbnail }}
-        {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+        {{ $media := cond (ne $cover "") $cover .Params.thumbnail }}
+        {{ $isPlaceholder := or (eq $media "/images/og-default.svg") (eq $media "/images/sample-thumb.svg") }}
+        {{ $needsDynamic := or (not $media) $isPlaceholder }}
         <a href="{{ .RelPermalink }}">
           {{ if $needsDynamic }}
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
             <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
-            <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            {{/* Responsive image pipeline like projects/list.html */}}
+            {{ $ext := path.Ext $media }}
+            {{ $isSVG := eq (lower $ext) ".svg" }}
+            {{ $assetsPath := printf "assets%s" $media }}
+            {{ if and (not $isSVG) (fileExists $assetsPath) }}
+              {{ $res := resources.Get (printf "%s" (replace $media "/" "/")) }}
+              {{ if $res }}
+                {{ $img640 := $res | images.Fit "640x360" }}
+                {{ $img960 := $res | images.Fit "960x540" }}
+                {{ $img1200 := $res | images.Fit "1200x675" }}
+                <img class="thumb"
+                     src="{{ $img640.RelPermalink }}"
+                     srcset="{{ $img640.RelPermalink }} 640w, {{ $img960.RelPermalink }} 960w, {{ $img1200.RelPermalink }} 1200w"
+                     sizes="(max-width: 700px) 100vw, 640px"
+                     width="640" height="360"
+                     alt="{{ .Title }} cover"
+                     loading="lazy" decoding="async" />
+              {{ else }}
+                <img class="thumb" src="{{ $media | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+              {{ end }}
+            {{ else }}
+              <img class="thumb" src="{{ $media | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            {{ end }}
           {{ end }}
         </a>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>

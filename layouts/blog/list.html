@@ -1,0 +1,31 @@
+{{ define "main" }}
+<section class="section">
+  {{ if not .IsHome }}<h1>{{ .Title }}</h1>{{ end }}
+  {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
+
+  <div class="cards" role="list">
+    {{ range .Paginator.Pages }}
+      <article class="card" role="listitem">
+        {{ $cover := .Params.cover }}
+        {{ if $cover }}
+          <a href="{{ .RelPermalink }}">
+            <img class="thumb" src="{{ $cover | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          </a>
+        {{ end }}
+        <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+        {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
+        {{ with .Params.summary }}<p class="summary-text">{{ . }}</p>{{ else }}{{ if .Summary }}<p class="summary-text">{{ .Summary }}</p>{{ end }}{{ end }}
+        {{ with .Params.tags }}
+          <ul class="tags">
+            {{ range . }}<li class="tag-pill">{{ . }}</li>{{ end }}
+          </ul>
+        {{ end }}
+      </article>
+    {{ end }}
+  </div>
+
+  <nav class="pagination">
+    {{ template "_internal/pagination.html" . }}
+  </nav>
+</section>
+{{ end }}

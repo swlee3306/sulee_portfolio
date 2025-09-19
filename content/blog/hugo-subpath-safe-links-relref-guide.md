@@ -11,7 +11,7 @@ draft: false
 ## TL;DR
 - GitHub Pages 프로젝트 사이트(`https://user.github.io/repo/`)는 사이트 루트가 `/repo/`입니다.
 - `href="/about/"` 같은 루트 슬래시 링크는 프로덕션에서 `/repo/`를 무시해 404를 유발할 수 있습니다.
-- Hugo의 `{{< relref >}}` 또는 `| relURL`를 사용하면 서브패스에서도 안전하게 내부 링크가 동작합니다.
+- Hugo의 `{{</* relref */>}}` 또는 `| relURL`를 사용하면 서브패스에서도 안전하게 내부 링크가 동작합니다.
 
 ## 문제 배경
 프로젝트 사이트(리포지토리 사이트)는 사용자/조직 사이트와 달리 서브패스(`/repo/`) 아래에 호스팅됩니다. 이때 정적 파일/페이지의 경로 계산이 루트(`/`)와 어긋나면서 내부 링크가 무너집니다.
@@ -38,8 +38,8 @@ canonifyURLs = true
 ### 1) relref (문서 참조 기반)
 콘텐츠 파일 경로를 기준으로 내부 문서에 안전하게 링크합니다.
 ```md
-{{< relref "/projects" >}}
-{{< relref "/contact" >}}
+{{</* relref "/projects" */>}}
+{{</* relref "/contact" */>}}
 ```
 - 장점: 콘텐츠 이동/리네임에도 안정적(해당 문서 존재 여부 체크)
 - 사용처: 콘텐츠 간 링크(목록/상세/소개 등)
@@ -60,7 +60,7 @@ Before(루트 슬래시 링크):
 ```
 After(relref):
 ```md
-<a class="btn" href="{{< relref "/projects" >}}">프로젝트</a>
+<a class="btn" href="{{</* relref "/projects" */>}}">프로젝트</a>
 ```
 Before(정적 파일 직접 경로):
 ```html

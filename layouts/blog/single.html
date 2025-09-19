@@ -1,8 +1,35 @@
 {{ define "main" }}
 <article class="article">
+  {{/* Hero image: prefer cover, then thumbnail, else dynamic SVG; responsive srcset if assets exist */}}
   {{ $cover := .Params.cover }}
-  {{ if $cover }}
-    <img class="cover" src="{{ $cover | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  {{ $media := cond (ne $cover "") $cover .Params.thumbnail }}
+  {{ $needsDynamic := or (not $media) (eq $media "/images/og-default.svg") }}
+  {{ if $needsDynamic }}
+    {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+    <img class="cover" src="{{ $tpl.Permalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  {{ else }}
+    {{ $ext := path.Ext $media }}
+    {{ $isSVG := eq (lower $ext) ".svg" }}
+    {{ $assetsPath := printf "assets%s" $media }}
+    {{ if and (not $isSVG) (fileExists $assetsPath) }}
+      {{ $res := resources.Get (printf "%s" (replace $media "/" "/")) }}
+      {{ if $res }}
+        {{ $img800 := $res | images.Fit "800x450" }}
+        {{ $img1200 := $res | images.Fit "1200x675" }}
+        {{ $img1600 := $res | images.Fit "1600x900" }}
+        <img class="cover"
+             src="{{ $img1200.RelPermalink }}"
+             srcset="{{ $img800.RelPermalink }} 800w, {{ $img1200.RelPermalink }} 1200w, {{ $img1600.RelPermalink }} 1600w"
+             sizes="(max-width: 1200px) 100vw, 1200px"
+             width="1200" height="675"
+             alt="{{ .Title }} cover"
+             loading="lazy" decoding="async" />
+      {{ else }}
+        <img class="cover" src="{{ $media | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+      {{ end }}
+    {{ else }}
+      <img class="cover" src="{{ $media | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+    {{ end }}
   {{ end }}
 
   <h1>{{ .Title }}</h1>

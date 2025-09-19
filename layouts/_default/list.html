@@ -10,7 +10,8 @@
         {{/* Prefer cover (blogs) then thumbnail (projects) */}}
         {{ $cover := .Params.cover }}
         {{ $thumb := cond (ne $cover "") $cover .Params.thumbnail }}
-        {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+        {{ $isPlaceholder := or (eq $thumb "/images/og-default.svg") (eq $thumb "/images/sample-thumb.svg") }}
+        {{ $needsDynamic := or (not $thumb) $isPlaceholder }}
         <a href="{{ $.RelPermalink }}">
           {{ if $needsDynamic }}
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}

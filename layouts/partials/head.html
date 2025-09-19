@@ -67,18 +67,19 @@
 {{ if eq .Section "projects" }}
   {{- $author := .Site.Params.author -}}
   {{- $repo := .Params.repo -}}
-  {{- $tags := .Params.techTags -}}
-  {{- $pl := cond (gt (len $tags) 0) (index $tags 0) "" -}}
+  {{- $tags := (default (slice) .Params.techTags) -}}
+  {{- $pl := "" -}}
+  {{- if gt (len $tags) 0 }}{{ $pl = index $tags 0 }}{{ end -}}
   {{- $data := dict
       "@context" "https://schema.org"
       "@type" "SoftwareSourceCode"
       "name" .Title
       "description" $desc
       "url" .Permalink
-      "image" ($image | absURL)
       "datePublished" (.Date.Format "2006-01-02")
       "author" (dict "@type" "Person" "name" $author)
   -}}
+  {{- if $image }}{{ $data = merge $data (dict "image" ($image | absURL)) }}{{ end -}}
   {{- if $repo }}{{ $data = merge $data (dict "codeRepository" $repo) }}{{ end -}}
   {{- if $pl }}{{ $data = merge $data (dict "programmingLanguage" $pl) }}{{ end -}}
   <script type="application/ld+json">{{ $data | jsonify | safeHTML }}</script>

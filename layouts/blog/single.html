@@ -1,0 +1,33 @@
+{{ define "main" }}
+<article class="article">
+  {{ $cover := .Params.cover }}
+  {{ if $cover }}
+    <img class="cover" src="{{ $cover | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  {{ end }}
+
+  <h1>{{ .Title }}</h1>
+  {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
+  {{ with .Params.tags }}
+    <ul class="tags">
+      {{ range . }}<li>{{ . }}</li>{{ end }}
+    </ul>
+  {{ end }}
+
+  <div class="content">
+    {{ .Content }}
+  </div>
+
+  <nav class="pagination" aria-label="이전/다음 글" style="margin-top:24px; gap:12px; display:flex; justify-content:space-between;">
+    <div>
+      {{ with .PrevInSection }}
+        <a class="btn" href="{{ .RelPermalink }}" aria-label="이전 글: {{ .Title }}">← {{ .Title }}</a>
+      {{ end }}
+    </div>
+    <div>
+      {{ with .NextInSection }}
+        <a class="btn" href="{{ .RelPermalink }}" aria-label="다음 글: {{ .Title }}">{{ .Title }} →</a>
+      {{ end }}
+    </div>
+  </nav>
+</article>
+{{ end }}

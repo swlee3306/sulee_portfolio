@@ -6,12 +6,18 @@
   <div class="cards" role="list">
     {{ range .Paginator.Pages }}
       <article class="card" role="listitem">
+        {{/* Prefer cover; fallback to thumbnail; else dynamic SVG */}}
         {{ $cover := .Params.cover }}
-        {{ if $cover }}
-          <a href="{{ .RelPermalink }}">
-            <img class="thumb" src="{{ $cover | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
-          </a>
-        {{ end }}
+        {{ $thumb := cond (ne $cover "") $cover .Params.thumbnail }}
+        {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+        <a href="{{ .RelPermalink }}">
+          {{ if $needsDynamic }}
+            {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+            <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          {{ else }}
+            <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          {{ end }}
+        </a>
         <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
         {{ with .Date }}<p class="meta">{{ .Format "2006-01-02" }}</p>{{ end }}
         {{ with .Params.summary }}<p class="summary-text">{{ . }}</p>{{ else }}{{ if .Summary }}<p class="summary-text">{{ .Summary }}</p>{{ end }}{{ end }}

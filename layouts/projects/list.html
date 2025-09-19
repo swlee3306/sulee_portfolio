@@ -19,10 +19,10 @@
       <article class="card" role="listitem" data-title="{{ .Title | plainify | lower }}" data-summary="{{ (cond (ne .Params.summary "") .Params.summary .Summary) | plainify | lower }}" data-tags="{{ delimit .Params.techTags "," | lower }}">
         {{ $thumb := .Params.thumbnail }}
         {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
-        <a href="{{ $.RelPermalink }}">
+        <a href="{{ .RelPermalink }}">
           {{ if $needsDynamic }}
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
-            <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            <img class="thumb" src="{{ $tpl.RelPermalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
             {{/* Try responsive pipeline if an assets/ counterpart exists and is not SVG */}}
             {{ $ext := path.Ext $thumb }}
@@ -39,13 +39,13 @@
                      srcset="{{ $img640.RelPermalink }} 640w, {{ $img960.RelPermalink }} 960w, {{ $img1200.RelPermalink }} 1200w"
                      sizes="(max-width: 700px) 100vw, 640px"
                      width="640" height="360"
-                     alt="{{ $.Title }} thumbnail"
+                     alt="{{ .Title }} thumbnail"
                      loading="lazy" decoding="async" />
               {{ else }}
-                <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
               {{ end }}
             {{ else }}
-              <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ $.Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+              <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
             {{ end }}
           {{ end }}
         </a>

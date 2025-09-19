@@ -12,10 +12,10 @@
         {{ $thumb := cond (ne $cover "") $cover .Params.thumbnail }}
         {{ $isPlaceholder := or (eq $thumb "/images/og-default.svg") (eq $thumb "/images/sample-thumb.svg") }}
         {{ $needsDynamic := or (not $thumb) $isPlaceholder }}
-        <a href="{{ $.RelPermalink }}">
+        <a href="{{ .RelPermalink }}">
           {{ if $needsDynamic }}
             {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
-            <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+            <img class="thumb" src="{{ $tpl.RelPermalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ else }}
             <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
           {{ end }}

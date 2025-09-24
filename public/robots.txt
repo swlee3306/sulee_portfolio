@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://swlee3306.github.io/sulee_portfolio/sitemap.xml

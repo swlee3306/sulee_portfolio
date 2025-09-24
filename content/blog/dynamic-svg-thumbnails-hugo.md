@@ -27,25 +27,25 @@ summary: "ExecuteAsTemplate, 브랜드 토큰, 폴백 시스템을 활용한 Hug
 - 브랜드 변경 시 유지보수 오버헤드
 - 누락된 이미지에 대한 폴백 부재
 
-## ExecuteAsTemplate Basics
+## ExecuteAsTemplate 기본
 
-Hugo's `ExecuteAsTemplate` processes template files with your site's context, generating unique resources for each page.
+Hugo의 `ExecuteAsTemplate`은 사이트의 컨텍스트로 템플릿 파일을 처리하여 각 페이지에 대한 고유한 리소스를 생성합니다.
 
-### Basic Implementation
+### 기본 구현
 
 ```hugo
 {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
 <img src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" />
 ```
 
-### Template Structure
+### 템플릿 구조
 
-Create `assets/images/project-thumb-template.svg`:
+`assets/images/project-thumb-template.svg` 생성:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
-  {{/* Brand parameters with safe fallbacks */}}
+  {{/* 안전한 폴백이 있는 브랜드 매개변수 */}}
   {{ $gStart := or .Site.Params.gradientStart "#7c3aed" }}
   {{ $gEnd := or .Site.Params.gradientEnd "#0ea5e9" }}
   {{ $titleColor := or .Site.Params.titleColor "#ffffff" }}
@@ -66,11 +66,11 @@ Create `assets/images/project-thumb-template.svg`:
 </svg>
 ```
 
-## Brand Tokens System
+## 브랜드 토큰 시스템
 
-Implement a flexible brand token system for consistent theming:
+일관된 테마를 위한 유연한 브랜드 토큰 시스템 구현:
 
-### Site Configuration
+### 사이트 설정
 
 ```toml
 # hugo.toml
@@ -84,10 +84,10 @@ Implement a flexible brand token system for consistent theming:
   brand = "Dev Note by sw'Lee"
 ```
 
-### Template Variables
+### 템플릿 변수
 
 ```xml
-{{/* Safe fallbacks for all brand parameters */}}
+{{/* 모든 브랜드 매개변수에 대한 안전한 폴백 */}}
 {{ $gStart := or .Site.Params.gradientStart "#7c3aed" }}
 {{ $gEnd := or .Site.Params.gradientEnd "#0ea5e9" }}
 {{ $titleColor := or .Site.Params.titleColor "#ffffff" }}
@@ -98,58 +98,58 @@ Implement a flexible brand token system for consistent theming:
 {{ $subtitleY := or .Site.Params.thumbSubtitleY "230" }}
 ```
 
-## Fallback System
+## 폴백 시스템
 
-Implement intelligent fallback logic for missing thumbnails:
+누락된 썸네일에 대한 지능적인 폴백 로직 구현:
 
-### Layout Implementation
+### 레이아웃 구현
 
 ```hugo
-{{/* Check if dynamic thumbnail is needed */}}
+{{/* 동적 썸네일이 필요한지 확인 */}}
 {{ $thumb := .Params.thumbnail }}
 {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
 
 {{ if $needsDynamic }}
-  {{/* Generate unique key for caching */}}
+  {{/* 캐싱을 위한 고유 키 생성 */}}
   {{ $key := md5 .Permalink }}
   {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
   <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" />
 {{ else }}
-  {{/* Use existing thumbnail */}}
+  {{/* 기존 썸네일 사용 */}}
   <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} thumbnail" />
 {{ end }}
 ```
 
-### Multiple Fallback Levels
+### 다중 폴백 레벨
 
 ```hugo
-{{/* Priority: cover > thumbnail > dynamic SVG */}}
+{{/* 우선순위: cover > thumbnail > dynamic SVG */}}
 {{ $cover := .Params.cover }}
 {{ $thumb := cond (ne $cover "") $cover .Params.thumbnail }}
 {{ $isPlaceholder := or (eq $thumb "/images/og-default.svg") (eq $thumb "/images/sample-thumb.svg") }}
 {{ $needsDynamic := or (not $thumb) $isPlaceholder }}
 ```
 
-## Performance Optimization
+## 성능 최적화
 
-### Caching Strategy
+### 캐싱 전략
 
 ```hugo
-{{/* Use content-based keys for efficient caching */}}
+{{/* 효율적인 캐싱을 위한 콘텐츠 기반 키 사용 */}}
 {{ $key := md5 .Permalink }}
 {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
 ```
 
-### Resource Pipeline
+### 리소스 파이프라인
 
 ```hugo
-{{/* Leverage Hugo's resource pipeline for optimization */}}
+{{/* 최적화를 위한 Hugo의 리소스 파이프라인 활용 */}}
 {{ $svg := resources.Get "images/project-thumb-template.svg" }}
 {{ $processed := $svg | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
 {{ $minified := $processed | resources.Minify }}
 ```
 
-### Lazy Loading
+### 지연 로딩
 
 ```html
 <img class="thumb" 
@@ -161,31 +161,31 @@ Implement intelligent fallback logic for missing thumbnails:
      height="360" />
 ```
 
-## Advanced Features
+## 고급 기능
 
-### Responsive Sizing
+### 반응형 크기 조정
 
 ```hugo
-{{/* Generate multiple sizes for responsive images */}}
+{{/* 반응형 이미지를 위한 여러 크기 생성 */}}
 {{ $svg := resources.Get "images/project-thumb-template.svg" }}
 {{ $thumb640 := $svg | resources.ExecuteAsTemplate (printf "gen/thumbs/%s-640.svg" $key) . }}
 {{ $thumb960 := $svg | resources.ExecuteAsTemplate (printf "gen/thumbs/%s-960.svg" $key) . }}
 {{ $thumb1200 := $svg | resources.ExecuteAsTemplate (printf "gen/thumbs/%s-1200.svg" $key) . }}
 ```
 
-### Content-Aware Theming
+### 콘텐츠 인식 테마
 
 ```xml
-{{/* Adjust colors based on content type */}}
+{{/* 콘텐츠 타입에 따른 색상 조정 */}}
 {{ $isBlog := eq .Section "blog" }}
 {{ $isProject := eq .Section "projects" }}
 {{ $accentColor := cond $isBlog "#3b82f6" "#7c3aed" }}
 ```
 
-### Dynamic Typography
+### 동적 타이포그래피
 
 ```xml
-{{/* Adjust text size based on title length */}}
+{{/* 제목 길이에 따른 텍스트 크기 조정 */}}
 {{ $titleLength := len .Title }}
 {{ $fontSize := cond (gt $titleLength 30) "32" "38" }}
 <text x="32" y="192" font-size="{{ $fontSize }}" font-weight="800">
@@ -193,12 +193,12 @@ Implement intelligent fallback logic for missing thumbnails:
 </text>
 ```
 
-## Implementation Examples
+## 구현 예제
 
-### Blog Post Thumbnails
+### 블로그 포스트 썸네일
 
 ```hugo
-{{/* In layouts/blog/single.html */}}
+{{/* layouts/blog/single.html에서 */}}
 {{ $needsDynamic := or (not $media) (eq $media "/images/og-default.svg") }}
 {{ if $needsDynamic }}
   {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
@@ -206,10 +206,10 @@ Implement intelligent fallback logic for missing thumbnails:
 {{ end }}
 ```
 
-### Project Cards
+### 프로젝트 카드
 
 ```hugo
-{{/* In layouts/projects/list.html */}}
+{{/* layouts/projects/list.html에서 */}}
 {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
 {{ if $needsDynamic }}
   {{ $key := md5 .Permalink }}
@@ -218,33 +218,33 @@ Implement intelligent fallback logic for missing thumbnails:
 {{ end }}
 ```
 
-## Common Pitfalls
+## 일반적인 함정
 
-1. **Template Syntax**: Use Hugo template syntax, not Go templates
-2. **Resource Paths**: Ensure template files are in `assets/` directory
-3. **Caching**: Use consistent keys to avoid unnecessary regeneration
-4. **Fallbacks**: Always provide safe fallback values
-5. **Performance**: Don't generate thumbnails for every page load
+1. **템플릿 문법**: Go 템플릿이 아닌 Hugo 템플릿 문법 사용
+2. **리소스 경로**: 템플릿 파일이 `assets/` 디렉토리에 있는지 확인
+3. **캐싱**: 불필요한 재생성을 피하기 위해 일관된 키 사용
+4. **폴백**: 항상 안전한 폴백 값 제공
+5. **성능**: 모든 페이지 로드에 대해 썸네일을 생성하지 않기
 
-## Best Practices
+## 모범 사례
 
-- Use semantic naming for generated files
-- Implement proper fallback chains
-- Cache generated resources effectively
-- Test with various content lengths
-- Consider accessibility with proper alt text
-- Monitor build performance with large sites
+- 생성된 파일에 의미론적 명명 사용
+- 적절한 폴백 체인 구현
+- 생성된 리소스를 효과적으로 캐시
+- 다양한 콘텐츠 길이로 테스트
+- 적절한 alt 텍스트로 접근성 고려
+- 대규모 사이트에서 빌드 성능 모니터링
 
-## Further Work
+## 추가 작업
 
-- Implement content-aware color schemes
-- Add support for custom fonts
-- Create thumbnail preview system
-- Build automated testing for generated thumbnails
-- Consider WebP conversion for better performance
+- 콘텐츠 인식 색상 체계 구현
+- 사용자 정의 폰트 지원 추가
+- 썸네일 미리보기 시스템 생성
+- 생성된 썸네일에 대한 자동화된 테스팅 구축
+- 더 나은 성능을 위한 WebP 변환 고려
 
-## Conclusion
+## 결론
 
-Dynamic SVG thumbnails with Hugo provide a powerful, maintainable solution for consistent visual branding. By leveraging `ExecuteAsTemplate`, brand tokens, and intelligent fallbacks, you can create professional-looking thumbnails without external design tools.
+Hugo의 동적 SVG 썸네일은 일관된 시각적 브랜딩을 위한 강력하고 유지보수 가능한 솔루션을 제공합니다. `ExecuteAsTemplate`, 브랜드 토큰, 지능적인 폴백을 활용하여 외부 디자인 도구 없이도 전문적인 썸네일을 만들 수 있습니다.
 
-The key is starting simple with basic templates and gradually adding complexity. Focus on performance through caching and lazy loading, and always provide fallbacks for edge cases. This approach scales well and keeps your site's visual identity consistent across all content.
+핵심은 기본 템플릿으로 간단하게 시작하여 점진적으로 복잡성을 추가하는 것입니다. 캐싱과 지연 로딩을 통한 성능에 집중하고, 항상 엣지 케이스에 대한 폴백을 제공하세요. 이 접근법은 잘 확장되며 모든 콘텐츠에서 사이트의 시각적 정체성을 일관되게 유지합니다.

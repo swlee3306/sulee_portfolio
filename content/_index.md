@@ -3,9 +3,9 @@ title: "홈"
 description: "Dev Note by sw'Lee — 경력, 프로젝트, 기술 노트를 빠르게 살펴보세요."
 ---
 
-Dev Note by sw'Lee. 실사용 환경을 전제로 한 시스템 도구와 백엔드를 만들며, Go를 중심으로 신뢰성·성능·관측 가능성을 중시합니다. 운영 요구는 코드로 해결하고, 반복 작업은 자동화하며, 로깅/테스트/벤치마크로 품질을 관리합니다.
+Dev Note by sw'Lee. 운영 환경에서 안정적으로 동작하는 시스템 도구와 백엔드를 개발하며, Go를 중심으로 신뢰성·성능·관측 가능성을 중시합니다. 운영 요구사항을 코드로 해결하고, 반복 작업을 자동화하며, 로깅/테스트/벤치마크를 통해 품질을 관리합니다.
 
-<a class="btn" href="{{< relref "/projects" >}}">프로젝트 보러 가기</a> <a class="btn" href="{{< relref "/contact" >}}">연락하기</a>
+<a class="btn" href="{{< relref "/projects" >}}">프로젝트 보러 가기</a> <a class="btn" href="{{< relref "/contact" >}}">연락처</a>
 
 ## 핵심 역량
 - 시스템/인프라 지향 개발: 메트릭 수집, 시스템 정보 수집, 프로토콜(SNMP) 처리

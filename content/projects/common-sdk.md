@@ -15,14 +15,14 @@ repo: "https://github.com/swlee3306/common-sdk"
 
 <a class="btn" href="https://github.com/swlee3306/common-sdk" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
 
-## 구성(예상)
+## 주요 구성
 
 - 로깅 래퍼: 구조화 로그, 레벨 필터링
 - 설정 로더: `.yml/.env` 등 환경 의존 설정 로딩
 - HTTP 클라이언트: 공통 헤더/타임아웃/리트라이 전략
 - 에러/응답 유틸: 표준화된 에러 타입/응답 포맷
 
-## 사용 아이디어(초안)
+## 사용 예시
 
 ```go
 import (

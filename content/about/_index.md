@@ -3,7 +3,7 @@ title: "About"
 description: "소개 페이지"
 ---
 
-안녕하세요. 실사용 환경에서 확장성과 관측성을 갖춘 데이터 수집/백엔드 시스템을 설계·구현하는 개발자 이상욱입니다. 오케스트로(Platform Service Dev 1)에서 K8s·OpenStack 기반의 수집 파이프라인, 클라우드 빌링/미터링, 하드웨어/스토리지(신뢰성 메트릭) 수집을 담당하고 있습니다(총 4년 8개월). Go를 중심으로 성능, 안정성, 운영 자동화를 우선합니다.
+안녕하세요. 운영 환경에서 확장성과 관측성을 갖춘 데이터 수집/백엔드 시스템을 설계·구현하는 개발자 이상욱입니다. 오케스트로(Platform Service Dev 1)에서 K8s·OpenStack 기반의 수집 파이프라인, 클라우드 빌링/미터링, 하드웨어/스토리지(신뢰성 메트릭) 수집을 담당하고 있습니다(총 4년 8개월). Go를 중심으로 성능, 안정성, 운영 자동화를 우선합니다.
 
 ## 기술 스택
 - 언어: Go(주), Shell Script, C/C++(검증 경험)
@@ -53,7 +53,7 @@ description: "소개 페이지"
 이력서는 요청 시 제공해 드립니다(개인정보 보호를 위해 다운로드 버튼은 임시 비활성화되었습니다).
 
 <div class="btn-group" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
-  <a class="btn" href="{{< relref "/projects" >}}">Projects 보러 가기</a>
+  <a class="btn" href="{{< relref "/projects" >}}">프로젝트 보러 가기</a>
   <a class="btn" href="https://github.com/swlee3306" target="_blank" rel="noopener">GitHub 프로필</a>
   <a class="btn" href="mailto:swlee3306@gmail.com">이메일 보내기</a>
   <!-- 이력서 다운로드 버튼(임시 비활성화)

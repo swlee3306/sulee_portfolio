@@ -1,5 +1,5 @@
 ---
-title: "Case Study: make-snmprec — 현실적인 SNMP 시뮬레이션 데이터 만들기"
+title: "make-snmprec 케이스 스터디"
 date: 2025-09-19T15:46:30+09:00
 summary: "운영 환경에 가까운 SNMP 시뮬레이션 데이터를 재현하는 도구를 설계/구현하며, 데이터 모델·엣지 케이스·검증·CLI UX를 통해 신뢰성과 생산성을 동시에 높였습니다."
 cover: "/images/sample-thumb.svg"

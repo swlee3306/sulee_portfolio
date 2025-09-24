@@ -1,29 +1,31 @@
 ---
-title: "Logging strategy that scales from dev to prod"
+title: "개발부터 프로덕션까지 로깅 전략"
 date: 2025-01-15T00:00:00Z
 draft: false
 tags: ["logging", "observability", "devops", "go", "opensearch", "elk"]
 categories: ["Backend", "DevOps"]
-description: "A comprehensive guide to building a logging strategy that scales from development to production, covering structured logging, rotation, and centralized collection with OpenSearch/ELK."
+description: "구조화된 로깅, 로테이션, OpenSearch/ELK를 활용한 중앙화된 수집을 다루는 개발부터 프로덕션까지 확장 가능한 로깅 전략 구축 가이드"
 ---
 
 ## TL;DR
 
-Building a robust logging strategy requires structured logging, proper level management, rotation policies, and centralized collection. This guide covers everything from JSON schema design to OpenSearch integration, with practical examples and performance considerations for Go applications.
+- **목표**: 개발부터 프로덕션까지 확장 가능한 로깅 시스템 구축
+- **핵심**: 구조화된 로깅, 로테이션 정책, 중앙화된 수집, 성능 최적화
+- **결과**: 디버깅 효율성 향상, 운영 가시성 확보, 시스템 안정성 증대
 
 ## Context
 
-In modern distributed systems, logging is more than just debugging output—it's a critical component of observability. As applications scale from development to production, logging strategies must evolve to handle increased volume, complexity, and operational requirements.
+현대의 분산 시스템에서 로깅은 단순한 디버깅 출력을 넘어서 관찰 가능성의 핵심 구성 요소입니다. 애플리케이션이 개발부터 프로덕션까지 확장되면서, 로깅 전략도 증가하는 볼륨, 복잡성, 운영 요구사항을 처리할 수 있도록 진화해야 합니다.
 
-## The Problem
+## Problem
 
-Most applications start with simple `fmt.Println` or basic logging, but this approach breaks down in production:
+대부분의 애플리케이션은 간단한 `fmt.Println`이나 기본 로깅으로 시작하지만, 이 접근법은 프로덕션에서 문제가 됩니다:
 
-- **Unstructured logs** are hard to parse and search
-- **Inconsistent log levels** make filtering difficult
-- **No rotation strategy** leads to disk space issues
-- **Missing context** makes debugging distributed systems nearly impossible
-- **Performance impact** from synchronous logging
+- **구조화되지 않은 로그**는 파싱과 검색이 어려움
+- **일관성 없는 로그 레벨**로 인한 필터링 어려움
+- **로테이션 전략 부재**로 인한 디스크 공간 문제
+- **컨텍스트 누락**으로 인한 분산 시스템 디버깅의 어려움
+- **동기식 로깅**으로 인한 성능 영향
 
 ## Logging Schema
 

@@ -1,29 +1,31 @@
 ---
-title: "Dynamic SVG Thumbnails with Hugo"
+title: "Hugo 동적 SVG 썸네일"
 date: 2025-01-15T00:00:00Z
 draft: false
 tags: ["hugo", "svg", "thumbnails", "templates", "performance", "branding"]
-summary: "ExecuteAsTemplate, brand tokens, fallbacks; visual consistency without external assets using Hugo's resource system."
+summary: "ExecuteAsTemplate, 브랜드 토큰, 폴백 시스템을 활용한 Hugo 리소스 시스템으로 외부 에셋 없이 시각적 일관성 확보"
 ---
 
-# Dynamic SVG Thumbnails with Hugo
+# Hugo 동적 SVG 썸네일
 
 ## TL;DR
 
-Hugo's `ExecuteAsTemplate` allows you to generate dynamic SVG thumbnails on-the-fly with brand tokens, fallbacks, and consistent visual design. No external assets needed—just templates and Hugo's resource pipeline.
+- **목표**: 외부 에셋 없이 브랜드 일관성을 유지하는 동적 썸네일 생성
+- **핵심**: ExecuteAsTemplate, 브랜드 토큰, 폴백 시스템, 성능 최적화
+- **결과**: 유지보수 비용 절감, 시각적 일관성, 자동화된 썸네일 생성
 
 ## Context
 
-Creating consistent thumbnails for blog posts and projects can be time-consuming and maintenance-heavy. Static images require design tools, consistent sizing, and manual updates. Dynamic SVG generation solves this by creating thumbnails programmatically with your brand colors, typography, and content.
+블로그 포스트와 프로젝트를 위한 일관된 썸네일을 만드는 것은 시간이 많이 걸리고 유지보수가 부담스러울 수 있습니다. 정적 이미지는 디자인 도구, 일관된 크기 조정, 수동 업데이트가 필요합니다. 동적 SVG 생성은 브랜드 색상, 타이포그래피, 콘텐츠를 사용하여 프로그래밍 방식으로 썸네일을 생성하여 이 문제를 해결합니다.
 
 ## Problem
 
-Traditional thumbnail approaches have several limitations:
-- Manual creation for each post/project
-- Inconsistent visual design across thumbnails
-- Large file sizes for simple graphics
-- Maintenance overhead when brand changes
-- No fallback for missing images
+전통적인 썸네일 접근 방식에는 여러 제한사항이 있습니다:
+- 각 포스트/프로젝트마다 수동 생성
+- 썸네일 간 일관성 없는 시각적 디자인
+- 간단한 그래픽에도 큰 파일 크기
+- 브랜드 변경 시 유지보수 오버헤드
+- 누락된 이미지에 대한 폴백 부재
 
 ## ExecuteAsTemplate Basics
 

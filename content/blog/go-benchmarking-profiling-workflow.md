@@ -1,5 +1,5 @@
 ---
-title: "Go benchmarking and profiling workflow you can actually use"
+title: "Go 벤치마킹과 프로파일링 워크플로우"
 date: 2025-01-15T12:00:00+09:00
 summary: "Go 성능 최적화를 위한 실전 벤치마킹과 프로파일링 워크플로우: testing, bench, pprof, flamegraphs를 활용한 성능 문제 해결과 최적화 방법을 단계별로 소개합니다."
 cover: "/images/og-default.svg"

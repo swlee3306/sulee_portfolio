@@ -5,7 +5,8 @@
   {{ $media := cond (ne $cover "") $cover .Params.thumbnail }}
   {{ $needsDynamic := or (not $media) (eq $media "/images/og-default.svg") }}
   {{ if $needsDynamic }}
-    {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+    {{ $key := md5 .Permalink }}
+    {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}
     <img class="cover" src="{{ $tpl.Permalink }}" alt="{{ .Title }} cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
   {{ else }}
     {{ $ext := path.Ext $media }}

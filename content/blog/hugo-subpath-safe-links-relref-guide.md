@@ -1,86 +1,342 @@
 ---
-title: "Hugo+GitHub Pages: 서브패스에서도 안전한 내부 링크(relref/relURL)"
-date: 2025-09-19T16:08:10+09:00
-summary: "GitHub Pages 프로젝트 사이트(`/user/repo/`)에서 루트 슬래시 링크가 깨지는 문제를 relref/relURL로 해결하는 실전 가이드입니다."
-cover: "/images/sample-thumb.svg"
-tags: ["Hugo", "GitHub Pages", "links", "SEO"]
-description: "baseURL/relativeURLs/canonifyURLs와 함께 relref/relURL를 적용해 서브패스에서도 안전하게 내부 링크를 유지하는 방법을 다룹니다."
+title: "Hugo+GitHub Pages: Subpath-safe internal links (relref/relURL) guide"
+date: 2025-01-15T11:00:00+09:00
+summary: "GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드"
+cover: "/images/og-default.svg"
+tags: ["Hugo", "GitHub Pages", "Web Development", "Tutorial"]
+description: "Hugo와 GitHub Pages를 함께 사용할 때 발생하는 서브패스 링크 문제를 relref와 relURL로 해결하는 실전 가이드입니다."
 draft: false
 ---
 
 ## TL;DR
-- GitHub Pages 프로젝트 사이트(`https://user.github.io/repo/`)는 사이트 루트가 `/repo/`입니다.
-- `href="/about/"` 같은 루트 슬래시 링크는 프로덕션에서 `/repo/`를 무시해 404를 유발할 수 있습니다.
-- Hugo의 `{{</* relref */>}}` 또는 `| relURL`를 사용하면 서브패스에서도 안전하게 내부 링크가 동작합니다.
 
-## 문제 배경
-프로젝트 사이트(리포지토리 사이트)는 사용자/조직 사이트와 달리 서브패스(`/repo/`) 아래에 호스팅됩니다. 이때 정적 파일/페이지의 경로 계산이 루트(`/`)와 어긋나면서 내부 링크가 무너집니다.
+- **문제**: GitHub Pages 서브패스에서 내부 링크가 깨지는 현상
+- **해결**: `relref`와 `relURL` 함수 활용, `relativeURLs`와 `canonifyURLs` 설정
+- **결과**: 모든 환경에서 안정적인 내부 링크, SEO 친화적 URL 구조
 
-예: 아래 링크는 로컬에선 보이지만, 배포 후 `/about/`로 가리켜 404가 납니다.
+## Context
+
+Hugo로 정적 사이트를 구축하고 GitHub Pages에 배포할 때 가장 흔히 마주치는 문제 중 하나가 **서브패스(subpath) 환경에서의 내부 링크**입니다. 
+
+GitHub Pages는 프로젝트 사이트의 경우 `username.github.io/repository-name/` 형태의 서브패스에서 사이트를 호스팅하는데, 이때 내부 링크가 제대로 작동하지 않는 경우가 많습니다.
+
+### 일반적인 문제 상황
+
 ```html
-<a href="/about/">About</a>
+<!-- ❌ 잘못된 링크 (절대 경로) -->
+<a href="/projects/">프로젝트</a>
+<!-- GitHub Pages에서: /projects/ → 404 에러 -->
+
+<!-- ❌ 잘못된 링크 (상대 경로) -->
+<a href="../projects/">프로젝트</a>
+<!-- 복잡하고 유지보수 어려움 -->
 ```
 
-## 설정 점검
-`hugo.toml`에서 다음을 확인합니다(예시):
+## Problem
+
+### GitHub Pages 서브패스의 특성
+
+GitHub Pages는 두 가지 호스팅 방식을 제공합니다:
+
+1. **User/Organization Pages**: `username.github.io` (루트 도메인)
+2. **Project Pages**: `username.github.io/repository-name/` (서브패스)
+
+대부분의 경우 Project Pages를 사용하게 되는데, 이때 모든 URL이 `/repository-name/` 접두사를 가지게 됩니다.
+
+### 발생하는 문제들
+
+1. **절대 경로 링크 실패**: `/projects/` → 404 에러
+2. **상대 경로 복잡성**: 페이지별로 다른 상대 경로 계산 필요
+3. **SEO 문제**: 깨진 링크로 인한 검색 엔진 최적화 저하
+4. **개발/프로덕션 환경 차이**: 로컬에서는 정상, 배포 후 링크 깨짐
+
+## Solution
+
+### 1. Hugo 설정 최적화
+
+`hugo.toml`에서 다음 설정을 활성화합니다:
+
 ```toml
-baseURL = "https://user.github.io/repo/"
+# hugo.toml
+baseURL = "https://username.github.io/repository-name/"
 relativeURLs = true
 canonifyURLs = true
 ```
-- `baseURL`: 반드시 실제 배포 주소(`/repo/` 포함)로 설정
-- `relativeURLs=true`: 템플릿/콘텐츠의 상대 링크 보조
-- `canonifyURLs=true`: 절대 URL 정규화 보조
 
-## 해결: relref / relURL
-안전한 내부 링크는 아래 두 가지가 핵심입니다.
+**설정 설명:**
+- `relativeURLs = true`: 상대 URL 생성 활성화
+- `canonifyURLs = true`: URL 정규화로 일관성 보장
 
-### 1) relref (문서 참조 기반)
-콘텐츠 파일 경로를 기준으로 내부 문서에 안전하게 링크합니다.
-```md
-{{</* relref "/projects" */>}}
-{{</* relref "/contact" */>}}
+### 2. relref 함수 활용
+
+Hugo의 `relref` 함수는 페이지 간 안전한 링크를 생성합니다:
+
+```go
+// 템플릿에서 사용
+{{< relref "/projects" >}}           // /repository-name/projects/
+{{< relref "/blog" >}}               // /repository-name/blog/
+{{< relref "/about" >}}              // /repository-name/about/
 ```
-- 장점: 콘텐츠 이동/리네임에도 안정적(해당 문서 존재 여부 체크)
-- 사용처: 콘텐츠 간 링크(목록/상세/소개 등)
 
-### 2) relURL (상대 URL 변환)
-정적 경로를 Hugo가 사이트 설정에 맞는 상대/절대 경로로 변환합니다.
+**실제 사용 예제:**
+
 ```html
-<a href="{{ "files/resume.pdf" | relURL }}">이력서</a>
-<img src="{{ .Params.thumbnail | relURL }}" alt="..." />
+<!-- ✅ 올바른 링크 (relref 사용) -->
+<a href="{{< relref "/projects" >}}">프로젝트</a>
+<a href="{{< relref "/blog" >}}">블로그</a>
+<a href="{{< relref "/contact" >}}">연락하기</a>
 ```
-- 장점: 정적 파일/이미지 경로에 간단히 적용
-- 사용처: 이미지/파일/에셋 링크
 
-## Before / After
-Before(루트 슬래시 링크):
-```md
-<a class="btn" href="/projects/">프로젝트</a>
+### 3. relURL 함수 활용
+
+이미지나 정적 파일의 경우 `relURL` 함수를 사용합니다:
+
+```go
+// 이미지 링크
+<img src="{{ "/images/logo.png" | relURL }}" alt="로고">
+
+// CSS 파일
+<link rel="stylesheet" href="{{ "/css/style.css" | relURL }}">
+
+// JavaScript 파일
+<script src="{{ "/js/main.js" | relURL }}"></script>
 ```
-After(relref):
-```md
-<a class="btn" href="{{</* relref "/projects" */>}}">프로젝트</a>
+
+### 4. Shortcode 활용
+
+자주 사용하는 링크 패턴은 shortcode로 만들어 재사용성을 높입니다:
+
+```go
+// layouts/shortcodes/link.html
+{{ $url := .Get "to" }}
+{{ $text := .Get "text" | default $url }}
+<a href="{{ $url | relURL }}" class="btn">{{ $text }}</a>
 ```
-Before(정적 파일 직접 경로):
+
+**사용법:**
 ```html
-<a class="btn" href="/files/resume.pdf">이력서</a>
+<!-- 직접 relref 사용 -->
+<a href="{{< relref "/projects" >}}" class="btn">프로젝트 보기</a>
+<a href="{{< relref "/blog" >}}" class="btn">블로그</a>
 ```
-After(relURL):
+
+## Before/After Examples
+
+### Before: 문제가 있는 링크
+
 ```html
-<a class="btn" href="{{ "files/resume.pdf" | relURL }}">이력서</a>
+<!-- ❌ 절대 경로 사용 -->
+<nav>
+  <a href="/">홈</a>
+  <a href="/projects/">프로젝트</a>
+  <a href="/blog/">블로그</a>
+  <a href="/about/">소개</a>
+</nav>
+
+<!-- ❌ 상대 경로 사용 (복잡함) -->
+<nav>
+  <a href="../">홈</a>
+  <a href="../projects/">프로젝트</a>
+  <a href="../blog/">블로그</a>
+  <a href="../about/">소개</a>
+</nav>
 ```
 
-## 체크리스트
-- [ ] baseURL이 실제 배포 주소(`/repo/`)인지 확인
-- [ ] 루트 슬래시(`/...`) 내부 링크를 relref/relURL로 치환
-- [ ] 템플릿의 이미지/스크립트/스타일 경로도 `| relURL` 사용
-- [ ] RSS/canonical/og:image 등 메타 URL은 `absURL`로 절대경로 보장
+**결과**: GitHub Pages에서 404 에러 발생
 
-## 디버깅 팁
-- 배포 후 개발자 도구에서 링크의 실제 href를 확인
-- 404가 나면 앞에 `/repo/`가 누락되지 않았는지 체크
-- Hugo의 링크 체크(lint)나 CI 스크립트로 자동 검증 고려
+### After: relref를 사용한 안전한 링크
 
-## 결론
-서브패스 환경에서 내부 링크의 신뢰성은 작은 설정과 습관에서 좌우됩니다. `relref`/`relURL`를 기본으로 삼으면 이식성과 안정성이 크게 개선됩니다.
+```html
+<!-- ✅ relref 사용 -->
+<nav>
+  <a href="{{< relref "/" >}}">홈</a>
+  <a href="{{< relref "/projects" >}}">프로젝트</a>
+  <a href="{{< relref "/blog" >}}">블로그</a>
+  <a href="{{< relref "/about" >}}">소개</a>
+</nav>
+```
+
+**결과**: 모든 환경에서 정상 작동
+
+### 실제 프로젝트 적용 예제
+
+```html
+<!-- layouts/_default/baseof.html -->
+<header>
+  <nav class="main-nav">
+    {{ range .Site.Menus.main }}
+      <a href="{{ .URL | relURL }}" class="nav-link">
+        {{ .Name }}
+      </a>
+    {{ end }}
+  </nav>
+</header>
+
+<main>
+  {{ block "main" . }}{{ end }}
+</main>
+
+<footer>
+  <p>
+    <a href="{{< relref "/" >}}">홈으로</a> | 
+    <a href="{{< relref "/contact" >}}">연락하기</a>
+  </p>
+</footer>
+```
+
+## Common Pitfalls
+
+### 1. 슬래시 누락
+
+```go
+// ❌ 잘못된 사용
+{{< relref "projects" >}}     // 상대 경로로 해석됨
+
+// ✅ 올바른 사용
+{{< relref "/projects" >}}    // 절대 경로로 해석됨
+```
+
+### 2. 파일 확장자 포함
+
+```go
+// ❌ 잘못된 사용 (파일 확장자 포함)
+{{< relref "/blog" >}}
+
+// ✅ 올바른 사용 (확장자 제외)
+{{< relref "/blog" >}}
+```
+
+### 3. 존재하지 않는 페이지 참조
+
+```go
+// ❌ 존재하지 않는 페이지
+{{< relref "/contact" >}}
+
+// ✅ 존재하는 페이지만 참조
+{{< relref "/projects" >}}
+```
+
+### 4. 설정 누락
+
+```toml
+# ❌ 설정 누락
+baseURL = "https://username.github.io/repository-name/"
+# relativeURLs = true  # 누락!
+# canonifyURLs = true # 누락!
+
+# ✅ 올바른 설정
+baseURL = "https://username.github.io/repository-name/"
+relativeURLs = true
+canonifyURLs = true
+```
+
+## Advanced Techniques
+
+### 1. 조건부 링크
+
+```go
+{{ if .IsHome }}
+  <a href="{{< relref "/" >}}">홈</a>
+{{ else }}
+  <a href="{{< relref "/" >}}">← 홈으로</a>
+{{ end }}
+```
+
+### 2. 동적 메뉴 생성
+
+```go
+{{ range .Site.Menus.main }}
+  <a href="{{ .URL | relURL }}" 
+     class="{{ if $.IsMenuCurrent "main" . }}active{{ end }}">
+    {{ .Name }}
+  </a>
+{{ end }}
+```
+
+### 3. 이미지 최적화
+
+```go
+{{ $image := .Resources.GetMatch "*.jpg" }}
+{{ if $image }}
+  <img src="{{ $image.RelPermalink }}" 
+       alt="{{ .Title }}"
+       loading="lazy">
+{{ end }}
+```
+
+## Testing & Validation
+
+### 로컬 테스트
+
+```bash
+# Hugo 서버 실행 (서브패스 시뮬레이션)
+hugo server --baseURL="http://localhost:1313/repository-name/" --appendPort=false
+
+# 빌드 테스트
+hugo --baseURL="https://username.github.io/repository-name/"
+```
+
+### 링크 검증
+
+```bash
+# 빌드된 사이트에서 링크 검증
+find public -name "*.html" -exec grep -l "href=" {} \; | head -5
+```
+
+### 자동화된 검증
+
+```yaml
+# .github/workflows/link-check.yml
+name: Link Check
+on: [push, pull_request]
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build site
+        run: hugo --minify
+      - name: Check links
+        run: |
+          npx linkinator public --recurse --silent
+```
+
+## Performance Considerations
+
+### 1. 빌드 시간 최적화
+
+```go
+// 불필요한 페이지 생성 방지
+{{ if not .Draft }}
+  <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+{{ end }}
+```
+
+### 2. 캐싱 전략
+
+```go
+// 이미지 최적화
+{{ $image := .Resources.GetMatch "*.jpg" }}
+{{ if $image }}
+  {{ $resized := $image.Resize "800x600" }}
+  <img src="{{ $resized.RelPermalink }}" alt="{{ .Title }}">
+{{ end }}
+```
+
+## Further Work
+
+### 단기 개선 계획
+
+1. **자동 링크 검증**: CI/CD 파이프라인에 링크 체크 추가
+2. **Shortcode 확장**: 더 많은 재사용 가능한 컴포넌트 개발
+3. **성능 모니터링**: 링크 로딩 시간 측정 및 최적화
+
+### 장기 비전
+
+1. **다국어 지원**: 언어별 링크 구조 최적화
+2. **PWA 통합**: 오프라인 링크 처리
+3. **SEO 고도화**: 구조화된 데이터와 링크 관계 최적화
+
+---
+
+이 가이드를 통해 Hugo와 GitHub Pages를 함께 사용할 때 발생하는 링크 문제를 해결할 수 있습니다. 다음 포스트에서는 Go 벤치마킹과 프로파일링을 통한 성능 최적화 방법을 다루겠습니다.

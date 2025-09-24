@@ -1,35 +1,37 @@
 ---
-title: "Accessibility: Keyboard-first navigation check in practice"
+title: "웹 접근성: 키보드 네비게이션 체크리스트"
 date: 2025-01-15T00:00:00Z
 draft: false
 tags: ["accessibility", "web-development", "keyboard-navigation", "aria", "focus-management"]
-summary: "Skip links, roles/ARIA, focus-visible, live regions; easy wins and checklist for keyboard-first navigation."
+summary: "Skip links, ARIA 역할, focus-visible, live regions를 활용한 키보드 우선 네비게이션 구현 가이드와 실용적인 체크리스트"
 ---
 
-# Accessibility: Keyboard-first navigation check in practice
+# 웹 접근성: 키보드 네비게이션 체크리스트
 
 ## TL;DR
 
-Keyboard navigation is essential for accessibility. This guide covers skip links, focus management, ARIA roles, and provides a practical checklist for implementing keyboard-first navigation in web applications.
+- **목표**: 모든 사용자가 키보드만으로 웹사이트를 완전히 탐색할 수 있도록 구현
+- **핵심**: Skip links, 포커스 관리, ARIA 역할, 키보드 트랩 방지
+- **결과**: 접근성 준수, 사용자 경험 향상, 법적 요구사항 충족
 
 ## Context
 
-Web accessibility isn't just about screen readers—it's about ensuring all users can navigate and interact with your content using any input method. Keyboard navigation is fundamental to this goal, benefiting users with motor disabilities, power users who prefer keyboard shortcuts, and anyone using assistive technologies.
+웹 접근성은 단순히 스크린 리더만을 위한 것이 아닙니다. 모든 사용자가 어떤 입력 방법을 사용하든 콘텐츠를 탐색하고 상호작용할 수 있도록 보장하는 것입니다. 키보드 네비게이션은 이 목표의 핵심으로, 운동 장애가 있는 사용자, 키보드 단축키를 선호하는 파워 유저, 그리고 보조 기술을 사용하는 모든 사용자에게 도움이 됩니다.
 
 ## Problem
 
-Many websites fail basic keyboard navigation tests:
-- No skip links to bypass repetitive content
-- Poor focus management and visual indicators
-- Missing ARIA roles and labels
-- Inaccessible interactive elements
-- No live regions for dynamic content updates
+많은 웹사이트가 기본적인 키보드 네비게이션 테스트를 통과하지 못합니다:
+- 반복적인 콘텐츠를 건너뛸 수 있는 skip links 부재
+- 부적절한 포커스 관리와 시각적 표시
+- ARIA 역할과 라벨 누락
+- 접근할 수 없는 인터랙티브 요소
+- 동적 콘텐츠 업데이트를 위한 live regions 부재
 
 ## Skip Links
 
-Skip links allow users to jump directly to main content, bypassing navigation menus and other repetitive elements.
+Skip links는 사용자가 네비게이션 메뉴나 다른 반복적인 요소를 건너뛰고 메인 콘텐츠로 직접 이동할 수 있게 해줍니다.
 
-### Implementation
+### 구현 방법
 
 ```html
 <a href="#main-content" class="skip-link">

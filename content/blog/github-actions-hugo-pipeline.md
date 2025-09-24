@@ -1,30 +1,32 @@
 ---
-title: "GitHub Actions pipeline for Hugo"
+title: "Hugo GitHub Actions 파이프라인"
 date: 2025-01-15T00:00:00Z
 draft: false
 tags: ["github-actions", "hugo", "ci-cd", "deployment", "automation", "performance"]
-summary: "Workflow file basics, cache, build flags, artifact tips; zero-downtime repo hygiene for Hugo sites."
+summary: "워크플로우 기본, 캐시, 빌드 플래그, 아티팩트 팁을 활용한 Hugo 사이트의 제로 다운타임 배포 파이프라인"
 ---
 
-# GitHub Actions pipeline for Hugo
+# Hugo GitHub Actions 파이프라인
 
 ## TL;DR
 
-GitHub Actions provides powerful CI/CD capabilities for Hugo sites with caching, build optimization, and automated deployment. This guide covers workflow basics, performance tips, and zero-downtime deployment strategies.
+- **목표**: Hugo 사이트의 자동화된 빌드, 테스트, 배포 파이프라인 구축
+- **핵심**: 워크플로우 최적화, 캐싱 전략, 아티팩트 관리, 제로 다운타임 배포
+- **결과**: 배포 시간 단축, 일관된 빌드 환경, 자동화된 품질 관리
 
 ## Context
 
-Static site generators like Hugo benefit greatly from automated CI/CD pipelines. GitHub Actions offers seamless integration with GitHub Pages, providing caching, build optimization, and deployment automation without external services.
+Hugo와 같은 정적 사이트 생성기는 자동화된 CI/CD 파이프라인으로부터 큰 이익을 얻습니다. GitHub Actions는 외부 서비스 없이 캐싱, 빌드 최적화, 배포 자동화를 제공하며 GitHub Pages와의 원활한 통합을 제공합니다.
 
 ## Problem
 
-Manual deployment processes have several limitations:
-- Time-consuming manual builds and deployments
-- Inconsistent build environments
-- No automated testing or validation
-- Lack of caching leads to slow builds
-- No preview deployments for pull requests
-- Risk of human error in deployment process
+수동 배포 프로세스에는 여러 제한사항이 있습니다:
+- 시간이 많이 걸리는 수동 빌드 및 배포
+- 일관성 없는 빌드 환경
+- 자동화된 테스팅이나 검증 부재
+- 캐싱 부족으로 인한 느린 빌드
+- Pull Request를 위한 프리뷰 배포 부재
+- 배포 프로세스에서의 인간적 오류 위험
 
 ## Workflow Basics
 

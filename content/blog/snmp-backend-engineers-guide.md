@@ -1,5 +1,5 @@
 ---
-title: "SNMP for backend engineers (MIB, OID, traps vs polling)"
+title: "백엔드 엔지니어를 위한 SNMP"
 date: 2025-01-15T13:00:00+09:00
 summary: "백엔드 엔지니어를 위한 SNMP 실전 가이드: MIB, OID, traps vs polling의 핵심 개념과 Go를 활용한 실용적인 네트워크 모니터링 구현 방법을 소개합니다."
 cover: "/images/og-default.svg"

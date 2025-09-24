@@ -1,5 +1,5 @@
 ---
-title: "Hugo+GitHub Pages: Subpath-safe internal links (relref/relURL) guide"
+title: "Hugo GitHub Pages 서브패스 링크"
 date: 2025-01-15T11:00:00+09:00
 summary: "GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드"
 cover: "/images/og-default.svg"

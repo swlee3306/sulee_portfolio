@@ -1,6 +1,6 @@
-# Hugo build output
-public/
-resources/
+# Hugo build output (commented out for GitHub Pages deployment)
+# public/
+# resources/
 
 # Hugo cache
 .hugo_build.lock

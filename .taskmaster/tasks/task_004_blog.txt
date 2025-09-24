@@ -1,0 +1,37 @@
+# Task ID: 4
+# Title: Go benchmarking and profiling workflow you can actually use
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Performance mindset: testing, bench, pprof, flamegraphs, common pitfalls.
+# Details:
+Outline → Draft → Review → Publish. Include sample repo links + screenshots; reproducible steps.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [done]
+### Dependencies: None
+### Description: Create structured outline: TL;DR, Context, Problem, Benchmarking basics, Profiling workflow, pprof usage, Flamegraphs, Common pitfalls, Performance optimization, Further Work.
+### Details:
+
+
+## 2. Draft [done]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with practical examples, code snippets, and reproducible steps.
+### Details:
+
+
+## 3. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all examples work correctly.
+### Details:
+
+
+## 4. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+
+

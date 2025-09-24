@@ -143,7 +143,7 @@
         "description": "Lighthouse 90+ 목표로 최적화",
         "details": "- 이미지 최적화(LQIP/blur)\n- 코드 스플리팅/지연 로딩\n- 폰트 최적화\n- 메트릭 측정(Web Vitals)",
         "testStrategy": "",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -154,7 +154,7 @@
         "description": "색 대비, 키보드 탐색, aria 속성 점검",
         "details": "- 포커스 스타일\n- landmark/aria-label\n- 스크린리더 테스트 체크리스트",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -176,7 +176,7 @@
         "description": "Google Analytics/umami 등 간단한 트래킹",
         "details": "- 쿠키 배너(필요 시)\n- 이벤트 트래킹\n- 성능 로그",
         "testStrategy": "",
-        "status": "pending",
+        "status": "cancelled",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -187,7 +187,7 @@
         "description": "목록/상세, 태그/검색, 코드 하이라이트, RSS",
         "details": "- MD 렌더링\n- 구문 하이라이트\n- 태그/검색\n- OG 이미지",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [],
         "priority": "medium",
         "subtasks": []
@@ -196,7 +196,509 @@
     "metadata": {
       "created": "2025-09-04T08:22:39.876Z",
       "description": "Default tasks context",
-      "updated": "2025-09-05T01:57:53.963Z"
+      "updated": "2025-09-19T06:38:07.611Z"
+    }
+  },
+  "blog": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Case Study: make-snmprec — Building realistic SNMP simulation data",
+        "description": "Deep-dive post aligned to project. Cover data model, edge cases, validation, CLI UX, sample outputs; include diagrams and short demo GIF.",
+        "details": "Outline → Draft → Review → Publish. Include TL;DR, internal links to Projects, metrics/screenshots. Target ≥ 600 words.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline with sections, key points, and assets list.",
+            "details": "Sections: TL;DR, Context, Problem, Approach, Data Model, Edge Cases, Validation, CLI UX, Results, Further Work. Assets: diagram, demo GIF, sample outputs.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with examples and TL;DR.",
+            "details": "Include code snippets for input/output, CLI examples, and Further Work section.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify links/code blocks, ensure TL;DR and Further Work present.",
+            "details": "Checked internal relref to /projects/make-snmprec, headings, code fences, and Korean phrasing.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "Draft is already false. Live URL verified under /blog/make-snmprec-case-study/",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Case Study: system-Info-collector — Host observability from the ground up",
+        "description": "Deep-dive into CPU/MEM/Disk collection and reliability under load; sampling, backoff/retry, CSV+DB dual logging, rotation.",
+        "details": "Outline → Draft → Review → Publish. Architecture sketch + perf table; ≥ 600 words.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Architecture, Sampling, Backoff/Retry, Dual logging (CSV+DB), Rotation, Performance, Further Work.",
+            "details": "Assets: architecture sketch (text), simple perf table.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with examples, architecture details, and TL;DR section.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure TL;DR and Further Work sections are present.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 2
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "SNMP for backend engineers (MIB, OID, traps vs polling)",
+        "description": "Evergreen primer with minimal Go examples; clarify core concepts and practical tips.",
+        "details": "Outline → Draft → Review → Publish. Code snippets + diagrams; SEO-friendly headings.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, SNMP basics, MIB/OID concepts, Traps vs Polling, Go examples, Common pitfalls, Best practices, Further Work.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with Go examples, code snippets, and practical tips.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all Go examples work correctly.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 3
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Go benchmarking and profiling workflow you can actually use",
+        "description": "Performance mindset: testing, bench, pprof, flamegraphs, common pitfalls.",
+        "details": "Outline → Draft → Review → Publish. Include sample repo links + screenshots; reproducible steps.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Benchmarking basics, Profiling workflow, pprof usage, Flamegraphs, Common pitfalls, Performance optimization, Further Work.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with practical examples, code snippets, and reproducible steps.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all examples work correctly.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Logging strategy that scales from dev to prod",
+        "description": "Operational logging: schema, levels, rotation, shipping to OpenSearch/ELK.",
+        "details": "Outline → Draft → Review → Publish. JSON examples + pipeline sketch; link to related projects.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Logging schema, Levels, Rotation, Shipping to OpenSearch/ELK, Performance considerations, Best practices, Further Work.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with JSON examples, pipeline sketches, and practical implementation details.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all JSON examples and pipeline sketches are correct.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Hugo+GitHub Pages: Subpath-safe internal links (relref/relURL)",
+        "description": "Guide based on real fix: baseURL, relative/canonify, shortcodes, pitfalls.",
+        "details": "Outline → Draft → Review → Publish. Before/after diffs + checklist.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Draft",
+            "description": "Write the full draft covering baseURL, relative/canonify, shortcodes, and common pitfalls with before/after examples.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
+          },
+          {
+            "id": 2,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all examples work correctly.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
+          },
+          {
+            "id": 3,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "Web Performance: Killing CLS on list pages (practical playbook)",
+        "description": "How we eliminated CLS with min-height reservations, badge sizing, defer scripts.",
+        "details": "Outline → Draft → Review → Publish. Include numbers before/after + code changes.",
+        "testStrategy": "",
+        "status": "cancelled",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Accessibility: Keyboard-first navigation check in practice",
+        "description": "Skip links, roles/ARIA, focus-visible, live regions; easy wins and checklist.",
+        "details": "Outline → Draft → Review → Publish. Include checklist + diffs; reference site changes.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Skip links, Focus management, ARIA roles, Keyboard navigation, Live regions, Checklist, Further Work",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with practical examples, code snippets, and before/after comparisons",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all examples work correctly",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 8
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Dynamic SVG Thumbnails with Hugo",
+        "description": "ExecuteAsTemplate, brand tokens, fallbacks; visual consistency without external assets.",
+        "details": "Outline → Draft → Review → Publish. Template snippet + examples; performance notes.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, ExecuteAsTemplate basics, Brand tokens, Fallback system, Performance optimization, Implementation examples, Further Work",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with practical Hugo examples, template code, and performance considerations",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all Hugo examples work correctly",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 9
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "GitHub Actions pipeline for Hugo",
+        "description": "Workflow file basics, cache, build flags, artifact tips; zero-downtime repo hygiene.",
+        "details": "Outline → Draft → Review → Publish. Include workflow gist + tips.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Workflow basics, Cache optimization, Build flags, Artifact management, Performance tips, Further Work",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with practical GitHub Actions examples, workflow optimizations, and performance considerations",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all GitHub Actions examples work correctly",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 10
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Go networking tips: timeouts, backoff, idempotency",
+        "description": "Reliability patterns with context/deadlines/retries; brief circuit breaker mention.",
+        "details": "Outline → Draft → Review → Publish. Minimal patterns + pitfalls.",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Outline",
+            "description": "Create structured outline: TL;DR, Context, Problem, Timeout strategies, Backoff patterns, Idempotency, Circuit breaker basics, Error handling, Best practices, Further Work.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11
+          },
+          {
+            "id": 2,
+            "title": "Draft",
+            "description": "Write the full draft (600–900 words) with practical Go examples, code snippets, and reliability patterns.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11
+          },
+          {
+            "id": 3,
+            "title": "Review",
+            "description": "Proofread content, verify technical accuracy, ensure all Go examples work correctly.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11
+          },
+          {
+            "id": 4,
+            "title": "Publish",
+            "description": "Ensure draft=false, commit & push, verify live URL and RSS inclusion.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 11
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "API test harness in constrained networks (APITestProgram)",
+        "description": "Offline/air-gapped testing: local fixtures, mock servers, reproducible scripts.",
+        "details": "Outline → Draft → Review → Publish. Demo + scripts; link to project.",
+        "testStrategy": "",
+        "status": "cancelled",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-09-19T06:41:10.619Z",
+      "updated": "2025-09-24T07:57:55.936Z",
+      "description": "Tasks for blog content plan and execution"
     }
   }
 }

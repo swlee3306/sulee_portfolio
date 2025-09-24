@@ -1,0 +1,103 @@
+# Blog Content PRD for Portfolio
+
+## Goal
+Publish a focused set of technical blog posts that reinforce portfolio strengths (systems tooling, Go backend, observability, performance, accessibility) and drive recruiters/engineers to project detail pages and GitHub.
+
+## Audience
+- Hiring managers and senior engineers scanning quickly
+- Engineers evaluating code quality and problem-solving approach
+
+## Content Strategy
+- Anchor posts (deep-dives) that align with portfolio projects
+- Supporting posts (how-to/guide) that showcase approach, testing, benchmarking, and reliability mindset
+- Each post includes: problem context, constraints, decision trade-offs, results (metrics/screenshots), and next steps
+
+## Posts (initial set)
+1) Case Study: make-snmprec — Building realistic SNMP simulation data
+   - Why: Demonstrates protocol-level thinking and ops empathy
+   - Key points: data model, edge cases, validation, CLI UX, sample outputs
+   - Deliverables: diagrams + short demo GIF + snippet
+
+2) Case Study: system-Info-collector — Host observability from the ground up
+   - Why: Systems perspective, CPU/MEM/Disk, reliability under load
+   - Key points: sampling, backoff/retry, CSV + DB dual logging, rotation
+   - Deliverables: architecture sketch + perf table
+
+3) Primer: SNMP for backend engineers (MIB, OID, traps vs polling)
+   - Why: Searchable evergreen post to attract protocol-oriented audiences
+   - Key points: minimal practical examples with Go
+   - Deliverables: code snippets + diagrams
+
+4) Go: Benchmarking and profiling workflow you can actually use
+   - Why: Performance mindset; reproducible steps
+   - Key points: testing, bench, pprof, flamegraphs, gotchas
+   - Deliverables: sample repo links + screenshots
+
+5) Observability: Logging strategy that scales from dev to prod
+   - Why: Shows operational maturity
+   - Key points: log schema, levels, rotation, shipping to OpenSearch/ELK
+   - Deliverables: JSON examples + pipeline sketch
+
+6) Hugo+GitHub Pages: Subpath-safe internal links (relref/relURL) guide
+   - Why: Real problem solved in portfolio
+   - Key points: baseURL, relative/canonify, shortcodes, pitfalls
+   - Deliverables: before/after diffs + checklists
+
+7) Web Performance: Killing CLS on list pages (practical playbook)
+   - Why: Measurable impact; Lighthouse credibility
+   - Key points: min-height reservations, badge sizing, defer scripts
+   - Deliverables: numbers before/after + code changes
+
+8) Accessibility: Keyboard-first navigation check in practice
+   - Why: Quality mindset; easy wins
+   - Key points: skip links, roles/ARIA, focus-visible, live regions
+   - Deliverables: checklist + diffs
+
+9) Dynamic SVG Thumbnails with Hugo
+   - Why: Visual consistency without external assets
+   - Key points: ExecuteAsTemplate, brand tokens, fallbacks
+   - Deliverables: template snippet + examples
+
+10) GitHub Actions pipeline for Hugo (zero-downtime repo hygiene)
+    - Why: CI maturity
+    - Key points: workflow file, cache, build flags, artifact basics
+    - Deliverables: workflow gist + tips
+
+11) Go networking tips: timeouts, backoff, and idempotency
+    - Why: Reliability patterns
+    - Key points: context, deadlines, retries, circuit breakers (light)
+    - Deliverables: minimal code patterns
+
+12) API test harness in constrained networks (APITestProgram)
+    - Why: Practical constraints (offline/air-gapped)
+    - Key points: local fixtures, mock servers, reproducible scripts
+    - Deliverables: demo + scripts
+
+## SEO Guidelines (per post)
+- Title ≤ 60 chars, summary 140–160 chars
+- Use 3–5 tags, include "Go", "performance", "observability" where relevant
+- Structured headings (H2/H3), internal links to Projects and About
+
+## Format & UX
+- Cover image optional (SVG/PNG). Thumbnails 16:9
+- Code blocks with language hints
+- Include a TL;DR at top (3 bullets)
+- Each post ends with “Further Work”
+
+## Acceptance Criteria
+- 12 published posts (draft=false), each ≥ 600 words, unique summary
+- At least 2 deep-dive case studies link back to related Projects
+- Lighthouse Performance ≥ 90 for post pages, A11y best practices maintained
+
+## Timeline & Priorities
+- Week 1: 1,2,3,6
+- Week 2: 4,5,7,8
+- Week 3: 9,10,11,12
+
+## Risks & Mitigation
+- Time: keep scope tight; focus on genuine insights over breadth
+- Visuals: reuse brand SVG; avoid heavy screenshots
+
+## Tracking
+- Create tasks with IDs per post; subtasks: outline → draft → review → publish → share
+- Optional: tag tasks with "blog" context

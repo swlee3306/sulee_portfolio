@@ -1,0 +1,568 @@
+<!doctype html><html lang=ko><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Go 네트워킹 팁: 타임아웃, 백오프, 멱등성 | Dev Note by sw'Lee</title><meta name=description content="안정적인 분산 시스템 구축을 위한 필수 Go 네트워킹 패턴: 타임아웃, 지수 백오프, 멱등성, 서킷 브레이커를 실제 예제와 함께 다룹니다."><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/blog/go-networking-tips-timeouts-backoff-idempotency/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/blog/go-networking-tips-timeouts-backoff-idempotency/"><meta property="og:title" content="Go 네트워킹 팁: 타임아웃, 백오프, 멱등성 | Dev Note by sw'Lee"><meta property="og:description" content="안정적인 분산 시스템 구축을 위한 필수 Go 네트워킹 패턴: 타임아웃, 지수 백오프, 멱등성, 서킷 브레이커를 실제 예제와 함께 다룹니다."><meta property="og:image" content="https://swlee3306.github.io/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Go 네트워킹 팁: 타임아웃, 백오프, 멱등성 | Dev Note by sw'Lee"><meta name=twitter:description content="안정적인 분산 시스템 구축을 위한 필수 Go 네트워킹 패턴: 타임아웃, 지수 백오프, 멱등성, 서킷 브레이커를 실제 예제와 함께 다룹니다."><meta name=twitter:image content="https://swlee3306.github.io/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1758702765"><link rel=stylesheet href="../../css/styles.css?v=1758702765"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script></head><body><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../>Dev Note by sw'Lee</a><nav><ul><li><a href=../../>Home</a></li><li><a href=../../projects/>Projects</a></li><li><a href=../../blog/>Blog</a></li><li><a href=../../tags/>Tags</a></li><li><a href=../../about/>About</a></li><li><a href=../../contact/>Contact</a></li></ul></nav></div></header><main id=main-content role=main class=container><article class=article><img class=cover src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/go-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%82%B9-%ED%8C%81-%ED%83%80%EC%9E%84%EC%95%84%EC%9B%83-%EB%B0%B1%EC%98%A4%ED%94%84-%EB%A9%B1%EB%93%B1%EC%84%B1.svg alt="Go 네트워킹 팁: 타임아웃, 백오프, 멱등성 cover" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px"><h1>Go 네트워킹 팁: 타임아웃, 백오프, 멱등성</h1><p class=meta>2025-01-15</p><ul class=tags><li>go</li><li>networking</li><li>reliability</li><li>timeouts</li><li>backoff</li><li>idempotency</li></ul><div class=content><h2 id=tldr>TL;DR</h2><p>Go에서 안정적인 네트워크 애플리케이션을 구축하려면 적절한 타임아웃 처리, 지능적인 재시도 전략, 멱등성 연산이 필요합니다. 이 가이드는 컨텍스트/데드라인, 지수 백오프, 서킷 브레이커에 대한 필수 패턴을 실제 예제와 함께 다룹니다.</p><h2 id=배경>배경</h2><p>Go에서 네트워크 프로그래밍은 고유한 도전 과제를 제시합니다: 연결이 실패할 수 있고, 서비스가 일시적으로 사용 불가능할 수 있으며, 네트워크 분할이 연쇄 실패를 일으킬 수 있습니다. 적절한 안정성 패턴 없이는 애플리케이션이 취약하고 예측 불가능해집니다.</p><h2 id=문제점>문제점</h2><p>Go 애플리케이션에서 흔한 네트워킹 문제들:</p><ul><li><strong>타임아웃 없음</strong>은 연결이 멈추고 리소스 누수를 야기합니다</li><li><strong>단순한 재시도</strong>는 실패하는 서비스를 압도할 수 있습니다</li><li><strong>비멱등성 연산</strong>은 재시도 시 데이터 손상을 일으킵니다</li><li><strong>서킷 브레이커 없음</strong>은 연쇄 실패를 허용합니다</li><li><strong>부적절한 에러 처리</strong>는 디버깅을 거의 불가능하게 만듭니다</li></ul><h2 id=타임아웃-전략>타임아웃 전략</h2><h3 id=데드라인과-함께하는-컨텍스트>데드라인과 함께하는 컨텍스트</h3><p>Go 네트워킹에서 가장 중요한 패턴은 타임아웃과 함께 <code>context.Context</code>를 사용하는 것입니다:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;context&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>makeRequest</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>url</span> <span style=color:#66d9ef>string</span>) (<span style=color:#f92672>*</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Response</span>, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 타임아웃이 있는 새로운 컨텍스트 생성</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>req</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>NewRequestWithContext</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#e6db74>&#34;GET&#34;</span>, <span style=color:#a6e22e>url</span>, <span style=color:#66d9ef>nil</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>client</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Client</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Timeout</span>: <span style=color:#ae81ff>10</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>, <span style=color:#75715e>// 클라이언트 레벨 타임아웃</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>client</span>.<span style=color:#a6e22e>Do</span>(<span style=color:#a6e22e>req</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 3초 타임아웃으로 요청</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#ae81ff>3</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>makeRequest</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#e6db74>&#34;https://api.example.com/data&#34;</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;요청 실패: %v\n&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;요청 성공&#34;</span>)
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=다중-타임아웃-레이어>다중 타임아웃 레이어</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>TimeoutConfig</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ConnectTimeout</span>   <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ReadTimeout</span>     <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>WriteTimeout</span>    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>TotalTimeout</span>    <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewHTTPClient</span>(<span style=color:#a6e22e>config</span> <span style=color:#a6e22e>TimeoutConfig</span>) <span style=color:#f92672>*</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Client</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>transport</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Transport</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>DialContext</span>: (<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>net</span>.<span style=color:#a6e22e>Dialer</span>{
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Timeout</span>: <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>ConnectTimeout</span>,
+</span></span><span style=display:flex><span>        }).<span style=color:#a6e22e>DialContext</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>TLSHandshakeTimeout</span>: <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>ConnectTimeout</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>ResponseHeaderTimeout</span>: <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>ReadTimeout</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Client</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Transport</span>: <span style=color:#a6e22e>transport</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Timeout</span>:   <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>TotalTimeout</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 사용법</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>client</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>NewHTTPClient</span>(<span style=color:#a6e22e>TimeoutConfig</span>{
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ConnectTimeout</span>: <span style=color:#ae81ff>2</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ReadTimeout</span>:    <span style=color:#ae81ff>5</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>WriteTimeout</span>:   <span style=color:#ae81ff>2</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>,
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>TotalTimeout</span>:   <span style=color:#ae81ff>10</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>,
+</span></span><span style=display:flex><span>})
+</span></span></code></pre></div><h2 id=백오프-패턴>백오프 패턴</h2><h3 id=지수-백오프>지수 백오프</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;context&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;log&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;math&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;math/rand&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;sync&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>BackoffConfig</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>InitialDelay</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>MaxDelay</span>     <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Multiplier</span>   <span style=color:#66d9ef>float64</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Jitter</span>       <span style=color:#66d9ef>bool</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>RetryableFunc</span> <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>error</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ExponentialBackoff</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>config</span> <span style=color:#a6e22e>BackoffConfig</span>, <span style=color:#a6e22e>fn</span> <span style=color:#a6e22e>RetryableFunc</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>delay</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>InitialDelay</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>attempt</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fn</span>()
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>attempt</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 컨텍스트가 취소되었는지 확인</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>()
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>default</span>:
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 다음 지연 시간 계산</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>nextDelay</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(float64(<span style=color:#a6e22e>delay</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>math</span>.<span style=color:#a6e22e>Pow</span>(<span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>Multiplier</span>, float64(<span style=color:#a6e22e>attempt</span>)))
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>nextDelay</span> &gt; <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>MaxDelay</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>nextDelay</span> = <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>MaxDelay</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 썬더링 허드 방지를 위한 지터 추가</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>Jitter</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>jitter</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#a6e22e>rand</span>.<span style=color:#a6e22e>Float64</span>() <span style=color:#f92672>*</span> float64(<span style=color:#a6e22e>nextDelay</span>) <span style=color:#f92672>*</span> <span style=color:#ae81ff>0.1</span>)
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>nextDelay</span> <span style=color:#f92672>+=</span> <span style=color:#a6e22e>jitter</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;시도 %d 실패, %v 후 재시도: %v\n&#34;</span>, <span style=color:#a6e22e>attempt</span>, <span style=color:#a6e22e>nextDelay</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>After</span>(<span style=color:#a6e22e>nextDelay</span>):
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>delay</span> = <span style=color:#a6e22e>nextDelay</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>()
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Usage</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#ae81ff>30</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>config</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>BackoffConfig</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>InitialDelay</span>: <span style=color:#ae81ff>100</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Millisecond</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>MaxDelay</span>:     <span style=color:#ae81ff>5</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Multiplier</span>:   <span style=color:#ae81ff>2.0</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Jitter</span>:       <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ExponentialBackoff</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>config</span>, <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 여기에 네트워크 연산을 넣으세요</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;일시적 실패&#34;</span>)
+</span></span><span style=display:flex><span>    })
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;모든 재시도 실패: %v\n&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=선형-백오프>선형 백오프</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>LinearBackoff</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>config</span> <span style=color:#a6e22e>BackoffConfig</span>, <span style=color:#a6e22e>fn</span> <span style=color:#a6e22e>RetryableFunc</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>delay</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>InitialDelay</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>attempt</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fn</span>()
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>attempt</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>()
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>default</span>:
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 선형 증가</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>nextDelay</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(float64(<span style=color:#a6e22e>delay</span>) <span style=color:#f92672>*</span> float64(<span style=color:#a6e22e>attempt</span>))
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>nextDelay</span> &gt; <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>MaxDelay</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>nextDelay</span> = <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>MaxDelay</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;시도 %d 실패, %v 후 재시도: %v\n&#34;</span>, <span style=color:#a6e22e>attempt</span>, <span style=color:#a6e22e>nextDelay</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>After</span>(<span style=color:#a6e22e>nextDelay</span>):
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>delay</span> = <span style=color:#a6e22e>nextDelay</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>()
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=멱등성>멱등성</h2><h3 id=멱등성-연산>멱등성 연산</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;crypto/md5&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;encoding/hex&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>IdempotentKey</span> <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>IdempotentOperation</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Key</span>       <span style=color:#a6e22e>IdempotentKey</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Result</span>    <span style=color:#66d9ef>interface</span>{}
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Timestamp</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>TTL</span>       <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>IdempotencyStore</span> <span style=color:#66d9ef>interface</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Get</span>(<span style=color:#a6e22e>key</span> <span style=color:#a6e22e>IdempotentKey</span>) (<span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>, <span style=color:#66d9ef>bool</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Set</span>(<span style=color:#a6e22e>key</span> <span style=color:#a6e22e>IdempotentKey</span>, <span style=color:#a6e22e>op</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>) <span style=color:#66d9ef>error</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>InMemoryStore</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>operations</span> <span style=color:#66d9ef>map</span>[<span style=color:#a6e22e>IdempotentKey</span>]<span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewInMemoryStore</span>() <span style=color:#f92672>*</span><span style=color:#a6e22e>InMemoryStore</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>InMemoryStore</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>operations</span>: make(<span style=color:#66d9ef>map</span>[<span style=color:#a6e22e>IdempotentKey</span>]<span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>),
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>s</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>InMemoryStore</span>) <span style=color:#a6e22e>Get</span>(<span style=color:#a6e22e>key</span> <span style=color:#a6e22e>IdempotentKey</span>) (<span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>, <span style=color:#66d9ef>bool</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>op</span>, <span style=color:#a6e22e>exists</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>operations</span>[<span style=color:#a6e22e>key</span>]
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>exists</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#66d9ef>false</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// TTL 확인</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Since</span>(<span style=color:#a6e22e>op</span>.<span style=color:#a6e22e>Timestamp</span>) &gt; <span style=color:#a6e22e>op</span>.<span style=color:#a6e22e>TTL</span> {
+</span></span><span style=display:flex><span>        delete(<span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>operations</span>, <span style=color:#a6e22e>key</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#66d9ef>false</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>op</span>, <span style=color:#66d9ef>true</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>s</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>InMemoryStore</span>) <span style=color:#a6e22e>Set</span>(<span style=color:#a6e22e>key</span> <span style=color:#a6e22e>IdempotentKey</span>, <span style=color:#a6e22e>op</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>IdempotentOperation</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>s</span>.<span style=color:#a6e22e>operations</span>[<span style=color:#a6e22e>key</span>] = <span style=color:#a6e22e>op</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 요청에서 멱등성 키 생성</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>GenerateIdempotentKey</span>(<span style=color:#a6e22e>userID</span>, <span style=color:#a6e22e>operation</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>params</span> <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}) <span style=color:#a6e22e>IdempotentKey</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(<span style=color:#e6db74>&#34;%s:%s:%v&#34;</span>, <span style=color:#a6e22e>userID</span>, <span style=color:#a6e22e>operation</span>, <span style=color:#a6e22e>params</span>)
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>hash</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>md5</span>.<span style=color:#a6e22e>Sum</span>([]byte(<span style=color:#a6e22e>data</span>))
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>IdempotentKey</span>(<span style=color:#a6e22e>hex</span>.<span style=color:#a6e22e>EncodeToString</span>(<span style=color:#a6e22e>hash</span>[:]))
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 멱등성 연산 래퍼</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ExecuteIdempotent</span>(<span style=color:#a6e22e>store</span> <span style=color:#a6e22e>IdempotencyStore</span>, <span style=color:#a6e22e>key</span> <span style=color:#a6e22e>IdempotentKey</span>, <span style=color:#a6e22e>operation</span> <span style=color:#66d9ef>func</span>() (<span style=color:#66d9ef>interface</span>{}, <span style=color:#66d9ef>error</span>), <span style=color:#a6e22e>ttl</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>) (<span style=color:#66d9ef>interface</span>{}, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 연산이 이미 실행되었는지 확인</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>existing</span>, <span style=color:#a6e22e>exists</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>store</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#a6e22e>key</span>); <span style=color:#a6e22e>exists</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>existing</span>.<span style=color:#a6e22e>Result</span>, <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 연산 실행</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>operation</span>()
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 결과 저장</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>op</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>IdempotentOperation</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Key</span>:       <span style=color:#a6e22e>key</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Result</span>:    <span style=color:#a6e22e>result</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Timestamp</span>: <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>(),
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>TTL</span>:       <span style=color:#a6e22e>ttl</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>store</span>.<span style=color:#a6e22e>Set</span>(<span style=color:#a6e22e>key</span>, <span style=color:#a6e22e>op</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>, <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 사용 예제</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>store</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>NewInMemoryStore</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 결제 연산 시뮬레이션</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>key</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>GenerateIdempotentKey</span>(<span style=color:#e6db74>&#34;user123&#34;</span>, <span style=color:#e6db74>&#34;payment&#34;</span>, <span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>string</span>]<span style=color:#66d9ef>interface</span>{}{
+</span></span><span style=display:flex><span>        <span style=color:#e6db74>&#34;amount&#34;</span>: <span style=color:#ae81ff>100</span>,
+</span></span><span style=display:flex><span>        <span style=color:#e6db74>&#34;currency&#34;</span>: <span style=color:#e6db74>&#34;USD&#34;</span>,
+</span></span><span style=display:flex><span>    })
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ExecuteIdempotent</span>(<span style=color:#a6e22e>store</span>, <span style=color:#a6e22e>key</span>, <span style=color:#66d9ef>func</span>() (<span style=color:#66d9ef>interface</span>{}, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 결제 처리 시뮬레이션</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>100</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Millisecond</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;payment_success_123&#34;</span>, <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>    }, <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Minute</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;결제 실패: %v\n&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;결제 결과: %v\n&#34;</span>, <span style=color:#a6e22e>result</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 같은 연산 재시도 - 캐시된 결과 반환해야 함</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result2</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ExecuteIdempotent</span>(<span style=color:#a6e22e>store</span>, <span style=color:#a6e22e>key</span>, <span style=color:#66d9ef>func</span>() (<span style=color:#66d9ef>interface</span>{}, <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;payment_success_456&#34;</span>, <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>    }, <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Minute</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;재시도 결과: %v\n&#34;</span>, <span style=color:#a6e22e>result2</span>) <span style=color:#75715e>// 첫 번째 결과와 같아야 함</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=서킷-브레이커-기초>서킷 브레이커 기초</h2><h3 id=간단한-서킷-브레이커>간단한 서킷 브레이커</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;context&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;sync&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>CircuitState</span> <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>const</span> (
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>StateClosed</span> <span style=color:#a6e22e>CircuitState</span> = <span style=color:#66d9ef>iota</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>StateOpen</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>StateHalfOpen</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>CircuitBreaker</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>maxFailures</span>   <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>timeout</span>       <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>state</span>         <span style=color:#a6e22e>CircuitState</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>failures</span>      <span style=color:#66d9ef>int</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>lastFailTime</span>  <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>mutex</span>         <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>RWMutex</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewCircuitBreaker</span>(<span style=color:#a6e22e>maxFailures</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>timeout</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>) <span style=color:#f92672>*</span><span style=color:#a6e22e>CircuitBreaker</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>CircuitBreaker</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>maxFailures</span>: <span style=color:#a6e22e>maxFailures</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>timeout</span>:     <span style=color:#a6e22e>timeout</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>state</span>:       <span style=color:#a6e22e>StateClosed</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>cb</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>CircuitBreaker</span>) <span style=color:#a6e22e>Execute</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>operation</span> <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>error</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>mutex</span>.<span style=color:#a6e22e>Lock</span>()
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>mutex</span>.<span style=color:#a6e22e>Unlock</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 서킷이 열려있는지 확인</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>state</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>StateOpen</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Since</span>(<span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>lastFailTime</span>) &lt; <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>timeout</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;서킷 브레이커가 열려있음&#34;</span>)
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 반열림 상태로 이동</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>state</span> = <span style=color:#a6e22e>StateHalfOpen</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 연산 실행</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>operation</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>failures</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>lastFailTime</span> = <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>()
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>failures</span> <span style=color:#f92672>&gt;=</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>maxFailures</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>state</span> = <span style=color:#a6e22e>StateOpen</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 성공 - 실패 횟수 초기화하고 서킷 닫기</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>failures</span> = <span style=color:#ae81ff>0</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>state</span> = <span style=color:#a6e22e>StateClosed</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>cb</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>CircuitBreaker</span>) <span style=color:#a6e22e>State</span>() <span style=color:#a6e22e>CircuitState</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>mutex</span>.<span style=color:#a6e22e>RLock</span>()
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>mutex</span>.<span style=color:#a6e22e>RUnlock</span>()
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>state</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 사용법</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cb</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>NewCircuitBreaker</span>(<span style=color:#ae81ff>3</span>, <span style=color:#ae81ff>5</span><span style=color:#f92672>*</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#ae81ff>10</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>Execute</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 네트워크 연산 시뮬레이션</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>i</span> &lt; <span style=color:#ae81ff>5</span> {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;네트워크 오류&#34;</span>)
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>        })
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;시도 %d 실패: %v (상태: %v)\n&#34;</span>, <span style=color:#a6e22e>i</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>, <span style=color:#a6e22e>err</span>, <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>State</span>())
+</span></span><span style=display:flex><span>        } <span style=color:#66d9ef>else</span> {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;시도 %d 성공 (상태: %v)\n&#34;</span>, <span style=color:#a6e22e>i</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>, <span style=color:#a6e22e>cb</span>.<span style=color:#a6e22e>State</span>())
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Sleep</span>(<span style=color:#ae81ff>1</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=에러-처리>에러 처리</h2><h3 id=네트워크-에러-분류>네트워크 에러 분류</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;context&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;errors&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;fmt&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;log&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;time&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>NetworkError</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Type</span>    <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Message</span> <span style=color:#66d9ef>string</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>Retryable</span> <span style=color:#66d9ef>bool</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#a6e22e>NetworkError</span>) <span style=color:#a6e22e>Error</span>() <span style=color:#66d9ef>string</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(<span style=color:#e6db74>&#34;%s: %s&#34;</span>, <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>Type</span>, <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>Message</span>)
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ClassifyError</span>(<span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>) <span style=color:#a6e22e>NetworkError</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{}
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 컨텍스트 에러</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>Is</span>(<span style=color:#a6e22e>err</span>, <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>DeadlineExceeded</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;timeout&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;연산 타임아웃&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>Is</span>(<span style=color:#a6e22e>err</span>, <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Canceled</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;cancelled&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;연산이 취소됨&#34;</span>,
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>false</span>,
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 네트워크 에러</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>netErr</span> <span style=color:#a6e22e>net</span>.<span style=color:#a6e22e>Error</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>As</span>(<span style=color:#a6e22e>err</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>netErr</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>netErr</span>.<span style=color:#a6e22e>Timeout</span>() {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;timeout&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;네트워크 타임아웃&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>netErr</span>.<span style=color:#a6e22e>Temporary</span>() {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;temporary&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;일시적 네트워크 에러&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// HTTP 에러</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>httpErr</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Response</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>As</span>(<span style=color:#a6e22e>err</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>httpErr</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>switch</span> <span style=color:#a6e22e>httpErr</span>.<span style=color:#a6e22e>StatusCode</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#ae81ff>429</span>: <span style=color:#75715e>// Too Many Requests</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;rate_limited&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;속도 제한&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#ae81ff>502</span>, <span style=color:#ae81ff>503</span>, <span style=color:#ae81ff>504</span>: <span style=color:#75715e>// Server errors</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;server_error&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;서버 에러&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#ae81ff>400</span>, <span style=color:#ae81ff>401</span>, <span style=color:#ae81ff>403</span>, <span style=color:#ae81ff>404</span>: <span style=color:#75715e>// Client errors</span>
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;client_error&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Message</span>:   <span style=color:#e6db74>&#34;클라이언트 에러&#34;</span>,
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>false</span>,
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 기본적으로 재시도 가능</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>NetworkError</span>{
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Type</span>:      <span style=color:#e6db74>&#34;unknown&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Message</span>:   <span style=color:#a6e22e>err</span>.<span style=color:#a6e22e>Error</span>(),
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>Retryable</span>: <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 에러 분류와 함께 재시도</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>RetryWithClassification</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>operation</span> <span style=color:#66d9ef>func</span>() <span style=color:#66d9ef>error</span>, <span style=color:#a6e22e>maxRetries</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>attempt</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>attempt</span> &lt; <span style=color:#a6e22e>maxRetries</span>; <span style=color:#a6e22e>attempt</span><span style=color:#f92672>++</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>operation</span>()
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>networkErr</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>ClassifyError</span>(<span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>networkErr</span>.<span style=color:#a6e22e>Retryable</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;재시도 불가능한 에러: %w&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>attempt</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>maxRetries</span><span style=color:#f92672>-</span><span style=color:#ae81ff>1</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;최대 재시도 횟수 초과: %w&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 재시도 전 대기</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>select</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>After</span>(<span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>(<span style=color:#a6e22e>attempt</span><span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>) <span style=color:#f92672>*</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Second</span>):
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>case</span> <span style=color:#f92672>&lt;-</span><span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Done</span>():
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>ctx</span>.<span style=color:#a6e22e>Err</span>()
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=모범-사례>모범 사례</h2><h3 id=1-항상-컨텍스트-사용>1. 항상 컨텍스트 사용</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NetworkOperation</span>(<span style=color:#a6e22e>ctx</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Context</span>, <span style=color:#a6e22e>url</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span> {
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 항상 호출 체인을 통해 컨텍스트 전달</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>req</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>NewRequestWithContext</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#e6db74>&#34;GET&#34;</span>, <span style=color:#a6e22e>url</span>, <span style=color:#66d9ef>nil</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>client</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Client</span>{}
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>resp</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>client</span>.<span style=color:#a6e22e>Do</span>(<span style=color:#a6e22e>req</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>resp</span>.<span style=color:#a6e22e>Body</span>.<span style=color:#a6e22e>Close</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=2-우아한-종료-구현>2. 우아한 종료 구현</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>GracefulShutdown</span>(<span style=color:#a6e22e>server</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>Server</span>, <span style=color:#a6e22e>timeout</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>cancel</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>WithTimeout</span>(<span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>(), <span style=color:#a6e22e>timeout</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>cancel</span>()
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>server</span>.<span style=color:#a6e22e>Shutdown</span>(<span style=color:#a6e22e>ctx</span>); <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;서버 종료 에러: %v&#34;</span>, <span style=color:#a6e22e>err</span>)
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=3-모니터링과-로깅>3. 모니터링과 로깅</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>NetworkMetrics</span> <span style=color:#66d9ef>struct</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>RequestCount</span>    <span style=color:#66d9ef>int64</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>ErrorCount</span>      <span style=color:#66d9ef>int64</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>TimeoutCount</span>    <span style=color:#66d9ef>int64</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>AverageLatency</span>  <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>NetworkMetrics</span>) <span style=color:#a6e22e>RecordRequest</span>(<span style=color:#a6e22e>duration</span> <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Duration</span>, <span style=color:#a6e22e>err</span> <span style=color:#66d9ef>error</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>RequestCount</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+</span></span><span style=display:flex><span>        <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>ErrorCount</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>Is</span>(<span style=color:#a6e22e>err</span>, <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>DeadlineExceeded</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>TimeoutCount</span><span style=color:#f92672>++</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 평균 지연 시간 업데이트</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>AverageLatency</span> = (<span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>AverageLatency</span> <span style=color:#f92672>+</span> <span style=color:#a6e22e>duration</span>) <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=추가-작업>추가 작업</h2><ul><li><strong>서비스 메시 통합</strong>: Istio/Linkerd 패턴</li><li><strong>고급 서킷 브레이커</strong>: Hystrix 스타일 구현</li><li><strong>로드 밸런싱</strong>: 클라이언트 사이드 로드 밸런싱 전략</li><li><strong>연결 풀링</strong>: 효율적인 연결 관리</li><li><strong>관측 가능성</strong>: 분산 추적 및 메트릭</li></ul><h2 id=결론>결론</h2><p>Go에서 안정적인 네트워크 프로그래밍은 이러한 기본 패턴들을 이해하는 것이 필요합니다. 적절한 타임아웃, 지능적인 재시도 전략, 멱등성 연산을 구현함으로써 네트워크 실패를 우아하게 처리하는 견고한 분산 시스템을 구축할 수 있습니다.</p><p>핵심은 이러한 기본 패턴들로 시작하여 시스템의 요구사항이 더 복잡해짐에 따라 접근 방식을 발전시키는 것입니다.</p></div><nav class=pagination aria-label="이전/다음 글" style=margin-top:24px;gap:12px;display:flex;justify-content:space-between><div><a class=btn href=../../blog/github-actions-hugo-pipeline/ aria-label="이전 글: Hugo GitHub Actions 파이프라인">← Hugo GitHub Actions 파이프라인</a></div><div><a class=btn href=../../blog/system-info-collector-case-study/ aria-label="다음 글: system-Info-collector 케이스 스터디">system-Info-collector 케이스 스터디 →</a></div></nav></article></main><footer class=site-footer><div class=container><p>© 2025 이상욱</p></div></footer></body></html>

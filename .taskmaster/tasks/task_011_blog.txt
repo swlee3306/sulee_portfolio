@@ -1,0 +1,37 @@
+# Task ID: 11
+# Title: Go networking tips: timeouts, backoff, idempotency
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Reliability patterns with context/deadlines/retries; brief circuit breaker mention.
+# Details:
+Outline → Draft → Review → Publish. Minimal patterns + pitfalls.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [done]
+### Dependencies: None
+### Description: Create structured outline: TL;DR, Context, Problem, Timeout strategies, Backoff patterns, Idempotency, Circuit breaker basics, Error handling, Best practices, Further Work.
+### Details:
+
+
+## 2. Draft [done]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with practical Go examples, code snippets, and reliability patterns.
+### Details:
+
+
+## 3. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all Go examples work correctly.
+### Details:
+
+
+## 4. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+
+

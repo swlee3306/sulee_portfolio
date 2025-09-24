@@ -1,0 +1,11 @@
+# Task ID: 7
+# Title: Web Performance: Killing CLS on list pages (practical playbook)
+# Status: cancelled
+# Dependencies: None
+# Priority: high
+# Description: How we eliminated CLS with min-height reservations, badge sizing, defer scripts.
+# Details:
+Outline → Draft → Review → Publish. Include numbers before/after + code changes.
+
+# Test Strategy:
+

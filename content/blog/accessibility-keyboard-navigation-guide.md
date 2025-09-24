@@ -62,14 +62,14 @@ Skip links는 사용자가 네비게이션 메뉴나 다른 반복적인 요소�
 }
 ```
 
-## Focus Management
+## 포커스 관리
 
-Proper focus management ensures users can navigate through all interactive elements with clear visual indicators.
+적절한 포커스 관리는 사용자가 명확한 시각적 표시와 함께 모든 인터랙티브 요소를 탐색할 수 있도록 보장합니다.
 
-### Focus-visible Implementation
+### Focus-visible 구현
 
 ```css
-/* Focus indicators for all interactive elements */
+/* 모든 인터랙티브 요소에 대한 포커스 표시 */
 .btn:focus-visible,
 nav a:focus-visible,
 .content a:focus-visible {
@@ -78,15 +78,15 @@ nav a:focus-visible,
   border-radius: 6px;
 }
 
-/* Enhanced focus for buttons */
+/* 버튼에 대한 향상된 포커스 */
 .btn:focus-visible {
   box-shadow: 0 0 0 3px rgba(37,99,235,.20);
 }
 ```
 
-### Focus Trapping
+### 포커스 트랩
 
-For modal dialogs and dropdowns, implement focus trapping:
+모달 다이얼로그와 드롭다운의 경우, 포커스 트랩을 구현합니다:
 
 ```javascript
 function trapFocus(element) {
@@ -114,51 +114,51 @@ function trapFocus(element) {
 }
 ```
 
-## ARIA Roles and Labels
+## ARIA 역할과 라벨
 
-ARIA (Accessible Rich Internet Applications) provides semantic information to assistive technologies.
+ARIA (Accessible Rich Internet Applications)는 보조 기술에 의미론적 정보를 제공합니다.
 
-### Essential ARIA Roles
+### 필수 ARIA 역할
 
 ```html
-<!-- Main content area -->
+<!-- 메인 콘텐츠 영역 -->
 <main id="main-content" role="main">
-  <!-- Content -->
+  <!-- 콘텐츠 -->
 </main>
 
-<!-- Navigation -->
-<nav role="navigation" aria-label="Main navigation">
+<!-- 네비게이션 -->
+<nav role="navigation" aria-label="메인 네비게이션">
   <ul>
-    <li><a href="/">Home</a></li>
-    <li><a href="/about">About</a></li>
+    <li><a href="/">홈</a></li>
+    <li><a href="/about">소개</a></li>
   </ul>
 </nav>
 
-<!-- Form with proper labeling -->
+<!-- 적절한 라벨링이 있는 폼 -->
 <form>
-  <label for="email">Email Address</label>
+  <label for="email">이메일 주소</label>
   <input type="email" id="email" name="email" required>
   
   <button type="submit" aria-describedby="email-help">
-    Subscribe
+    구독
   </button>
   <div id="email-help" class="visually-hidden">
-    We'll never share your email address
+    이메일 주소를 공유하지 않습니다
   </div>
 </form>
 ```
 
 ### ARIA Live Regions
 
-For dynamic content updates:
+동적 콘텐츠 업데이트를 위해:
 
 ```html
 <div aria-live="polite" aria-atomic="true" id="status-messages">
-  <!-- Status updates will be announced here -->
+  <!-- 상태 업데이트가 여기서 발표됩니다 -->
 </div>
 
 <div aria-live="assertive" id="error-messages">
-  <!-- Critical errors will be announced immediately -->
+  <!-- 중요한 오류가 즉시 발표됩니다 -->
 </div>
 ```
 
@@ -171,86 +171,86 @@ function announceStatus(message, priority = 'polite') {
 }
 ```
 
-## Keyboard Navigation Patterns
+## 키보드 네비게이션 패턴
 
-### Tab Order Management
+### 탭 순서 관리
 
 ```css
-/* Ensure logical tab order */
+/* 논리적인 탭 순서 보장 */
 .nav-item { tab-index: 0; }
 .nav-item.disabled { tab-index: -1; }
 
-/* Skip decorative elements */
+/* 장식적 요소 건너뛰기 */
 .decorative { tab-index: -1; }
 ```
 
-### Keyboard Shortcuts
+### 키보드 단축키
 
 ```javascript
-// Implement keyboard shortcuts
+// 키보드 단축키 구현
 document.addEventListener('keydown', (e) => {
-  // Alt + M for main content
+  // Alt + M으로 메인 콘텐츠로 이동
   if (e.altKey && e.key === 'm') {
     document.getElementById('main-content').focus();
     e.preventDefault();
   }
   
-  // Escape to close modals
+  // Escape로 모달 닫기
   if (e.key === 'Escape') {
     closeModal();
   }
 });
 ```
 
-## Accessibility Checklist
+## 접근성 체크리스트
 
 ### ✅ Skip Links
-- [ ] Skip link present and functional
-- [ ] Skip link visible on focus
-- [ ] Skip link targets main content
+- [ ] Skip link가 존재하고 기능함
+- [ ] 포커스 시 Skip link가 보임
+- [ ] Skip link가 메인 콘텐츠를 대상으로 함
 
-### ✅ Focus Management
-- [ ] All interactive elements focusable
-- [ ] Clear focus indicators
-- [ ] Logical tab order
-- [ ] Focus trapping for modals
+### ✅ 포커스 관리
+- [ ] 모든 인터랙티브 요소가 포커스 가능
+- [ ] 명확한 포커스 표시
+- [ ] 논리적인 탭 순서
+- [ ] 모달에 대한 포커스 트랩
 
-### ✅ ARIA Implementation
-- [ ] Proper semantic HTML
-- [ ] ARIA roles where needed
-- [ ] ARIA labels for form elements
-- [ ] Live regions for dynamic content
+### ✅ ARIA 구현
+- [ ] 적절한 의미론적 HTML
+- [ ] 필요한 곳에 ARIA 역할
+- [ ] 폼 요소에 대한 ARIA 라벨
+- [ ] 동적 콘텐츠를 위한 Live regions
 
-### ✅ Keyboard Navigation
-- [ ] All functionality accessible via keyboard
-- [ ] No keyboard traps
-- [ ] Logical navigation flow
-- [ ] Keyboard shortcuts documented
+### ✅ 키보드 네비게이션
+- [ ] 모든 기능이 키보드로 접근 가능
+- [ ] 키보드 트랩 없음
+- [ ] 논리적인 네비게이션 흐름
+- [ ] 키보드 단축키 문서화
 
-### ✅ Testing
-- [ ] Tab through entire page
-- [ ] Test with screen reader
-- [ ] Verify focus indicators
-- [ ] Check color contrast ratios
+### ✅ 테스팅
+- [ ] 전체 페이지를 탭으로 탐색
+- [ ] 스크린 리더로 테스트
+- [ ] 포커스 표시 확인
+- [ ] 색상 대비 비율 확인
 
-## Common Pitfalls
+## 일반적인 함정
 
-1. **Missing Skip Links**: Always provide a way to bypass navigation
-2. **Poor Focus Indicators**: Ensure focus is always visible
-3. **Keyboard Traps**: Avoid elements that can't be escaped
-4. **Missing ARIA Labels**: Label all form elements and interactive components
-5. **Inconsistent Tab Order**: Maintain logical navigation flow
+1. **Skip Links 누락**: 네비게이션을 건너뛸 수 있는 방법을 항상 제공
+2. **불량한 포커스 표시**: 포커스가 항상 보이도록 보장
+3. **키보드 트랩**: 탈출할 수 없는 요소 피하기
+4. **ARIA 라벨 누락**: 모든 폼 요소와 인터랙티브 컴포넌트에 라벨 지정
+5. **일관성 없는 탭 순서**: 논리적인 네비게이션 흐름 유지
 
-## Further Work
+## 추가 작업
 
-- Implement comprehensive keyboard testing
-- Add more ARIA live regions for dynamic content
-- Create keyboard shortcut documentation
-- Regular accessibility audits with real users
-- Consider implementing a focus management library for complex interactions
+- 포괄적인 키보드 테스팅 구현
+- 동적 콘텐츠를 위한 더 많은 ARIA live regions 추가
+- 키보드 단축키 문서 작성
+- 실제 사용자와의 정기적인 접근성 감사
+- 복잡한 상호작용을 위한 포커스 관리 라이브러리 구현 고려
 
-## Conclusion
+## 결론
 
-Keyboard-first navigation is not just about compliance—it's about creating inclusive experiences for all users. By implementing skip links, proper focus management, ARIA roles, and following the accessibility checklist, you can ensure your web applications are truly accessible.
+키보드 우선 네비게이션은 단순한 규정 준수를 넘어서 모든 사용자를 위한 포용적인 경험을 만드는 것입니다. Skip links, 적절한 포커스 관리, ARIA 역할을 구현하고 접근성 체크리스트를 따름으로써 웹 애플리케이션이 진정으로 접근 가능하도록 보장할 수 있습니다.
 
-Start with the basics: skip links and focus indicators. Then gradually add more sophisticated features like live regions and keyboard shortcuts. Remember, accessibility is an ongoing process, not a one-time implementation.
+기본부터 시작하세요: skip links와 포커스 표시. 그런 다음 live regions와 키보드 단축키와 같은 더 정교한 기능을 점진적으로 추가하세요. 접근성은 일회성 구현이 아닌 지속적인 과정임을 기억하세요.

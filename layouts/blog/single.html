@@ -3,7 +3,8 @@
   {{/* Hero image: prefer cover, then thumbnail, else dynamic SVG; responsive srcset if assets exist */}}
   {{ $cover := .Params.cover }}
   {{ $media := cond (ne $cover "") $cover .Params.thumbnail }}
-  {{ $needsDynamic := or (not $media) (eq $media "/images/og-default.svg") }}
+  {{ $isPlaceholder := or (eq $media "/images/og-default.svg") (eq $media "/images/sample-thumb.svg") }}
+  {{ $needsDynamic := or (not $media) $isPlaceholder }}
   {{ if $needsDynamic }}
     {{ $key := md5 .Permalink }}
     {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" $key) . }}

@@ -1,0 +1,31 @@
+# Task ID: 6
+# Title: Hugo+GitHub Pages: Subpath-safe internal links (relref/relURL)
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Guide based on real fix: baseURL, relative/canonify, shortcodes, pitfalls.
+# Details:
+Outline → Draft → Review → Publish. Before/after diffs + checklist.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Draft [done]
+### Dependencies: None
+### Description: Write the full draft covering baseURL, relative/canonify, shortcodes, and common pitfalls with before/after examples.
+### Details:
+
+
+## 2. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all examples work correctly.
+### Details:
+
+
+## 3. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+
+

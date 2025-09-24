@@ -1,0 +1,37 @@
+# Task ID: 5
+# Title: Logging strategy that scales from dev to prod
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Operational logging: schema, levels, rotation, shipping to OpenSearch/ELK.
+# Details:
+Outline → Draft → Review → Publish. JSON examples + pipeline sketch; link to related projects.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [done]
+### Dependencies: None
+### Description: Create structured outline: TL;DR, Context, Problem, Logging schema, Levels, Rotation, Shipping to OpenSearch/ELK, Performance considerations, Best practices, Further Work.
+### Details:
+
+
+## 2. Draft [done]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with JSON examples, pipeline sketches, and practical implementation details.
+### Details:
+
+
+## 3. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all JSON examples and pipeline sketches are correct.
+### Details:
+
+
+## 4. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+
+

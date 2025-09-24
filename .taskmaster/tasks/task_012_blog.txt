@@ -1,0 +1,11 @@
+# Task ID: 12
+# Title: API test harness in constrained networks (APITestProgram)
+# Status: cancelled
+# Dependencies: None
+# Priority: high
+# Description: Offline/air-gapped testing: local fixtures, mock servers, reproducible scripts.
+# Details:
+Outline → Draft → Review → Publish. Demo + scripts; link to project.
+
+# Test Strategy:
+

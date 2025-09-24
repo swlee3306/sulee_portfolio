@@ -1,0 +1,37 @@
+# Task ID: 10
+# Title: GitHub Actions pipeline for Hugo
+# Status: in-progress
+# Dependencies: None
+# Priority: medium
+# Description: Workflow file basics, cache, build flags, artifact tips; zero-downtime repo hygiene.
+# Details:
+Outline → Draft → Review → Publish. Include workflow gist + tips.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [pending]
+### Dependencies: None
+### Description: Create structured outline: TL;DR, Context, Problem, Workflow basics, Cache optimization, Build flags, Artifact management, Performance tips, Further Work
+### Details:
+
+
+## 2. Draft [pending]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with practical GitHub Actions examples, workflow optimizations, and performance considerations
+### Details:
+
+
+## 3. Review [pending]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all GitHub Actions examples work correctly
+### Details:
+
+
+## 4. Publish [pending]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion
+### Details:
+
+

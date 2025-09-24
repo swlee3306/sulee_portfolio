@@ -34,5 +34,54 @@
       {{ range . }}<li>{{ . }}</li>{{ end }}
     </ul>
   {{ end }}
+
+  {{/* Prev/Next navigation within projects section */}}
+  <nav class="pagination" aria-label="이전/다음 프로젝트" style="margin-top:24px; gap:12px; display:flex; justify-content:space-between;">
+    <div>
+      {{ with .PrevInSection }}
+        <a class="btn" href="{{ .RelPermalink }}" aria-label="이전 프로젝트: {{ .Title }}">← {{ .Title }}</a>
+      {{ end }}
+    </div>
+    <div>
+      {{ with .NextInSection }}
+        <a class="btn" href="{{ .RelPermalink }}" aria-label="다음 프로젝트: {{ .Title }}">{{ .Title }} →</a>
+      {{ end }}
+    </div>
+  </nav>
+
+  {{/* Related projects by shared techTags */}}
+  {{ $self := . }}
+  {{ $myTags := .Params.techTags }}
+  {{ if gt (len $myTags) 0 }}
+    <section class="section" aria-label="관련 프로젝트" style="padding-top:12px;">
+      <h2>관련 프로젝트</h2>
+      <div class="cards">
+        {{ $shown := 0 }}
+        {{ range where .Site.RegularPages "Section" "projects" }}
+          {{ if and (ne .Permalink $self.Permalink) (gt (len (intersect .Params.techTags $myTags)) 0) }}
+            <article class="card">
+              {{ $thumb := .Params.thumbnail }}
+              {{ $needsDynamic := or (not $thumb) (eq $thumb "/images/og-default.svg") }}
+              <a href="{{ .RelPermalink }}">
+                {{ if $needsDynamic }}
+                  {{ $tpl := resources.Get "images/project-thumb-template.svg" | resources.ExecuteAsTemplate (printf "gen/thumbs/%s.svg" (.Title | urlize)) . }}
+                  <img class="thumb" src="{{ $tpl.Permalink }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                {{ else }}
+                  <img class="thumb" src="{{ $thumb | relURL }}" alt="{{ .Title }} thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                {{ end }}
+              </a>
+              <h3 style="margin-top:10px;"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+              {{ with .Params.summary }}<p class="summary-text">{{ . }}</p>{{ end }}
+            </article>
+            {{ $shown = add $shown 1 }}
+            {{ if ge $shown 3 }}{{ break }}{{ end }}
+          {{ end }}
+        {{ end }}
+        {{ if eq $shown 0 }}
+          <p class="muted">공유된 기술 태그 기반의 관련 프로젝트가 없습니다.</p>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
 </article>
 {{ end }}

@@ -1,0 +1,37 @@
+# Task ID: 3
+# Title: SNMP for backend engineers (MIB, OID, traps vs polling)
+# Status: done
+# Dependencies: None
+# Priority: medium
+# Description: Evergreen primer with minimal Go examples; clarify core concepts and practical tips.
+# Details:
+Outline → Draft → Review → Publish. Code snippets + diagrams; SEO-friendly headings.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [done]
+### Dependencies: None
+### Description: Create structured outline: TL;DR, Context, Problem, SNMP basics, MIB/OID concepts, Traps vs Polling, Go examples, Common pitfalls, Best practices, Further Work.
+### Details:
+
+
+## 2. Draft [done]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with Go examples, code snippets, and practical tips.
+### Details:
+
+
+## 3. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify technical accuracy, ensure all Go examples work correctly.
+### Details:
+
+
+## 4. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+
+

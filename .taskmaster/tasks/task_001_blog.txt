@@ -1,0 +1,37 @@
+# Task ID: 1
+# Title: Case Study: make-snmprec — Building realistic SNMP simulation data
+# Status: done
+# Dependencies: None
+# Priority: high
+# Description: Deep-dive post aligned to project. Cover data model, edge cases, validation, CLI UX, sample outputs; include diagrams and short demo GIF.
+# Details:
+Outline → Draft → Review → Publish. Include TL;DR, internal links to Projects, metrics/screenshots. Target ≥ 600 words.
+
+# Test Strategy:
+
+
+# Subtasks:
+## 1. Outline [done]
+### Dependencies: None
+### Description: Create structured outline with sections, key points, and assets list.
+### Details:
+Sections: TL;DR, Context, Problem, Approach, Data Model, Edge Cases, Validation, CLI UX, Results, Further Work. Assets: diagram, demo GIF, sample outputs.
+
+## 2. Draft [done]
+### Dependencies: None
+### Description: Write the full draft (600–900 words) with examples and TL;DR.
+### Details:
+Include code snippets for input/output, CLI examples, and Further Work section.
+
+## 3. Review [done]
+### Dependencies: None
+### Description: Proofread content, verify links/code blocks, ensure TL;DR and Further Work present.
+### Details:
+Checked internal relref to /projects/make-snmprec, headings, code fences, and Korean phrasing.
+
+## 4. Publish [done]
+### Dependencies: None
+### Description: Ensure draft=false, commit & push, verify live URL and RSS inclusion.
+### Details:
+Draft is already false. Live URL verified under /blog/make-snmprec-case-study/
+

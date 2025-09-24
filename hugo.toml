@@ -13,7 +13,7 @@ canonifyURLs = true
 
 [params]
   author = "이상욱"
-  description = "개인 포트폴리오"
+  description = "Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성"
   ogImage = "/images/og-default.svg"
   email = "swlee3306@gmail.com"
   useWebp = false # .webp 전역 비활성화
@@ -28,7 +28,6 @@ canonifyURLs = true
     plausibleDomain = "" # 예: yourdomain.com
   socials = [
     { name = "GitHub", url = "https://github.com/swlee3306" },
-    { name = "LinkedIn", url = "https://www.linkedin.com/" },
     { name = "Email", url = "mailto:swlee3306@gmail.com" }
   ]
 

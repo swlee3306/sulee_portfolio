@@ -24,6 +24,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
   
+  // Debug function to check if elements exist
+  function debugElements() {
+    console.log('Menu toggle:', menuToggle);
+    console.log('Main navigation:', mainNavigation);
+    console.log('Dark mode toggle:', darkModeToggle);
+    console.log('Hamburger icon:', hamburgerIcon);
+    console.log('Close icon:', closeIcon);
+  }
+  
   // Enable dark mode
   function enableDarkMode() {
     html.classList.add('dark');
@@ -155,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialize everything
   initDarkMode();
   adjustMenuForDevice();
+  debugElements();
   
   // Adjust menu on orientation change
   window.addEventListener('orientationchange', function() {

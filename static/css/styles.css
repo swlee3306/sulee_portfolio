@@ -189,6 +189,20 @@ nav ul {
   padding: 0; 
 }
 
+/* Hide desktop navigation on mobile */
+@media (max-width: 767px) {
+  nav {
+    display: none;
+  }
+}
+
+/* Show desktop navigation on larger screens */
+@media (min-width: 768px) {
+  nav {
+    display: flex;
+  }
+}
+
 /* shadcn/ui Button Component */
 .btn {
   display: inline-flex;

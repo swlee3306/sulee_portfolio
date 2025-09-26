@@ -3,7 +3,7 @@
     <a class="brand" href="{{ "/" | relURL }}">
       <span class="font-bold text-xl">{{ with .Site.Params.brand }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}</span>
     </a>
-    <nav class="hidden md:flex">
+    <nav class="flex">
       <ul>
         {{ range .Site.Menus.main }}
           <li><a href="{{ .URL | relURL }}" class="nav-link">{{ .Name }}</a></li>

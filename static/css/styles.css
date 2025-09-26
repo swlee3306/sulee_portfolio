@@ -75,6 +75,22 @@ html, body { margin: 0; padding: 0; }
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
+/* Dark mode button styles */
+.dark .theme-toggle,
+.dark .menu-toggle {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+  color: hsl(var(--foreground));
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+.dark .theme-toggle:hover,
+.dark .menu-toggle:hover {
+  background: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  border-color: hsl(var(--primary));
+}
+
 .dark .content pre {
   background: hsl(222.2 84% 6%);
   border-color: hsl(var(--border));
@@ -232,26 +248,31 @@ body {
 
 /* Header Controls */
 .header-controls {
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 12px;
   margin-left: auto;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Theme Toggle Button */
 .theme-toggle {
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
   border-radius: calc(var(--radius) - 2px);
   background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(var(--border));
   color: hsl(var(--foreground));
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10;
 }
 
 .theme-toggle:hover {
@@ -268,18 +289,21 @@ body {
 
 /* Menu Toggle Button */
 .menu-toggle {
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
   border-radius: calc(var(--radius) - 2px);
   background: hsl(var(--background));
-  border: 1px solid hsl(var(--border));
+  border: 2px solid hsl(var(--border));
   color: hsl(var(--foreground));
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10;
 }
 
 .menu-toggle:hover {

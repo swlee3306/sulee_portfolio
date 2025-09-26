@@ -3,19 +3,12 @@
     <a class="brand" href="{{ "/" | relURL }}">
       <span class="font-bold text-xl">{{ with .Site.Params.brand }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}</span>
     </a>
-    <nav class="flex">
+    <nav class="nav-menu">
       <ul>
         {{ range .Site.Menus.main }}
           <li><a href="{{ .URL | relURL }}" class="nav-link">{{ .Name }}</a></li>
         {{ end }}
       </ul>
     </nav>
-    <!-- Mobile menu button -->
-    <button class="md:hidden p-2 rounded-md hover:bg-accent" aria-label="메뉴 열기" aria-expanded="false">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
   </div>
 </header>
-<script src="{{ "js/mobile-menu.js" | relURL }}" defer></script>

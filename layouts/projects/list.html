@@ -6,13 +6,17 @@
   {{ with .Content }}<div class="content">{{ . }}</div>{{ end }}
 
   <!-- Filters: Search + Tag selection -->
-  <div id="project-filters" class="filters" style="margin: 10px 0 20px 0; display:flex; gap:10px; flex-wrap:wrap; align-items:center;" role="group" aria-labelledby="filters-heading" aria-controls="projectCards resultsInfo">
-    <h2 id="filters-heading" class="visually-hidden" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">프로젝트 필터</h2>
-    <input id="searchInput" type="search" placeholder="프로젝트 검색 (제목/요약)" style="flex:1; min-width:220px; padding:8px 10px; border:1px solid var(--border); border-radius:8px;" aria-label="프로젝트 검색" inputmode="search" autocomplete="off" />
-    <div id="tagFilters" class="tags" style="display:flex; gap:8px; flex-wrap:wrap;" role="group" aria-label="태그 필터"></div>
-    <button id="clearFilters" class="btn" type="button" aria-label="필터 초기화">필터 초기화</button>
+  <div id="project-filters" class="filters bg-card border border-border rounded-lg p-6 mb-8" role="group" aria-labelledby="filters-heading" aria-controls="projectCards resultsInfo">
+    <h2 id="filters-heading" class="visually-hidden">프로젝트 필터</h2>
+    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+      <div class="flex-1 min-w-0">
+        <input id="searchInput" type="search" placeholder="프로젝트 검색 (제목/요약)" class="w-full" aria-label="프로젝트 검색" inputmode="search" autocomplete="off" />
+      </div>
+      <div id="tagFilters" class="tags flex-1" role="group" aria-label="태그 필터"></div>
+      <button id="clearFilters" class="btn btn-secondary" type="button" aria-label="필터 초기화">필터 초기화</button>
+    </div>
+    <p id="resultsInfo" class="meta mt-4" aria-live="polite" role="status"></p>
   </div>
-  <p id="resultsInfo" class="meta" aria-live="polite" role="status" style="margin: -8px 0 12px 0;"></p>
 
   <div class="cards" id="projectCards" role="list">
     {{ range .Paginator.Pages }}
@@ -67,7 +71,14 @@
             {{ range . }}<li class="tag-pill">{{ . }}</li>{{ end }}
           </ul>
         {{ end }}
-        <p><a class="btn" href="{{ .RelPermalink }}" aria-label="프로젝트 {{ .Title }} 자세히 보기">자세히 보기</a></p>
+        <div class="mt-4">
+          <a class="btn btn-primary" href="{{ .RelPermalink }}" aria-label="프로젝트 {{ .Title }} 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
       </article>
     {{ end }}
   </div>

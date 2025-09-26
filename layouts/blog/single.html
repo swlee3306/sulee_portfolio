@@ -46,15 +46,25 @@
     {{ .Content }}
   </div>
 
-  <nav class="pagination" aria-label="이전/다음 글" style="margin-top:24px; gap:12px; display:flex; justify-content:space-between;">
-    <div>
+  <nav class="pagination" aria-label="이전/다음 글" style="margin-top:32px; gap:16px; display:flex; justify-content:space-between; flex-wrap:wrap;">
+    <div class="flex-1 min-w-0">
       {{ with .PrevInSection }}
-        <a class="btn" href="{{ .RelPermalink }}" aria-label="이전 글: {{ .Title }}">← {{ .Title }}</a>
+        <a class="btn btn-ghost flex items-center gap-2" href="{{ .RelPermalink }}" aria-label="이전 글: {{ .Title }}">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="truncate">{{ .Title }}</span>
+        </a>
       {{ end }}
     </div>
-    <div>
+    <div class="flex-1 min-w-0 text-right">
       {{ with .NextInSection }}
-        <a class="btn" href="{{ .RelPermalink }}" aria-label="다음 글: {{ .Title }}">{{ .Title }} →</a>
+        <a class="btn btn-ghost flex items-center gap-2" href="{{ .RelPermalink }}" aria-label="다음 글: {{ .Title }}">
+          <span class="truncate">{{ .Title }}</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
       {{ end }}
     </div>
   </nav>

@@ -855,6 +855,20 @@ h3 { font-size: clamp(1.05rem, 1.0rem + .3vw, 1.2rem); margin: .9em 0 .45em; fon
   .btn:hover { background: #f3f4f6; border-color: #343a40; box-shadow: 0 4px 14px rgba(0,0,0,.35); }
 }
 
+/* Dark mode button styles for better visibility */
+.dark .btn {
+  background: #ffffff;
+  color: #111111;
+  border-color: hsl(var(--border));
+}
+
+.dark .btn:hover {
+  background: #f3f4f6;
+  color: #111111;
+  border-color: #343a40;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
+}
+
 /* shadcn/ui Form Components */
 form { 
   max-width: 640px; 

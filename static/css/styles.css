@@ -84,6 +84,13 @@ html, body { margin: 0; padding: 0; }
   box-shadow: 0 2px 4px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
 }
 
+/* Ensure button visibility in dark mode */
+.dark .theme-toggle svg,
+.dark .menu-toggle svg {
+  color: hsl(var(--foreground));
+  stroke: currentColor;
+}
+
 .dark .theme-toggle:hover,
 .dark .menu-toggle:hover {
   background: hsl(var(--accent));
@@ -264,8 +271,8 @@ body {
   width: 44px;
   height: 44px;
   border-radius: calc(var(--radius) - 2px);
-  background: hsl(var(--background));
-  border: 2px solid hsl(var(--border));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   color: hsl(var(--foreground));
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -273,6 +280,11 @@ body {
   visibility: visible !important;
   opacity: 1 !important;
   z-index: 10;
+}
+
+.theme-toggle svg {
+  color: inherit;
+  stroke: currentColor;
 }
 
 .theme-toggle:hover {
@@ -295,8 +307,8 @@ body {
   width: 44px;
   height: 44px;
   border-radius: calc(var(--radius) - 2px);
-  background: hsl(var(--background));
-  border: 2px solid hsl(var(--border));
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   color: hsl(var(--foreground));
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -304,6 +316,11 @@ body {
   visibility: visible !important;
   opacity: 1 !important;
   z-index: 10;
+}
+
+.menu-toggle svg {
+  color: inherit;
+  stroke: currentColor;
 }
 
 .menu-toggle:hover {

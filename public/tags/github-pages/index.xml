@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>GitHub Pages on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/github-pages/</link><description>Recent content in GitHub Pages on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 11:00:00 +0900</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/github-pages/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo GitHub Pages 서브패스 링크</title><link>https://swlee3306.github.io/sulee_portfolio/blog/hugo-subpath-safe-links-relref-guide/</link><pubDate>Wed, 15 Jan 2025 11:00:00 +0900</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/hugo-subpath-safe-links-relref-guide/</guid><description>GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>GitHub Pages on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/github-pages/</link>
+    <description>Recent content in GitHub Pages on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 11:00:00 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/github-pages/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo GitHub Pages 서브패스 링크</title>
+      <link>http://localhost:1313/blog/hugo-subpath-safe-links-relref-guide/</link>
+      <pubDate>Wed, 15 Jan 2025 11:00:00 +0900</pubDate>
+      <guid>http://localhost:1313/blog/hugo-subpath-safe-links-relref-guide/</guid>
+      <description>GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드</description>
+    </item>
+  </channel>
+</rss>

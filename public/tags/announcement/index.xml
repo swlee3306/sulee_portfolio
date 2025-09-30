@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Announcement on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/announcement/</link><description>Recent content in Announcement on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Fri, 19 Sep 2025 15:26:30 +0900</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/announcement/index.xml" rel="self" type="application/rss+xml"/><item><title>블로그를 시작합니다</title><link>https://swlee3306.github.io/sulee_portfolio/blog/introducing-blog/</link><pubDate>Fri, 19 Sep 2025 15:26:30 +0900</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/introducing-blog/</guid><description>포트폴리오 사이트에 가벼운 개발 기록을 남기기 위한 블로그 섹션을 추가했습니다.</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Announcement on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/announcement/</link>
+    <description>Recent content in Announcement on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Fri, 19 Sep 2025 15:26:30 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/announcement/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>블로그를 시작합니다</title>
+      <link>http://localhost:1313/blog/introducing-blog/</link>
+      <pubDate>Fri, 19 Sep 2025 15:26:30 +0900</pubDate>
+      <guid>http://localhost:1313/blog/introducing-blog/</guid>
+      <description>포트폴리오 사이트에 가벼운 개발 기록을 남기기 위한 블로그 섹션을 추가했습니다.</description>
+    </item>
+  </channel>
+</rss>

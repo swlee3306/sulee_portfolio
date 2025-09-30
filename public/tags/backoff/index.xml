@@ -1,16 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Backoff on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/backoff/</link><description>Recent content in Backoff on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/backoff/index.xml" rel="self" type="application/rss+xml"/><item><title>Go 네트워킹 팁: 타임아웃, 백오프, 멱등성</title><link>https://swlee3306.github.io/sulee_portfolio/blog/go-networking-tips-timeouts-backoff-idempotency/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/go-networking-tips-timeouts-backoff-idempotency/</guid><description>&lt;h2 id="tldr">TL;DR&lt;/h2>
-&lt;p>Go에서 안정적인 네트워크 애플리케이션을 구축하려면 적절한 타임아웃 처리, 지능적인 재시도 전략, 멱등성 연산이 필요합니다. 이 가이드는 컨텍스트/데드라인, 지수 백오프, 서킷 브레이커에 대한 필수 패턴을 실제 예제와 함께 다룹니다.&lt;/p>
-&lt;h2 id="배경">배경&lt;/h2>
-&lt;p>Go에서 네트워크 프로그래밍은 고유한 도전 과제를 제시합니다: 연결이 실패할 수 있고, 서비스가 일시적으로 사용 불가능할 수 있으며, 네트워크 분할이 연쇄 실패를 일으킬 수 있습니다. 적절한 안정성 패턴 없이는 애플리케이션이 취약하고 예측 불가능해집니다.&lt;/p>
-&lt;h2 id="문제점">문제점&lt;/h2>
-&lt;p>Go 애플리케이션에서 흔한 네트워킹 문제들:&lt;/p>
-&lt;ul>
-&lt;li>&lt;strong>타임아웃 없음&lt;/strong>은 연결이 멈추고 리소스 누수를 야기합니다&lt;/li>
-&lt;li>&lt;strong>단순한 재시도&lt;/strong>는 실패하는 서비스를 압도할 수 있습니다&lt;/li>
-&lt;li>&lt;strong>비멱등성 연산&lt;/strong>은 재시도 시 데이터 손상을 일으킵니다&lt;/li>
-&lt;li>&lt;strong>서킷 브레이커 없음&lt;/strong>은 연쇄 실패를 허용합니다&lt;/li>
-&lt;li>&lt;strong>부적절한 에러 처리&lt;/strong>는 디버깅을 거의 불가능하게 만듭니다&lt;/li>
-&lt;/ul>
-&lt;h2 id="타임아웃-전략">타임아웃 전략&lt;/h2>
-&lt;h3 id="데드라인과-함께하는-컨텍스트">데드라인과 함께하는 컨텍스트&lt;/h3>
-&lt;p>Go 네트워킹에서 가장 중요한 패턴은 타임아웃과 함께 &lt;code>context.Context&lt;/code>를 사용하는 것입니다:&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Backoff on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/backoff/</link>
+    <description>Recent content in Backoff on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/backoff/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go 네트워킹 팁: 타임아웃, 백오프, 멱등성</title>
+      <link>http://localhost:1313/blog/go-networking-tips-timeouts-backoff-idempotency/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/blog/go-networking-tips-timeouts-backoff-idempotency/</guid>
+      <description>&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;p&gt;Go에서 안정적인 네트워크 애플리케이션을 구축하려면 적절한 타임아웃 처리, 지능적인 재시도 전략, 멱등성 연산이 필요합니다. 이 가이드는 컨텍스트/데드라인, 지수 백오프, 서킷 브레이커에 대한 필수 패턴을 실제 예제와 함께 다룹니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;배경&#34;&gt;배경&lt;/h2&gt;&#xA;&lt;p&gt;Go에서 네트워크 프로그래밍은 고유한 도전 과제를 제시합니다: 연결이 실패할 수 있고, 서비스가 일시적으로 사용 불가능할 수 있으며, 네트워크 분할이 연쇄 실패를 일으킬 수 있습니다. 적절한 안정성 패턴 없이는 애플리케이션이 취약하고 예측 불가능해집니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;문제점&#34;&gt;문제점&lt;/h2&gt;&#xA;&lt;p&gt;Go 애플리케이션에서 흔한 네트워킹 문제들:&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;타임아웃 없음&lt;/strong&gt;은 연결이 멈추고 리소스 누수를 야기합니다&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;단순한 재시도&lt;/strong&gt;는 실패하는 서비스를 압도할 수 있습니다&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;비멱등성 연산&lt;/strong&gt;은 재시도 시 데이터 손상을 일으킵니다&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;서킷 브레이커 없음&lt;/strong&gt;은 연쇄 실패를 허용합니다&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;부적절한 에러 처리&lt;/strong&gt;는 디버깅을 거의 불가능하게 만듭니다&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;타임아웃-전략&#34;&gt;타임아웃 전략&lt;/h2&gt;&#xA;&lt;h3 id=&#34;데드라인과-함께하는-컨텍스트&#34;&gt;데드라인과 함께하는 컨텍스트&lt;/h3&gt;&#xA;&lt;p&gt;Go 네트워킹에서 가장 중요한 패턴은 타임아웃과 함께 &lt;code&gt;context.Context&lt;/code&gt;를 사용하는 것입니다:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

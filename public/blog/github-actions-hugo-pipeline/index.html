@@ -1,243 +1,487 @@
-<!doctype html><html lang=ko class=scroll-smooth><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Hugo GitHub Actions 파이프라인 | Dev Note by sw'Lee</title><meta name=description content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성"><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/blog/github-actions-hugo-pipeline/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/blog/github-actions-hugo-pipeline/"><meta property="og:title" content="Hugo GitHub Actions 파이프라인 | Dev Note by sw'Lee"><meta property="og:description" content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성"><meta property="og:image" content="https://swlee3306.github.io/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Hugo GitHub Actions 파이프라인 | Dev Note by sw'Lee"><meta name=twitter:description content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성"><meta name=twitter:image content="https://swlee3306.github.io/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1758860447"><link rel=stylesheet href="../../css/styles.css?v=1758860447"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script></head><body class="min-h-screen bg-background font-sans antialiased"><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../><span class="font-bold text-xl">Dev Note by sw'Lee</span></a><div class=header-controls><button id=dark-mode-toggle class=theme-toggle aria-label="다크모드 토글">
-<svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-<svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
-</button>
-<button id=menu-toggle class=menu-toggle aria-label="메뉴 열기" aria-expanded=false>
-<svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><nav id=main-navigation class="main-navigation hidden"><div class=nav-content><ul class=nav-list><li><a href=../../ class=nav-link>Home</a></li><li><a href=../../projects/ class=nav-link>Projects</a></li><li><a href=../../blog/ class=nav-link>Blog</a></li><li><a href=../../tags/ class=nav-link>Tags</a></li><li><a href=../../about/ class=nav-link>About</a></li><li><a href=../../contact/ class=nav-link>Contact</a></li></ul></div></nav></header><script src=../../js/navigation.js defer></script><main id=main-content role=main class=container><article class=article><img class=cover src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/c2d845b78274d6b2911e9f8c855f4a99.svg alt="Hugo GitHub Actions 파이프라인 cover" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px"><h1>Hugo GitHub Actions 파이프라인</h1><p class=meta>2025-01-15</p><ul class=tags><li>github-actions</li><li>hugo</li><li>ci-cd</li><li>deployment</li><li>automation</li><li>performance</li></ul><div class=content><h1 id=hugo-github-actions-파이프라인>Hugo GitHub Actions 파이프라인</h1><h2 id=tldr>TL;DR</h2><ul><li><strong>목표</strong>: Hugo 사이트의 자동화된 빌드, 테스트, 배포 파이프라인 구축</li><li><strong>핵심</strong>: 워크플로우 최적화, 캐싱 전략, 아티팩트 관리, 제로 다운타임 배포</li><li><strong>결과</strong>: 배포 시간 단축, 일관된 빌드 환경, 자동화된 품질 관리</li></ul><h2 id=context>Context</h2><p>Hugo와 같은 정적 사이트 생성기는 자동화된 CI/CD 파이프라인으로부터 큰 이익을 얻습니다. GitHub Actions는 외부 서비스 없이 캐싱, 빌드 최적화, 배포 자동화를 제공하며 GitHub Pages와의 원활한 통합을 제공합니다.</p><h2 id=problem>Problem</h2><p>수동 배포 프로세스에는 여러 제한사항이 있습니다:</p><ul><li>시간이 많이 걸리는 수동 빌드 및 배포</li><li>일관성 없는 빌드 환경</li><li>자동화된 테스팅이나 검증 부재</li><li>캐싱 부족으로 인한 느린 빌드</li><li>Pull Request를 위한 프리뷰 배포 부재</li><li>배포 프로세스에서의 인간적 오류 위험</li></ul><h2 id=workflow-basics>Workflow Basics</h2><h3 id=basic-hugo-github-actions-workflow>Basic Hugo GitHub Actions Workflow</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>name</span>: <span style=color:#ae81ff>Deploy Hugo site to GitHub Pages</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>on</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>push</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>branches</span>: [ <span style=color:#ae81ff>main, master ]</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>workflow_dispatch</span>:
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>permissions</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>contents</span>: <span style=color:#ae81ff>read</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>pages</span>: <span style=color:#ae81ff>write</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>id-token</span>: <span style=color:#ae81ff>write</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>concurrency</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>group</span>: <span style=color:#e6db74>&#34;pages&#34;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>cancel-in-progress</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>jobs</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>build</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>runs-on</span>: <span style=color:#ae81ff>ubuntu-latest</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>steps</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Checkout</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/checkout@v4</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Setup Hugo</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>peaceiris/actions-hugo@v2</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>hugo-version</span>: <span style=color:#e6db74>&#39;0.125.7&#39;</span>
-</span></span><span style=display:flex><span>          <span style=color:#f92672>extended</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Build</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>env</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>BASE_URL</span>: <span style=color:#ae81ff>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>          echo &#34;Using baseURL=$BASE_URL&#34;
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>          hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Upload artifact</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/upload-pages-artifact@v3</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>path</span>: <span style=color:#ae81ff>./public</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>deploy</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>environment</span>:
-</span></span><span style=display:flex><span>      <span style=color:#f92672>name</span>: <span style=color:#ae81ff>github-pages</span>
-</span></span><span style=display:flex><span>      <span style=color:#f92672>url</span>: <span style=color:#ae81ff>${{ steps.deployment.outputs.page_url }}</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>needs</span>: <span style=color:#ae81ff>build</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>runs-on</span>: <span style=color:#ae81ff>ubuntu-latest</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>steps</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Setup Pages</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/configure-pages@v5</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>enablement</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Deploy to GitHub Pages</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>id</span>: <span style=color:#ae81ff>deployment</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/deploy-pages@v4</span>
-</span></span></code></pre></div><h2 id=cache-optimization>Cache Optimization</h2><h3 id=hugo-module-caching>Hugo Module Caching</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Cache Hugo modules</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/cache@v4</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      ~/.cache/hugo
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      resources/_gen</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>key</span>: <span style=color:#ae81ff>${{ runner.os }}-hugo-${{ hashFiles(&#39;**/go.sum&#39;) }}</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restore-keys</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      ${{ runner.os }}-hugo-</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Cache Hugo build</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/cache@v4</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      public
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      resources/_gen</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>key</span>: <span style=color:#ae81ff>${{ runner.os }}-hugo-${{ hashFiles(&#39;**/*.md&#39;, &#39;**/*.html&#39;, &#39;**/*.toml&#39;) }}</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restore-keys</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      ${{ runner.os }}-hugo-</span>
-</span></span></code></pre></div><h3 id=nodejs-dependencies-caching>Node.js Dependencies Caching</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Cache Node modules</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/cache@v4</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: <span style=color:#ae81ff>~/.npm</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>key</span>: <span style=color:#ae81ff>${{ runner.os }}-node-${{ hashFiles(&#39;**/package-lock.json&#39;) }}</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>restore-keys</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      ${{ runner.os }}-node-</span>
-</span></span></code></pre></div><h2 id=build-flags-and-optimization>Build Flags and Optimization</h2><h3 id=advanced-hugo-build-configuration>Advanced Hugo Build Configuration</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Build with optimization</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>env</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>HUGO_ENV</span>: <span style=color:#ae81ff>production</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>BASE_URL</span>: <span style=color:#ae81ff>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    hugo \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --minify \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --baseURL &#34;$BASE_URL&#34; \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --buildDrafts=false \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --buildFuture=false \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --buildExpired=false \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --cleanDestinationDir \
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      --gc</span>
-</span></span></code></pre></div><h3 id=environment-specific-builds>Environment-Specific Builds</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Build for environment</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>env</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>BASE_URL</span>: <span style=color:#ae81ff>${{ github.event_name == &#39;pull_request&#39; &amp;&amp; format(&#39;https://{0}-{1}.github.io/{2}/&#39;, github.event.pull_request.head.repo.owner.login, github.event.pull_request.number, github.event.repository.name) || format(&#39;https://{0}.github.io/{1}/&#39;, github.repository_owner, github.event.repository.name) }}</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    echo &#34;Building for: $BASE_URL&#34;
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
-</span></span></code></pre></div><h2 id=artifact-management>Artifact Management</h2><h3 id=optimized-artifact-upload>Optimized Artifact Upload</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Upload artifact with compression</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/upload-pages-artifact@v3</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: <span style=color:#ae81ff>./public</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>retention-days</span>: <span style=color:#ae81ff>30</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>compression-level</span>: <span style=color:#ae81ff>6</span>
-</span></span></code></pre></div><h3 id=multi-environment-artifacts>Multi-Environment Artifacts</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Upload production artifact</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>github.ref == &#39;refs/heads/main&#39;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/upload-pages-artifact@v3</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: <span style=color:#ae81ff>./public</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>production-site</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Upload preview artifact</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>github.event_name == &#39;pull_request&#39;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/upload-pages-artifact@v3</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>path</span>: <span style=color:#ae81ff>./public</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>name</span>: <span style=color:#ae81ff>preview-${{ github.event.pull_request.number }}</span>
-</span></span></code></pre></div><h2 id=performance-tips>Performance Tips</h2><h3 id=parallel-build-steps>Parallel Build Steps</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>jobs</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>build</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>runs-on</span>: <span style=color:#ae81ff>ubuntu-latest</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>steps</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Checkout</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/checkout@v4</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Setup Hugo</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/setup-hugo@v2</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>hugo-version</span>: <span style=color:#e6db74>&#39;0.125.7&#39;</span>
-</span></span><span style=display:flex><span>          <span style=color:#f92672>extended</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Build site</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>run</span>: <span style=color:#ae81ff>hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Optimize images</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>          find public -name &#34;*.jpg&#34; -o -name &#34;*.png&#34; | head -10 | xargs -I {} convert {} -quality 85 -strip {}</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Generate sitemap</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>run</span>: <span style=color:#ae81ff>hugo --baseURL &#34;$BASE_URL&#34; --disableKinds=page,section,taxonomy,taxonomyTerm</span>
-</span></span></code></pre></div><h3 id=build-matrix-for-multiple-hugo-versions>Build Matrix for Multiple Hugo Versions</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>strategy</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>matrix</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>hugo-version</span>: [<span style=color:#e6db74>&#39;0.120.0&#39;</span>, <span style=color:#e6db74>&#39;0.125.7&#39;</span>, <span style=color:#e6db74>&#39;0.130.0&#39;</span>]
-</span></span><span style=display:flex><span>    <span style=color:#f92672>include</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>hugo-version</span>: <span style=color:#e6db74>&#39;0.125.7&#39;</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>extended</span>: <span style=color:#66d9ef>true</span>
-</span></span></code></pre></div><h2 id=advanced-workflow-features>Advanced Workflow Features</h2><h3 id=pull-request-previews>Pull Request Previews</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span><span style=color:#f92672>name</span>: <span style=color:#ae81ff>Preview Hugo site</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>on</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>pull_request</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>branches</span>: [ <span style=color:#ae81ff>main ]</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>jobs</span>:
-</span></span><span style=display:flex><span>  <span style=color:#f92672>preview</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>runs-on</span>: <span style=color:#ae81ff>ubuntu-latest</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>steps</span>:
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Checkout</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/checkout@v4</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Setup Hugo</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>actions/setup-hugo@v2</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>hugo-version</span>: <span style=color:#e6db74>&#39;0.125.7&#39;</span>
-</span></span><span style=display:flex><span>          <span style=color:#f92672>extended</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Build preview</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>env</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>BASE_URL</span>: <span style=color:#ae81ff>https://${{ github.event.pull_request.number }}.preview.example.com/</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>run</span>: <span style=color:#ae81ff>hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>      - <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Deploy to preview</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>peaceiris/actions-gh-pages@v3</span>
-</span></span><span style=display:flex><span>        <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>          <span style=color:#f92672>github_token</span>: <span style=color:#ae81ff>${{ secrets.GITHUB_TOKEN }}</span>
-</span></span><span style=display:flex><span>          <span style=color:#f92672>publish_dir</span>: <span style=color:#ae81ff>./public</span>
-</span></span><span style=display:flex><span>          <span style=color:#f92672>destination_dir</span>: <span style=color:#ae81ff>preview/pr-${{ github.event.pull_request.number }}</span>
-</span></span></code></pre></div><h3 id=automated-testing>Automated Testing</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Test site build</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    hugo --buildDrafts --buildFuture
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    if [ $? -ne 0 ]; then
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      echo &#34;Build failed&#34;
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>      exit 1
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    fi</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Validate HTML</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    npx html-validate public/**/*.html</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Check for broken links</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    npx linkinator public --recurse --silent</span>
-</span></span></code></pre></div><h3 id=security-scanning>Security Scanning</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Security scan</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>github/super-linter@v4</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>env</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>DEFAULT_BRANCH</span>: <span style=color:#ae81ff>main</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>GITHUB_TOKEN</span>: <span style=color:#ae81ff>${{ secrets.GITHUB_TOKEN }}</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>VALIDATE_ALL_CODEBASE</span>: <span style=color:#66d9ef>false</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>VALIDATE_MARKDOWN</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>VALIDATE_YAML</span>: <span style=color:#66d9ef>true</span>
-</span></span></code></pre></div><h2 id=zero-downtime-deployment>Zero-Downtime Deployment</h2><h3 id=blue-green-deployment-strategy>Blue-Green Deployment Strategy</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Deploy to staging</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>github.ref != &#39;refs/heads/main&#39;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    hugo --baseURL &#34;https://staging.example.com/&#34;
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    # Deploy to staging environment</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Deploy to production</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>github.ref == &#39;refs/heads/main&#39;</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    hugo --baseURL &#34;https://example.com/&#34;
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    # Deploy to production environment</span>
-</span></span></code></pre></div><h3 id=health-checks>Health Checks</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Health check</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>run</span>: |<span style=color:#e6db74>
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    curl -f https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ || exit 1
-</span></span></span><span style=display:flex><span><span style=color:#e6db74>    echo &#34;Site is healthy&#34;</span>
-</span></span></code></pre></div><h2 id=monitoring-and-alerts>Monitoring and Alerts</h2><h3 id=build-notifications>Build Notifications</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Notify on success</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>success()</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>8398a7/action-slack@v3</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>status</span>: <span style=color:#ae81ff>success</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>text</span>: <span style=color:#e6db74>&#34;Hugo site deployed successfully!&#34;</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Notify on failure</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>if</span>: <span style=color:#ae81ff>failure()</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>8398a7/action-slack@v3</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>status</span>: <span style=color:#ae81ff>failure</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>text</span>: <span style=color:#e6db74>&#34;Hugo site deployment failed!&#34;</span>
-</span></span></code></pre></div><h3 id=performance-monitoring>Performance Monitoring</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-yaml data-lang=yaml><span style=display:flex><span>- <span style=color:#f92672>name</span>: <span style=color:#ae81ff>Lighthouse CI</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>uses</span>: <span style=color:#ae81ff>treosh/lighthouse-ci-action@v10</span>
-</span></span><span style=display:flex><span>  <span style=color:#f92672>with</span>:
-</span></span><span style=display:flex><span>    <span style=color:#f92672>configPath</span>: <span style=color:#e6db74>&#39;./lighthouserc.json&#39;</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>uploadArtifacts</span>: <span style=color:#66d9ef>true</span>
-</span></span><span style=display:flex><span>    <span style=color:#f92672>temporaryPublicStorage</span>: <span style=color:#66d9ef>true</span>
-</span></span></code></pre></div><h2 id=common-pitfalls>Common Pitfalls</h2><ol><li><strong>Missing Permissions</strong>: Ensure proper GitHub Pages permissions</li><li><strong>Base URL Issues</strong>: Always use correct baseURL for GitHub Pages</li><li><strong>Cache Invalidation</strong>: Clear cache when Hugo version changes</li><li><strong>Artifact Size</strong>: Monitor artifact size limits</li><li><strong>Build Timeouts</strong>: Optimize build steps to avoid timeouts</li></ol><h2 id=best-practices>Best Practices</h2><ul><li>Use specific Hugo versions for reproducible builds</li><li>Implement proper caching strategies</li><li>Add automated testing and validation</li><li>Monitor build performance and optimize</li><li>Use environment-specific configurations</li><li>Implement proper error handling and notifications</li></ul><h2 id=further-work>Further Work</h2><ul><li>Implement advanced caching strategies</li><li>Add automated performance testing</li><li>Create custom deployment strategies</li><li>Integrate with external monitoring services</li><li>Add automated security scanning</li><li>Implement A/B testing capabilities</li></ul><h2 id=conclusion>Conclusion</h2><p>GitHub Actions provides a robust foundation for Hugo site deployment with excellent caching, build optimization, and deployment automation. By implementing proper caching strategies, build flags, and artifact management, you can achieve fast, reliable deployments with zero downtime.</p><p>The key is starting with a basic workflow and gradually adding optimization features. Focus on caching for performance, proper build flags for optimization, and monitoring for reliability. This approach scales well and keeps your deployment process efficient and maintainable.</p></div><nav class=pagination aria-label="이전/다음 글" style=margin-top:32px;gap:16px;display:flex;justify-content:space-between;flex-wrap:wrap><div class="flex-1 min-w-0"><a class="btn btn-ghost flex items-center gap-2" href=../../blog/dynamic-svg-thumbnails-hugo/ aria-label="이전 글: Hugo 동적 SVG 썸네일"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-<span class=truncate>Hugo 동적 SVG 썸네일</span></a></div><div class="flex-1 min-w-0 text-right"><a class="btn btn-ghost flex items-center gap-2" href=../../blog/go-networking-tips-timeouts-backoff-idempotency/ aria-label="다음 글: Go 네트워킹 팁: 타임아웃, 백오프, 멱등성"><span class=truncate>Go 네트워킹 팁: 타임아웃, 백오프, 멱등성</span>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></nav></article></main><footer class=site-footer><div class=container><div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8"><p class="text-sm text-muted-foreground">© 2025 이상욱</p><div class="flex items-center gap-4"></div></div></div></footer></body></html>
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hugo GitHub Actions 파이프라인 | Dev Note by sw&#39;Lee</title>
+<meta name="description" content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성">
+<link rel="canonical" href="http://localhost:1313/blog/github-actions-hugo-pipeline/">
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../favicon.svg">
+
+<meta name="author" content="이상욱">
+
+
+<link rel="dns-prefetch" href="//img.shields.io">
+<link rel="preconnect" href="https://img.shields.io" crossorigin>
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/blog/github-actions-hugo-pipeline/">
+<meta property="og:title" content="Hugo GitHub Actions 파이프라인 | Dev Note by sw&#39;Lee">
+<meta property="og:description" content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성">
+<meta property="og:image" content="http://localhost:1313/images/og-default.svg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Hugo GitHub Actions 파이프라인 | Dev Note by sw&#39;Lee">
+<meta name="twitter:description" content="Go 백엔드 개발자 이상욱의 포트폴리오 - 시스템 도구, 백엔드 개발, 관측 가능성">
+<meta name="twitter:image" content="http://localhost:1313/images/og-default.svg">
+
+
+
+<link rel="preload" as="style" href="../../css/styles.css?v=1758862512">
+<link rel="stylesheet" href="../../css/styles.css?v=1758862512">
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "이상욱",
+  "url": "http:\/\/localhost:1313\/",
+  "sameAs": []
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  </head>
+  <body class="min-h-screen bg-background font-sans antialiased">
+    <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">본문으로 건너뛰기</a>
+    <header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../../">
+      <span class="font-bold text-xl">Dev Note by sw&#39;Lee</span>
+    </a>
+    
+    <div class="header-controls">
+      
+      <button id="dark-mode-toggle" class="theme-toggle" aria-label="다크모드 토글">
+        <svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+      
+      
+      <button id="menu-toggle" class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  
+  <nav id="main-navigation" class="main-navigation hidden">
+    <div class="nav-content">
+      <ul class="nav-list">
+        
+          <li><a href="../../" class="nav-link">Home</a></li>
+        
+          <li><a href="../../projects/" class="nav-link">Projects</a></li>
+        
+          <li><a href="../../blog/" class="nav-link">Blog</a></li>
+        
+          <li><a href="../../tags/" class="nav-link">Tags</a></li>
+        
+          <li><a href="../../about/" class="nav-link">About</a></li>
+        
+          <li><a href="../../contact/" class="nav-link">Contact</a></li>
+        
+      </ul>
+    </div>
+  </nav>
+</header>
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/mobile-menu.js" defer></script>
+
+    <main id="main-content" role="main" class="container">
+      
+<article class="article">
+  
+  
+  
+  
+  
+  
+    
+    
+    <img class="cover" src="http://localhost:1313/gen/thumbs/ed8897e92f45cd2fa660e5d8ff3c807a.svg" alt="Hugo GitHub Actions 파이프라인 cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  
+
+  <h1>Hugo GitHub Actions 파이프라인</h1>
+  <p class="meta">2025-01-15</p>
+  
+    <ul class="tags">
+      <li>github-actions</li><li>hugo</li><li>ci-cd</li><li>deployment</li><li>automation</li><li>performance</li>
+    </ul>
+  
+
+  <div class="content">
+    <h1 id="hugo-github-actions-파이프라인">Hugo GitHub Actions 파이프라인</h1>
+<h2 id="tldr">TL;DR</h2>
+<ul>
+<li><strong>목표</strong>: Hugo 사이트의 자동화된 빌드, 테스트, 배포 파이프라인 구축</li>
+<li><strong>핵심</strong>: 워크플로우 최적화, 캐싱 전략, 아티팩트 관리, 제로 다운타임 배포</li>
+<li><strong>결과</strong>: 배포 시간 단축, 일관된 빌드 환경, 자동화된 품질 관리</li>
+</ul>
+<h2 id="context">Context</h2>
+<p>Hugo와 같은 정적 사이트 생성기는 자동화된 CI/CD 파이프라인으로부터 큰 이익을 얻습니다. GitHub Actions는 외부 서비스 없이 캐싱, 빌드 최적화, 배포 자동화를 제공하며 GitHub Pages와의 원활한 통합을 제공합니다.</p>
+<h2 id="problem">Problem</h2>
+<p>수동 배포 프로세스에는 여러 제한사항이 있습니다:</p>
+<ul>
+<li>시간이 많이 걸리는 수동 빌드 및 배포</li>
+<li>일관성 없는 빌드 환경</li>
+<li>자동화된 테스팅이나 검증 부재</li>
+<li>캐싱 부족으로 인한 느린 빌드</li>
+<li>Pull Request를 위한 프리뷰 배포 부재</li>
+<li>배포 프로세스에서의 인간적 오류 위험</li>
+</ul>
+<h2 id="workflow-basics">Workflow Basics</h2>
+<h3 id="basic-hugo-github-actions-workflow">Basic Hugo GitHub Actions Workflow</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy Hugo site to GitHub Pages</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">push</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [ <span style="color:#ae81ff">main, master ]</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">workflow_dispatch</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">permissions</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">contents</span>: <span style="color:#ae81ff">read</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pages</span>: <span style="color:#ae81ff">write</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">id-token</span>: <span style="color:#ae81ff">write</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">concurrency</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">group</span>: <span style="color:#e6db74">&#34;pages&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">cancel-in-progress</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Hugo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-hugo@v2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">hugo-version</span>: <span style="color:#e6db74">&#39;0.125.7&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">extended</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">BASE_URL</span>: <span style="color:#ae81ff">https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Using baseURL=$BASE_URL&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload artifact</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-pages-artifact@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">path</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">deploy</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">github-pages</span>
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">url</span>: <span style="color:#ae81ff">${{ steps.deployment.outputs.page_url }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">needs</span>: <span style="color:#ae81ff">build</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Pages</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/configure-pages@v5</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">enablement</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy to GitHub Pages</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">id</span>: <span style="color:#ae81ff">deployment</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/deploy-pages@v4</span>
+</span></span></code></pre></div><h2 id="cache-optimization">Cache Optimization</h2>
+<h3 id="hugo-module-caching">Hugo Module Caching</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache Hugo modules</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache@v4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ~/.cache/hugo
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      resources/_gen</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ runner.os }}-hugo-${{ hashFiles(&#39;**/go.sum&#39;) }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restore-keys</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ${{ runner.os }}-hugo-</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache Hugo build</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache@v4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      public
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      resources/_gen</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ runner.os }}-hugo-${{ hashFiles(&#39;**/*.md&#39;, &#39;**/*.html&#39;, &#39;**/*.toml&#39;) }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restore-keys</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ${{ runner.os }}-hugo-</span>
+</span></span></code></pre></div><h3 id="nodejs-dependencies-caching">Node.js Dependencies Caching</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Cache Node modules</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/cache@v4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">~/.npm</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">key</span>: <span style="color:#ae81ff">${{ runner.os }}-node-${{ hashFiles(&#39;**/package-lock.json&#39;) }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">restore-keys</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      ${{ runner.os }}-node-</span>
+</span></span></code></pre></div><h2 id="build-flags-and-optimization">Build Flags and Optimization</h2>
+<h3 id="advanced-hugo-build-configuration">Advanced Hugo Build Configuration</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build with optimization</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">HUGO_ENV</span>: <span style="color:#ae81ff">production</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">BASE_URL</span>: <span style="color:#ae81ff">https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hugo \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --minify \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --baseURL &#34;$BASE_URL&#34; \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --buildDrafts=false \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --buildFuture=false \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --buildExpired=false \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --cleanDestinationDir \
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      --gc</span>
+</span></span></code></pre></div><h3 id="environment-specific-builds">Environment-Specific Builds</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build for environment</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">BASE_URL</span>: <span style="color:#ae81ff">${{ github.event_name == &#39;pull_request&#39; &amp;&amp; format(&#39;https://{0}-{1}.github.io/{2}/&#39;, github.event.pull_request.head.repo.owner.login, github.event.pull_request.number, github.event.repository.name) || format(&#39;https://{0}.github.io/{1}/&#39;, github.repository_owner, github.event.repository.name) }}</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    echo &#34;Building for: $BASE_URL&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
+</span></span></code></pre></div><h2 id="artifact-management">Artifact Management</h2>
+<h3 id="optimized-artifact-upload">Optimized Artifact Upload</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload artifact with compression</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-pages-artifact@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">retention-days</span>: <span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">compression-level</span>: <span style="color:#ae81ff">6</span>
+</span></span></code></pre></div><h3 id="multi-environment-artifacts">Multi-Environment Artifacts</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload production artifact</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">github.ref == &#39;refs/heads/main&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-pages-artifact@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">production-site</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Upload preview artifact</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">github.event_name == &#39;pull_request&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/upload-pages-artifact@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">path</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">name</span>: <span style="color:#ae81ff">preview-${{ github.event.pull_request.number }}</span>
+</span></span></code></pre></div><h2 id="performance-tips">Performance Tips</h2>
+<h3 id="parallel-build-steps">Parallel Build Steps</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">build</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Hugo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-hugo@v2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">hugo-version</span>: <span style="color:#e6db74">&#39;0.125.7&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">extended</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build site</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Optimize images</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          find public -name &#34;*.jpg&#34; -o -name &#34;*.png&#34; | head -10 | xargs -I {} convert {} -quality 85 -strip {}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Generate sitemap</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">hugo --baseURL &#34;$BASE_URL&#34; --disableKinds=page,section,taxonomy,taxonomyTerm</span>
+</span></span></code></pre></div><h3 id="build-matrix-for-multiple-hugo-versions">Build Matrix for Multiple Hugo Versions</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">strategy</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">matrix</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hugo-version</span>: [<span style="color:#e6db74">&#39;0.120.0&#39;</span>, <span style="color:#e6db74">&#39;0.125.7&#39;</span>, <span style="color:#e6db74">&#39;0.130.0&#39;</span>]
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">include</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">hugo-version</span>: <span style="color:#e6db74">&#39;0.125.7&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">extended</span>: <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><h2 id="advanced-workflow-features">Advanced Workflow Features</h2>
+<h3 id="pull-request-previews">Pull Request Previews</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Preview Hugo site</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">pull_request</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">branches</span>: [ <span style="color:#ae81ff">main ]</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">preview</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v4</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup Hugo</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/setup-hugo@v2</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">hugo-version</span>: <span style="color:#e6db74">&#39;0.125.7&#39;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">extended</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Build preview</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">BASE_URL</span>: <span style="color:#ae81ff">https://${{ github.event.pull_request.number }}.preview.example.com/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">hugo --minify --baseURL &#34;$BASE_URL&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy to preview</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-gh-pages@v3</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">github_token</span>: <span style="color:#ae81ff">${{ secrets.GITHUB_TOKEN }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">publish_dir</span>: <span style="color:#ae81ff">./public</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">destination_dir</span>: <span style="color:#ae81ff">preview/pr-${{ github.event.pull_request.number }}</span>
+</span></span></code></pre></div><h3 id="automated-testing">Automated Testing</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Test site build</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hugo --buildDrafts --buildFuture
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    if [ $? -ne 0 ]; then
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      echo &#34;Build failed&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">      exit 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Validate HTML</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    npx html-validate public/**/*.html</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Check for broken links</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    npx linkinator public --recurse --silent</span>
+</span></span></code></pre></div><h3 id="security-scanning">Security Scanning</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Security scan</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">github/super-linter@v4</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">DEFAULT_BRANCH</span>: <span style="color:#ae81ff">main</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">GITHUB_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.GITHUB_TOKEN }}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">VALIDATE_ALL_CODEBASE</span>: <span style="color:#66d9ef">false</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">VALIDATE_MARKDOWN</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">VALIDATE_YAML</span>: <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><h2 id="zero-downtime-deployment">Zero-Downtime Deployment</h2>
+<h3 id="blue-green-deployment-strategy">Blue-Green Deployment Strategy</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy to staging</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">github.ref != &#39;refs/heads/main&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hugo --baseURL &#34;https://staging.example.com/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    # Deploy to staging environment</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy to production</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">github.ref == &#39;refs/heads/main&#39;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    hugo --baseURL &#34;https://example.com/&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    # Deploy to production environment</span>
+</span></span></code></pre></div><h3 id="health-checks">Health Checks</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Health check</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    curl -f https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/ || exit 1
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    echo &#34;Site is healthy&#34;</span>
+</span></span></code></pre></div><h2 id="monitoring-and-alerts">Monitoring and Alerts</h2>
+<h3 id="build-notifications">Build Notifications</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Notify on success</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">success()</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">8398a7/action-slack@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">status</span>: <span style="color:#ae81ff">success</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">text</span>: <span style="color:#e6db74">&#34;Hugo site deployed successfully!&#34;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Notify on failure</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">if</span>: <span style="color:#ae81ff">failure()</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">8398a7/action-slack@v3</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">status</span>: <span style="color:#ae81ff">failure</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">text</span>: <span style="color:#e6db74">&#34;Hugo site deployment failed!&#34;</span>
+</span></span></code></pre></div><h3 id="performance-monitoring">Performance Monitoring</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>- <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Lighthouse CI</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">treosh/lighthouse-ci-action@v10</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">with</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">configPath</span>: <span style="color:#e6db74">&#39;./lighthouserc.json&#39;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">uploadArtifacts</span>: <span style="color:#66d9ef">true</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">temporaryPublicStorage</span>: <span style="color:#66d9ef">true</span>
+</span></span></code></pre></div><h2 id="common-pitfalls">Common Pitfalls</h2>
+<ol>
+<li><strong>Missing Permissions</strong>: Ensure proper GitHub Pages permissions</li>
+<li><strong>Base URL Issues</strong>: Always use correct baseURL for GitHub Pages</li>
+<li><strong>Cache Invalidation</strong>: Clear cache when Hugo version changes</li>
+<li><strong>Artifact Size</strong>: Monitor artifact size limits</li>
+<li><strong>Build Timeouts</strong>: Optimize build steps to avoid timeouts</li>
+</ol>
+<h2 id="best-practices">Best Practices</h2>
+<ul>
+<li>Use specific Hugo versions for reproducible builds</li>
+<li>Implement proper caching strategies</li>
+<li>Add automated testing and validation</li>
+<li>Monitor build performance and optimize</li>
+<li>Use environment-specific configurations</li>
+<li>Implement proper error handling and notifications</li>
+</ul>
+<h2 id="further-work">Further Work</h2>
+<ul>
+<li>Implement advanced caching strategies</li>
+<li>Add automated performance testing</li>
+<li>Create custom deployment strategies</li>
+<li>Integrate with external monitoring services</li>
+<li>Add automated security scanning</li>
+<li>Implement A/B testing capabilities</li>
+</ul>
+<h2 id="conclusion">Conclusion</h2>
+<p>GitHub Actions provides a robust foundation for Hugo site deployment with excellent caching, build optimization, and deployment automation. By implementing proper caching strategies, build flags, and artifact management, you can achieve fast, reliable deployments with zero downtime.</p>
+<p>The key is starting with a basic workflow and gradually adding optimization features. Focus on caching for performance, proper build flags for optimization, and monitoring for reliability. This approach scales well and keeps your deployment process efficient and maintainable.</p>
+
+  </div>
+
+  <nav class="pagination" aria-label="이전/다음 글" style="margin-top:32px; gap:16px; display:flex; justify-content:space-between; flex-wrap:wrap;">
+    <div class="flex-1 min-w-0">
+      
+        <a class="btn btn-ghost flex items-center gap-2" href="../../blog/dynamic-svg-thumbnails-hugo/" aria-label="이전 글: Hugo 동적 SVG 썸네일">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="truncate">Hugo 동적 SVG 썸네일</span>
+        </a>
+      
+    </div>
+    <div class="flex-1 min-w-0 text-right">
+      
+        <a class="btn btn-ghost flex items-center gap-2" href="../../blog/go-networking-tips-timeouts-backoff-idempotency/" aria-label="다음 글: Go 네트워킹 팁: 타임아웃, 백오프, 멱등성">
+          <span class="truncate">Go 네트워킹 팁: 타임아웃, 백오프, 멱등성</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      
+    </div>
+  </nav>
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8">
+      <p class="text-sm text-muted-foreground">
+        © 2025 이상욱
+      </p>
+      <div class="flex items-center gap-4">
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,10 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Elk on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/elk/</link><description>Recent content in Elk on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/elk/index.xml" rel="self" type="application/rss+xml"/><item><title>개발부터 프로덕션까지 로깅 전략</title><link>https://swlee3306.github.io/sulee_portfolio/blog/logging-strategy-dev-to-prod/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/logging-strategy-dev-to-prod/</guid><description>&lt;h2 id="tldr">TL;DR&lt;/h2>
-&lt;ul>
-&lt;li>&lt;strong>목표&lt;/strong>: 개발부터 프로덕션까지 확장 가능한 로깅 시스템 구축&lt;/li>
-&lt;li>&lt;strong>핵심&lt;/strong>: 구조화된 로깅, 로테이션 정책, 중앙화된 수집, 성능 최적화&lt;/li>
-&lt;li>&lt;strong>결과&lt;/strong>: 디버깅 효율성 향상, 운영 가시성 확보, 시스템 안정성 증대&lt;/li>
-&lt;/ul>
-&lt;h2 id="context">Context&lt;/h2>
-&lt;p>현대의 분산 시스템에서 로깅은 단순한 디버깅 출력을 넘어서 관찰 가능성의 핵심 구성 요소입니다. 애플리케이션이 개발부터 프로덕션까지 확장되면서, 로깅 전략도 증가하는 볼륨, 복잡성, 운영 요구사항을 처리할 수 있도록 진화해야 합니다.&lt;/p>
-&lt;h2 id="problem">Problem&lt;/h2>
-&lt;p>대부분의 애플리케이션은 간단한 &lt;code>fmt.Println&lt;/code>이나 기본 로깅으로 시작하지만, 이 접근법은 프로덕션에서 문제가 됩니다:&lt;/p></description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Elk on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/elk/</link>
+    <description>Recent content in Elk on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/elk/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>개발부터 프로덕션까지 로깅 전략</title>
+      <link>http://localhost:1313/blog/logging-strategy-dev-to-prod/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/blog/logging-strategy-dev-to-prod/</guid>
+      <description>&lt;h2 id=&#34;tldr&#34;&gt;TL;DR&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;strong&gt;목표&lt;/strong&gt;: 개발부터 프로덕션까지 확장 가능한 로깅 시스템 구축&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;핵심&lt;/strong&gt;: 구조화된 로깅, 로테이션 정책, 중앙화된 수집, 성능 최적화&lt;/li&gt;&#xA;&lt;li&gt;&lt;strong&gt;결과&lt;/strong&gt;: 디버깅 효율성 향상, 운영 가시성 확보, 시스템 안정성 증대&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;context&#34;&gt;Context&lt;/h2&gt;&#xA;&lt;p&gt;현대의 분산 시스템에서 로깅은 단순한 디버깅 출력을 넘어서 관찰 가능성의 핵심 구성 요소입니다. 애플리케이션이 개발부터 프로덕션까지 확장되면서, 로깅 전략도 증가하는 볼륨, 복잡성, 운영 요구사항을 처리할 수 있도록 진화해야 합니다.&lt;/p&gt;&#xA;&lt;h2 id=&#34;problem&#34;&gt;Problem&lt;/h2&gt;&#xA;&lt;p&gt;대부분의 애플리케이션은 간단한 &lt;code&gt;fmt.Println&lt;/code&gt;이나 기본 로깅으로 시작하지만, 이 접근법은 프로덕션에서 문제가 됩니다:&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

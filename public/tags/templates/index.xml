@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Templates on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/templates/</link><description>Recent content in Templates on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/templates/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo 동적 SVG 썸네일</title><link>https://swlee3306.github.io/sulee_portfolio/blog/dynamic-svg-thumbnails-hugo/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/dynamic-svg-thumbnails-hugo/</guid><description>ExecuteAsTemplate, 브랜드 토큰, 폴백 시스템을 활용한 Hugo 리소스 시스템으로 외부 에셋 없이 시각적 일관성 확보</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Templates on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/templates/</link>
+    <description>Recent content in Templates on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/templates/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo 동적 SVG 썸네일</title>
+      <link>http://localhost:1313/blog/dynamic-svg-thumbnails-hugo/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/blog/dynamic-svg-thumbnails-hugo/</guid>
+      <description>ExecuteAsTemplate, 브랜드 토큰, 폴백 시스템을 활용한 Hugo 리소스 시스템으로 외부 에셋 없이 시각적 일관성 확보</description>
+    </item>
+  </channel>
+</rss>

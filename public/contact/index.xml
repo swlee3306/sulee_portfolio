@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Contact on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/contact/</link><description>Recent content in Contact on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><atom:link href="https://swlee3306.github.io/sulee_portfolio/contact/index.xml" rel="self" type="application/rss+xml"/></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Contact on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/contact/</link>
+    <description>Recent content in Contact on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <atom:link href="http://localhost:1313/contact/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

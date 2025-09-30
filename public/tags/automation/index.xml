@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Automation on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/automation/</link><description>Recent content in Automation on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/automation/index.xml" rel="self" type="application/rss+xml"/><item><title>Hugo GitHub Actions 파이프라인</title><link>https://swlee3306.github.io/sulee_portfolio/blog/github-actions-hugo-pipeline/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/github-actions-hugo-pipeline/</guid><description>워크플로우 기본, 캐시, 빌드 플래그, 아티팩트 팁을 활용한 Hugo 사이트의 제로 다운타임 배포 파이프라인</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Automation on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/automation/</link>
+    <description>Recent content in Automation on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/automation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hugo GitHub Actions 파이프라인</title>
+      <link>http://localhost:1313/blog/github-actions-hugo-pipeline/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/blog/github-actions-hugo-pipeline/</guid>
+      <description>워크플로우 기본, 캐시, 빌드 플래그, 아티팩트 팁을 활용한 Hugo 사이트의 제로 다운타임 배포 파이프라인</description>
+    </item>
+  </channel>
+</rss>

@@ -1,1 +1,33 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorial on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/tutorial/</link><description>Recent content in Tutorial on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 13:00:00 +0900</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/tutorial/index.xml" rel="self" type="application/rss+xml"/><item><title>백엔드 엔지니어를 위한 SNMP</title><link>https://swlee3306.github.io/sulee_portfolio/blog/snmp-backend-engineers-guide/</link><pubDate>Wed, 15 Jan 2025 13:00:00 +0900</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/snmp-backend-engineers-guide/</guid><description>백엔드 엔지니어를 위한 SNMP 실전 가이드: MIB, OID, traps vs polling의 핵심 개념과 Go를 활용한 실용적인 네트워크 모니터링 구현 방법을 소개합니다.</description></item><item><title>Go 벤치마킹과 프로파일링 워크플로우</title><link>https://swlee3306.github.io/sulee_portfolio/blog/go-benchmarking-profiling-workflow/</link><pubDate>Wed, 15 Jan 2025 12:00:00 +0900</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/go-benchmarking-profiling-workflow/</guid><description>Go 성능 최적화를 위한 실전 벤치마킹과 프로파일링 워크플로우: testing, bench, pprof, flamegraphs를 활용한 성능 문제 해결과 최적화 방법을 단계별로 소개합니다.</description></item><item><title>Hugo GitHub Pages 서브패스 링크</title><link>https://swlee3306.github.io/sulee_portfolio/blog/hugo-subpath-safe-links-relref-guide/</link><pubDate>Wed, 15 Jan 2025 11:00:00 +0900</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/hugo-subpath-safe-links-relref-guide/</guid><description>GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tutorial on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/tutorial/</link>
+    <description>Recent content in Tutorial on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 13:00:00 +0900</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/tutorial/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>백엔드 엔지니어를 위한 SNMP</title>
+      <link>http://localhost:1313/blog/snmp-backend-engineers-guide/</link>
+      <pubDate>Wed, 15 Jan 2025 13:00:00 +0900</pubDate>
+      <guid>http://localhost:1313/blog/snmp-backend-engineers-guide/</guid>
+      <description>백엔드 엔지니어를 위한 SNMP 실전 가이드: MIB, OID, traps vs polling의 핵심 개념과 Go를 활용한 실용적인 네트워크 모니터링 구현 방법을 소개합니다.</description>
+    </item>
+    <item>
+      <title>Go 벤치마킹과 프로파일링 워크플로우</title>
+      <link>http://localhost:1313/blog/go-benchmarking-profiling-workflow/</link>
+      <pubDate>Wed, 15 Jan 2025 12:00:00 +0900</pubDate>
+      <guid>http://localhost:1313/blog/go-benchmarking-profiling-workflow/</guid>
+      <description>Go 성능 최적화를 위한 실전 벤치마킹과 프로파일링 워크플로우: testing, bench, pprof, flamegraphs를 활용한 성능 문제 해결과 최적화 방법을 단계별로 소개합니다.</description>
+    </item>
+    <item>
+      <title>Hugo GitHub Pages 서브패스 링크</title>
+      <link>http://localhost:1313/blog/hugo-subpath-safe-links-relref-guide/</link>
+      <pubDate>Wed, 15 Jan 2025 11:00:00 +0900</pubDate>
+      <guid>http://localhost:1313/blog/hugo-subpath-safe-links-relref-guide/</guid>
+      <description>GitHub Pages 서브패스 환경에서 Hugo의 relref와 relURL을 활용한 안전한 내부 링크 구현법과 자주 발생하는 문제점들을 실전 예제로 해결하는 가이드</description>
+    </item>
+  </channel>
+</rss>

@@ -1,1 +1,68 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Projects on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/projects/</link><description>Recent content in Projects on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/projects/index.xml" rel="self" type="application/rss+xml"/><item><title>make-snmprec</title><link>https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/</link><pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/</guid><description>SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</description></item><item><title>common-sdk</title><link>https://swlee3306.github.io/sulee_portfolio/projects/common-sdk/</link><pubDate>Fri, 30 May 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/common-sdk/</guid><description>프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</description></item><item><title>system-broadcast-agent</title><link>https://swlee3306.github.io/sulee_portfolio/projects/system-broadcast-agent/</link><pubDate>Fri, 23 May 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/system-broadcast-agent/</guid><description>Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</description></item><item><title>system-Info-collector</title><link>https://swlee3306.github.io/sulee_portfolio/projects/system-info-collector/</link><pubDate>Wed, 02 Apr 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/system-info-collector/</guid><description>시스템 정보 수집 및 REST API·메트릭 노출 에이전트</description></item><item><title>APITestProgram</title><link>https://swlee3306.github.io/sulee_portfolio/projects/apitestprogram/</link><pubDate>Wed, 13 Nov 2024 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/apitestprogram/</guid><description>오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트</description></item><item><title>go_crud</title><link>https://swlee3306.github.io/sulee_portfolio/projects/go_crud/</link><pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/go_crud/</guid><description>REST API로 DB 기본 CRUD를 제공하는 학습용 예제</description></item><item><title>ssh_commend</title><link>https://swlee3306.github.io/sulee_portfolio/projects/ssh_commend/</link><pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/ssh_commend/</guid><description>병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구</description></item><item><title>Goplayground</title><link>https://swlee3306.github.io/sulee_portfolio/projects/goplayground/</link><pubDate>Mon, 26 Feb 2024 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/projects/goplayground/</guid><description>Go 학습/실습을 위한 예제 모음(HTTP·DB·동시성 포함)</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/projects/</link>
+    <description>Recent content in Projects on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Tue, 24 Jun 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>make-snmprec</title>
+      <link>http://localhost:1313/projects/make-snmprec/</link>
+      <pubDate>Tue, 24 Jun 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/make-snmprec/</guid>
+      <description>SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</description>
+    </item>
+    <item>
+      <title>common-sdk</title>
+      <link>http://localhost:1313/projects/common-sdk/</link>
+      <pubDate>Fri, 30 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/common-sdk/</guid>
+      <description>프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</description>
+    </item>
+    <item>
+      <title>system-broadcast-agent</title>
+      <link>http://localhost:1313/projects/system-broadcast-agent/</link>
+      <pubDate>Fri, 23 May 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/system-broadcast-agent/</guid>
+      <description>Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</description>
+    </item>
+    <item>
+      <title>system-Info-collector</title>
+      <link>http://localhost:1313/projects/system-info-collector/</link>
+      <pubDate>Wed, 02 Apr 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/system-info-collector/</guid>
+      <description>시스템 정보 수집 및 REST API·메트릭 노출 에이전트</description>
+    </item>
+    <item>
+      <title>APITestProgram</title>
+      <link>http://localhost:1313/projects/apitestprogram/</link>
+      <pubDate>Wed, 13 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/apitestprogram/</guid>
+      <description>오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트</description>
+    </item>
+    <item>
+      <title>go_crud</title>
+      <link>http://localhost:1313/projects/go_crud/</link>
+      <pubDate>Mon, 11 Nov 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/go_crud/</guid>
+      <description>REST API로 DB 기본 CRUD를 제공하는 학습용 예제</description>
+    </item>
+    <item>
+      <title>ssh_commend</title>
+      <link>http://localhost:1313/projects/ssh_commend/</link>
+      <pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/ssh_commend/</guid>
+      <description>병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구</description>
+    </item>
+    <item>
+      <title>Goplayground</title>
+      <link>http://localhost:1313/projects/goplayground/</link>
+      <pubDate>Mon, 26 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/goplayground/</guid>
+      <description>Go 학습/실습을 위한 예제 모음(HTTP·DB·동시성 포함)</description>
+    </item>
+  </channel>
+</rss>

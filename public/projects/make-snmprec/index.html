@@ -1,18 +1,268 @@
-<!doctype html><html lang=ko class=scroll-smooth><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>make-snmprec | Dev Note by sw'Lee</title><meta name=description content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/"><meta property="og:title" content="make-snmprec | Dev Note by sw'Lee"><meta property="og:description" content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"><meta property="og:image" content="https://swlee3306.github.io/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="make-snmprec | Dev Note by sw'Lee"><meta name=twitter:description content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"><meta name=twitter:image content="https://swlee3306.github.io/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1758860447"><link rel=stylesheet href="../../css/styles.css?v=1758860447"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script><script type=application/ld+json>"{\"@context\":\"https://schema.org\",\"@type\":\"SoftwareSourceCode\",\"author\":{\"@type\":\"Person\",\"name\":\"이상욱\"},\"codeRepository\":\"https://github.com/swlee3306/make-snmprec\",\"datePublished\":\"2025-06-24\",\"description\":\"SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구\",\"image\":\"https://swlee3306.github.io/images/og-default.svg\",\"name\":\"make-snmprec\",\"programmingLanguage\":\"Go\",\"url\":\"https://swlee3306.github.io/sulee_portfolio/projects/make-snmprec/\"}"</script></head><body class="min-h-screen bg-background font-sans antialiased"><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../><span class="font-bold text-xl">Dev Note by sw'Lee</span></a><div class=header-controls><button id=dark-mode-toggle class=theme-toggle aria-label="다크모드 토글">
-<svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-<svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
-</button>
-<button id=menu-toggle class=menu-toggle aria-label="메뉴 열기" aria-expanded=false>
-<svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><nav id=main-navigation class="main-navigation hidden"><div class=nav-content><ul class=nav-list><li><a href=../../ class=nav-link>Home</a></li><li><a href=../../projects/ class=nav-link>Projects</a></li><li><a href=../../blog/ class=nav-link>Blog</a></li><li><a href=../../tags/ class=nav-link>Tags</a></li><li><a href=../../about/ class=nav-link>About</a></li><li><a href=../../contact/ class=nav-link>Contact</a></li></ul></div></nav></header><script src=../../js/navigation.js defer></script><main id=main-content role=main class=container><article class=article><div class=hero-card-wrap style=margin-bottom:16px><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/make-snmprec.svg alt="make-snmprec thumbnail" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px" style=border-radius:16px></div><h1>make-snmprec</h1><p class=summary>SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</p><div class=content><h2 id=개요>개요</h2><p>SNMP 장비로부터 데이터를 수집하여 시뮬레이터에서 사용할 수 있는 <code>.snmprec</code> 포맷으로 변환하는 도구입니다. 테스트/개발 환경에서 실제 장비 없이도 SNMP 응답을 재현할 수 있도록 도와줍니다.</p><p><a class=btn href=https://github.com/swlee3306/make-snmprec target=_blank rel=noopener>GitHub 저장소 열기 →</a></p><h2 id=snmprec-이란>.snmprec 이란?</h2><p><code>.snmprec</code>는 Net-SNMP의 <code>snmpsimd.py</code> 등 시뮬레이터에서 사용되는 레코드 파일 형식입니다. OID와 값, 타입을 라인 단위로 기록해 시뮬레이터가 동일한 응답을 재현할 수 있게 합니다.</p><h2 id=주요-기능>주요 기능</h2><ul><li>지정된 대상 장비/커뮤니티/버전으로 SNMP Walk 수행</li><li>수집된 OID-값을 <code>.snmprec</code> 포맷으로 직렬화</li><li>샘플/필터링 옵션(특정 OID 트리만 포함 등)</li></ul><h2 id=사용-예시>사용 예시</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 대상 장비에서 walk → .snmprec 생성</span>
-</span></span><span style=display:flex><span>make-snmprec <span style=color:#ae81ff>\
-</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --target 192.168.0.10 <span style=color:#ae81ff>\
-</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --community public <span style=color:#ae81ff>\
-</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --version 2c <span style=color:#ae81ff>\
-</span></span></span><span style=display:flex><span><span style=color:#ae81ff></span>  --out device.snmprec
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 시뮬레이터에서 device.snmprec 사용</span>
-</span></span><span style=display:flex><span>snmpsimd.py --data-dir<span style=color:#f92672>=</span>./ --agent-udpv4-endpoint<span style=color:#f92672>=</span>127.0.0.1:1161
-</span></span></code></pre></div><p>프로젝트 README 미존재로 상세 사용법은 추후 보강 예정입니다.</p></div><div class=meta style=display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px><img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading=lazy decoding=async>
-<img alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/make-snmprec loading=lazy decoding=async>
-<a class=btn href=https://github.com/swlee3306/make-snmprec target=_blank rel=noopener aria-label="swlee3306/make-snmprec GitHub 저장소 열기">GitHub 저장소 열기 →</a></div><ul class=tags><li>Go</li></ul><nav class=pagination aria-label="이전/다음 프로젝트" style=margin-top:24px;gap:12px;display:flex;justify-content:space-between><div><a class=btn href=../../projects/common-sdk/ aria-label="이전 프로젝트: common-sdk">← common-sdk</a></div><div></div></nav><section class=section aria-label="관련 프로젝트" style=padding-top:12px><h2>관련 프로젝트</h2><div class=cards><article class=card><a href=../../projects/common-sdk/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/common-sdk.svg alt="common-sdk thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h3 style=margin-top:10px><a href=../../projects/common-sdk/>common-sdk</a></h3><p class=summary-text>프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</p></article><article class=card><a href=../../projects/system-broadcast-agent/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/system-broadcast-agent.svg alt="system-broadcast-agent thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h3 style=margin-top:10px><a href=../../projects/system-broadcast-agent/>system-broadcast-agent</a></h3><p class=summary-text>Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</p></article><article class=card><a href=../../projects/system-info-collector/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/system-info-collector.svg alt="system-Info-collector thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h3 style=margin-top:10px><a href=../../projects/system-info-collector/>system-Info-collector</a></h3><p class=summary-text>시스템 정보 수집 및 REST API·메트릭 노출 에이전트</p></article></div></section></article></main><footer class=site-footer><div class=container><div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8"><p class="text-sm text-muted-foreground">© 2025 이상욱</p><div class="flex items-center gap-4"></div></div></div></footer></body></html>
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>make-snmprec | Dev Note by sw&#39;Lee</title>
+<meta name="description" content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구">
+<link rel="canonical" href="http://localhost:1313/projects/make-snmprec/">
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../favicon.svg">
+
+<meta name="author" content="이상욱">
+
+
+<link rel="dns-prefetch" href="//img.shields.io">
+<link rel="preconnect" href="https://img.shields.io" crossorigin>
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/projects/make-snmprec/">
+<meta property="og:title" content="make-snmprec | Dev Note by sw&#39;Lee">
+<meta property="og:description" content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구">
+<meta property="og:image" content="http://localhost:1313/images/og-default.svg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="make-snmprec | Dev Note by sw&#39;Lee">
+<meta name="twitter:description" content="SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구">
+<meta name="twitter:image" content="http://localhost:1313/images/og-default.svg">
+
+
+
+<link rel="preload" as="style" href="../../css/styles.css?v=1758862512">
+<link rel="stylesheet" href="../../css/styles.css?v=1758862512">
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "이상욱",
+  "url": "http:\/\/localhost:1313\/",
+  "sameAs": []
+}
+</script>
+
+
+
+
+
+
+
+
+
+<script type="application/ld+json">"{\"@context\":\"https://schema.org\",\"@type\":\"SoftwareSourceCode\",\"author\":{\"@type\":\"Person\",\"name\":\"이상욱\"},\"codeRepository\":\"https://github.com/swlee3306/make-snmprec\",\"datePublished\":\"2025-06-24\",\"description\":\"SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구\",\"image\":\"http://localhost:1313/images/og-default.svg\",\"name\":\"make-snmprec\",\"programmingLanguage\":\"Go\",\"url\":\"http://localhost:1313/projects/make-snmprec/\"}"</script>
+
+
+  </head>
+  <body class="min-h-screen bg-background font-sans antialiased">
+    <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">본문으로 건너뛰기</a>
+    <header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../../">
+      <span class="font-bold text-xl">Dev Note by sw&#39;Lee</span>
+    </a>
+    
+    <div class="header-controls">
+      
+      <button id="dark-mode-toggle" class="theme-toggle" aria-label="다크모드 토글">
+        <svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+      
+      
+      <button id="menu-toggle" class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  
+  <nav id="main-navigation" class="main-navigation hidden">
+    <div class="nav-content">
+      <ul class="nav-list">
+        
+          <li><a href="../../" class="nav-link">Home</a></li>
+        
+          <li><a href="../../projects/" class="nav-link">Projects</a></li>
+        
+          <li><a href="../../blog/" class="nav-link">Blog</a></li>
+        
+          <li><a href="../../tags/" class="nav-link">Tags</a></li>
+        
+          <li><a href="../../about/" class="nav-link">About</a></li>
+        
+          <li><a href="../../contact/" class="nav-link">Contact</a></li>
+        
+      </ul>
+    </div>
+  </nav>
+</header>
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/mobile-menu.js" defer></script>
+
+    <main id="main-content" role="main" class="container">
+      
+<article class="article">
+  
+  
+  
+  <div class="hero-card-wrap" style="margin-bottom:16px;">
+    
+      
+      <img class="thumb" src="http://localhost:1313/gen/thumbs/make-snmprec.svg" alt="make-snmprec thumbnail" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" style="border-radius:16px;" />
+    
+  </div>
+
+  <h1>make-snmprec</h1>
+  <p class="summary">SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</p>
+
+  <div class="content">
+    <h2 id="개요">개요</h2>
+<p>SNMP 장비로부터 데이터를 수집하여 시뮬레이터에서 사용할 수 있는 <code>.snmprec</code> 포맷으로 변환하는 도구입니다. 테스트/개발 환경에서 실제 장비 없이도 SNMP 응답을 재현할 수 있도록 도와줍니다.</p>
+<p><a class="btn" href="https://github.com/swlee3306/make-snmprec" target="_blank" rel="noopener">GitHub 저장소 열기 →</a></p>
+<h2 id="snmprec-이란">.snmprec 이란?</h2>
+<p><code>.snmprec</code>는 Net-SNMP의 <code>snmpsimd.py</code> 등 시뮬레이터에서 사용되는 레코드 파일 형식입니다. OID와 값, 타입을 라인 단위로 기록해 시뮬레이터가 동일한 응답을 재현할 수 있게 합니다.</p>
+<h2 id="주요-기능">주요 기능</h2>
+<ul>
+<li>지정된 대상 장비/커뮤니티/버전으로 SNMP Walk 수행</li>
+<li>수집된 OID-값을 <code>.snmprec</code> 포맷으로 직렬화</li>
+<li>샘플/필터링 옵션(특정 OID 트리만 포함 등)</li>
+</ul>
+<h2 id="사용-예시">사용 예시</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 대상 장비에서 walk → .snmprec 생성</span>
+</span></span><span style="display:flex;"><span>make-snmprec <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --target 192.168.0.10 <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --community public <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --version 2c <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>  --out device.snmprec
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 시뮬레이터에서 device.snmprec 사용</span>
+</span></span><span style="display:flex;"><span>snmpsimd.py --data-dir<span style="color:#f92672">=</span>./ --agent-udpv4-endpoint<span style="color:#f92672">=</span>127.0.0.1:1161
+</span></span></code></pre></div><p>프로젝트 README 미존재로 상세 사용법은 추후 보강 예정입니다.</p>
+
+  </div>
+
+  
+    
+    
+    <div class="meta" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:8px;">
+      <img alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading="lazy" decoding="async">
+      <img alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/make-snmprec" loading="lazy" decoding="async">
+      <a class="btn" href="https://github.com/swlee3306/make-snmprec" target="_blank" rel="noopener" aria-label="swlee3306/make-snmprec GitHub 저장소 열기">GitHub 저장소 열기 →</a>
+    </div>
+  
+
+  
+    <ul class="tags">
+      <li>Go</li>
+    </ul>
+  
+
+  
+  <nav class="pagination" aria-label="이전/다음 프로젝트" style="margin-top:24px; gap:12px; display:flex; justify-content:space-between;">
+    <div>
+      
+        <a class="btn" href="../../projects/common-sdk/" aria-label="이전 프로젝트: common-sdk">← common-sdk</a>
+      
+    </div>
+    <div>
+      
+    </div>
+  </nav>
+
+  
+  
+  
+  
+    <section class="section" aria-label="관련 프로젝트" style="padding-top:12px;">
+      <h2>관련 프로젝트</h2>
+      <div class="cards">
+        
+        
+          
+        
+          
+            <article class="card">
+              
+              
+              <a href="../../projects/common-sdk/">
+                
+                  
+                  <img class="thumb" src="http://localhost:1313/gen/thumbs/common-sdk.svg" alt="common-sdk thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                
+              </a>
+              <h3 style="margin-top:10px;"><a href="../../projects/common-sdk/">common-sdk</a></h3>
+              <p class="summary-text">프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</p>
+            </article>
+            
+            
+          
+        
+          
+            <article class="card">
+              
+              
+              <a href="../../projects/system-broadcast-agent/">
+                
+                  
+                  <img class="thumb" src="http://localhost:1313/gen/thumbs/system-broadcast-agent.svg" alt="system-broadcast-agent thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                
+              </a>
+              <h3 style="margin-top:10px;"><a href="../../projects/system-broadcast-agent/">system-broadcast-agent</a></h3>
+              <p class="summary-text">Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</p>
+            </article>
+            
+            
+          
+        
+          
+            <article class="card">
+              
+              
+              <a href="../../projects/system-info-collector/">
+                
+                  
+                  <img class="thumb" src="http://localhost:1313/gen/thumbs/system-info-collector.svg" alt="system-Info-collector thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+                
+              </a>
+              <h3 style="margin-top:10px;"><a href="../../projects/system-info-collector/">system-Info-collector</a></h3>
+              <p class="summary-text">시스템 정보 수집 및 REST API·메트릭 노출 에이전트</p>
+            </article>
+            
+            
+        
+      </div>
+    </section>
+  
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8">
+      <p class="text-sm text-muted-foreground">
+        © 2025 이상욱
+      </p>
+      <div class="flex items-center gap-4">
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

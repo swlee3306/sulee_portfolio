@@ -1,1 +1,19 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Keyboard-Navigation on Dev Note by sw'Lee</title><link>https://swlee3306.github.io/sulee_portfolio/tags/keyboard-navigation/</link><description>Recent content in Keyboard-Navigation on Dev Note by sw'Lee</description><generator>Hugo</generator><language>ko-kr</language><lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://swlee3306.github.io/sulee_portfolio/tags/keyboard-navigation/index.xml" rel="self" type="application/rss+xml"/><item><title>웹 접근성: 키보드 네비게이션 체크리스트</title><link>https://swlee3306.github.io/sulee_portfolio/blog/accessibility-keyboard-navigation-guide/</link><pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate><guid>https://swlee3306.github.io/sulee_portfolio/blog/accessibility-keyboard-navigation-guide/</guid><description>Skip links, ARIA 역할, focus-visible, live regions를 활용한 키보드 우선 네비게이션 구현 가이드와 실용적인 체크리스트</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Keyboard-Navigation on Dev Note by sw&#39;Lee</title>
+    <link>http://localhost:1313/tags/keyboard-navigation/</link>
+    <description>Recent content in Keyboard-Navigation on Dev Note by sw&#39;Lee</description>
+    <generator>Hugo</generator>
+    <language>ko-kr</language>
+    <lastBuildDate>Wed, 15 Jan 2025 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/keyboard-navigation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>웹 접근성: 키보드 네비게이션 체크리스트</title>
+      <link>http://localhost:1313/blog/accessibility-keyboard-navigation-guide/</link>
+      <pubDate>Wed, 15 Jan 2025 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/blog/accessibility-keyboard-navigation-guide/</guid>
+      <description>Skip links, ARIA 역할, focus-visible, live regions를 활용한 키보드 우선 네비게이션 구현 가이드와 실용적인 체크리스트</description>
+    </item>
+  </channel>
+</rss>

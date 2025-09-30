@@ -1,23 +1,460 @@
-<!doctype html><html lang=ko class=scroll-smooth><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Projects | Dev Note by sw'Lee</title><meta name=description content="프로젝트 목록"><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/projects/><meta name=theme-color content="#111111"><link rel=icon href=../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/projects/"><meta property="og:title" content="Projects | Dev Note by sw'Lee"><meta property="og:description" content="프로젝트 목록"><meta property="og:image" content="https://swlee3306.github.io/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Projects | Dev Note by sw'Lee"><meta name=twitter:description content="프로젝트 목록"><meta name=twitter:image content="https://swlee3306.github.io/images/og-default.svg"><link rel=preload as=style href="../css/styles.css?v=1758860447"><link rel=stylesheet href="../css/styles.css?v=1758860447"><link rel=alternate type=application/rss+xml title=RSS href=../projects/index.xml><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script><script type=application/ld+json>"{\"@context\":\"https://schema.org\",\"@type\":\"SoftwareSourceCode\",\"author\":{\"@type\":\"Person\",\"name\":\"이상욱\"},\"datePublished\":\"2025-06-24\",\"description\":\"프로젝트 목록\",\"image\":\"https://swlee3306.github.io/images/og-default.svg\",\"name\":\"Projects\",\"url\":\"https://swlee3306.github.io/sulee_portfolio/projects/\"}"</script></head><body class="min-h-screen bg-background font-sans antialiased"><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../><span class="font-bold text-xl">Dev Note by sw'Lee</span></a><div class=header-controls><button id=dark-mode-toggle class=theme-toggle aria-label="다크모드 토글">
-<svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-<svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
-</button>
-<button id=menu-toggle class=menu-toggle aria-label="메뉴 열기" aria-expanded=false>
-<svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><nav id=main-navigation class="main-navigation hidden"><div class=nav-content><ul class=nav-list><li><a href=../ class=nav-link>Home</a></li><li><a href=../projects/ class=nav-link>Projects</a></li><li><a href=../blog/ class=nav-link>Blog</a></li><li><a href=../tags/ class=nav-link>Tags</a></li><li><a href=../about/ class=nav-link>About</a></li><li><a href=../contact/ class=nav-link>Contact</a></li></ul></div></nav></header><script src=../js/navigation.js defer></script><main id=main-content role=main class=container><section class=section><h1>Projects</h1><div class=content><p>주요 프로젝트 목록입니다. 각 카드를 클릭하여 상세 내용을 확인하세요.</p></div><div id=project-filters class="filters bg-card border border-border rounded-lg p-6 mb-8" role=group aria-labelledby=filters-heading aria-controls="projectCards resultsInfo"><h2 id=filters-heading class=visually-hidden>프로젝트 필터</h2><div class="flex flex-col md:flex-row gap-4 items-start md:items-center"><div class="flex-1 min-w-0"><input id=searchInput type=search placeholder="프로젝트 검색 (제목/요약)" class=w-full aria-label="프로젝트 검색" inputmode=search autocomplete=off></div><div id=tagFilters class="tags flex-1" role=group aria-label="태그 필터"></div><button id=clearFilters class="btn btn-secondary" type=button aria-label="필터 초기화">필터 초기화</button></div><p id=resultsInfo class="meta mt-4" aria-live=polite role=status></p></div><div class=cards id=projectCards role=list><article class=card role=listitem data-title=make-snmprec data-summary="snmp walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구" data-tags=go><a href=../projects/make-snmprec/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/597888390de9c68aac5558ded464289a.svg alt="make-snmprec thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/make-snmprec/>make-snmprec</a></h2><p class=meta>2025-06-24</p><p class=summary-text>SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/make-snmprec loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/make-snmprec/ aria-label="프로젝트 make-snmprec 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=common-sdk data-summary="프로젝트 공통 유틸/sdk 모음(로깅·설정·http·에러 처리)" data-tags=go><a href=../projects/common-sdk/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/f834b9a56db94c771ab5d870cd7227c2.svg alt="common-sdk thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/common-sdk/>common-sdk</a></h2><p class=meta>2025-05-30</p><p class=summary-text>프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/common-sdk?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/common-sdk loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/common-sdk/ aria-label="프로젝트 common-sdk 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=system-broadcast-agent data-summary="zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스" data-tags=go><a href=../projects/system-broadcast-agent/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/d8793e7a403abb80c0aca87ea8fb4fa2.svg alt="system-broadcast-agent thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/system-broadcast-agent/>system-broadcast-agent</a></h2><p class=meta>2025-05-23</p><p class=summary-text>Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/system-broadcast-agent?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/system-broadcast-agent loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/system-broadcast-agent/ aria-label="프로젝트 system-broadcast-agent 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=system-info-collector data-summary="시스템 정보 수집 및 rest api·메트릭 노출 에이전트" data-tags=go,shell><a href=../projects/system-info-collector/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/c1ecf52281e8da41a7c676b852b457f4.svg alt="system-Info-collector thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/system-info-collector/>system-Info-collector</a></h2><p class=meta>2025-04-02</p><p class=summary-text>시스템 정보 수집 및 REST API·메트릭 노출 에이전트</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/system-Info-collector?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/system-Info-collector loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li><li class=tag-pill>Shell</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/system-info-collector/ aria-label="프로젝트 system-Info-collector 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=apitestprogram data-summary="오프라인/폐쇄망에서도 동작하는 경량 api 테스트 클라이언트" data-tags=go,shell><a href=../projects/apitestprogram/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/7bb6a245bedfaaecba77572ce92f2713.svg alt="APITestProgram thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/apitestprogram/>APITestProgram</a></h2><p class=meta>2024-11-13</p><p class=summary-text>오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/APITestProgram?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/APITestProgram loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li><li class=tag-pill>Shell</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/apitestprogram/ aria-label="프로젝트 APITestProgram 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=go_crud data-summary="rest api로 db 기본 crud를 제공하는 학습용 예제" data-tags=go,shell,batchfile><a href=../projects/go_crud/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/b52d123555ea80c2ad06c58901214bf5.svg alt="go_crud thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/go_crud/>go_crud</a></h2><p class=meta>2024-11-11</p><p class=summary-text>REST API로 DB 기본 CRUD를 제공하는 학습용 예제</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/go_crud?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/go_crud loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li><li class=tag-pill>Shell</li><li class=tag-pill>Batchfile</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/go_crud/ aria-label="프로젝트 go_crud 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=ssh_commend data-summary="병렬 ssh로 다수 호스트의 시스템 메트릭 수집 도구" data-tags=go,shell><a href=../projects/ssh_commend/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/10113dc58e4a67396db9230a052e5397.svg alt="ssh_commend thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/ssh_commend/>ssh_commend</a></h2><p class=meta>2024-07-10</p><p class=summary-text>병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/ssh_commend?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/ssh_commend loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li><li class=tag-pill>Shell</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/ssh_commend/ aria-label="프로젝트 ssh_commend 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article><article class=card role=listitem data-title=goplayground data-summary="go 학습/실습을 위한 예제 모음(http·db·동시성 포함)" data-tags=go><a href=../projects/goplayground/><img class=thumb src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/722430c0fb5ed622459fdfb6b8abb3b5.svg alt="Goplayground thumbnail" loading=lazy decoding=async width=640 height=360 sizes="(max-width: 700px) 100vw, 640px"></a><h2><a href=../projects/goplayground/>Goplayground</a></h2><p class=meta>2024-02-26</p><p class=summary-text>Go 학습/실습을 위한 예제 모음(HTTP·DB·동시성 포함)</p><div class=meta style=display:flex;gap:8px;align-items:center;flex-wrap:wrap><img class=badge alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/Goplayground?style=social" loading=lazy decoding=async>
-<img class=badge alt="Top language" src=https://img.shields.io/github/languages/top/swlee3306/Goplayground loading=lazy decoding=async></div><ul class=tags><li class=tag-pill>Go</li></ul><div class=mt-4><a class="btn btn-primary" href=../projects/goplayground/ aria-label="프로젝트 Goplayground 자세히 보기">자세히 보기
-<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></article></div><nav class=pagination></nav></section><script src=../js/projects-list.js defer></script></main><footer class=site-footer><div class=container><div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8"><p class="text-sm text-muted-foreground">© 2025 이상욱</p><div class="flex items-center gap-4"></div></div></div></footer></body></html>
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Projects | Dev Note by sw&#39;Lee</title>
+<meta name="description" content="프로젝트 목록">
+<link rel="canonical" href="http://localhost:1313/projects/">
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../favicon.svg">
+
+<meta name="author" content="이상욱">
+
+
+<link rel="dns-prefetch" href="//img.shields.io">
+<link rel="preconnect" href="https://img.shields.io" crossorigin>
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/projects/">
+<meta property="og:title" content="Projects | Dev Note by sw&#39;Lee">
+<meta property="og:description" content="프로젝트 목록">
+<meta property="og:image" content="http://localhost:1313/images/og-default.svg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Projects | Dev Note by sw&#39;Lee">
+<meta name="twitter:description" content="프로젝트 목록">
+<meta name="twitter:image" content="http://localhost:1313/images/og-default.svg">
+
+
+
+<link rel="preload" as="style" href="../css/styles.css?v=1758862512">
+<link rel="stylesheet" href="../css/styles.css?v=1758862512">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="../projects/index.xml">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "이상욱",
+  "url": "http:\/\/localhost:1313\/",
+  "sameAs": []
+}
+</script>
+
+
+
+
+
+
+
+
+
+<script type="application/ld+json">"{\"@context\":\"https://schema.org\",\"@type\":\"SoftwareSourceCode\",\"author\":{\"@type\":\"Person\",\"name\":\"이상욱\"},\"datePublished\":\"2025-06-24\",\"description\":\"프로젝트 목록\",\"image\":\"http://localhost:1313/images/og-default.svg\",\"name\":\"Projects\",\"url\":\"http://localhost:1313/projects/\"}"</script>
+
+
+  </head>
+  <body class="min-h-screen bg-background font-sans antialiased">
+    <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">본문으로 건너뛰기</a>
+    <header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../">
+      <span class="font-bold text-xl">Dev Note by sw&#39;Lee</span>
+    </a>
+    
+    <div class="header-controls">
+      
+      <button id="dark-mode-toggle" class="theme-toggle" aria-label="다크모드 토글">
+        <svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+      
+      
+      <button id="menu-toggle" class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  
+  <nav id="main-navigation" class="main-navigation hidden">
+    <div class="nav-content">
+      <ul class="nav-list">
+        
+          <li><a href="../" class="nav-link">Home</a></li>
+        
+          <li><a href="../projects/" class="nav-link">Projects</a></li>
+        
+          <li><a href="../blog/" class="nav-link">Blog</a></li>
+        
+          <li><a href="../tags/" class="nav-link">Tags</a></li>
+        
+          <li><a href="../about/" class="nav-link">About</a></li>
+        
+          <li><a href="../contact/" class="nav-link">Contact</a></li>
+        
+      </ul>
+    </div>
+  </nav>
+</header>
+<script src="../js/navigation.js" defer></script>
+<script src="../js/mobile-menu.js" defer></script>
+
+    <main id="main-content" role="main" class="container">
+      
+<section class="section">
+  
+    <h1>Projects</h1>
+  
+  <div class="content"><p>주요 프로젝트 목록입니다. 각 카드를 클릭하여 상세 내용을 확인하세요.</p>
+</div>
+
+  
+  <div id="project-filters" class="filters bg-card border border-border rounded-lg p-6 mb-8" role="group" aria-labelledby="filters-heading" aria-controls="projectCards resultsInfo">
+    <h2 id="filters-heading" class="visually-hidden">프로젝트 필터</h2>
+    <div class="flex flex-col md:flex-row gap-4 items-start md:items-center">
+      <div class="flex-1 min-w-0">
+        <input id="searchInput" type="search" placeholder="프로젝트 검색 (제목/요약)" class="w-full" aria-label="프로젝트 검색" inputmode="search" autocomplete="off" />
+      </div>
+      <div id="tagFilters" class="tags flex-1" role="group" aria-label="태그 필터"></div>
+      <button id="clearFilters" class="btn btn-secondary" type="button" aria-label="필터 초기화">필터 초기화</button>
+    </div>
+    <p id="resultsInfo" class="meta mt-4" aria-live="polite" role="status"></p>
+  </div>
+
+  <div class="cards" id="projectCards" role="list">
+    
+      <article class="card" role="listitem" data-title="make-snmprec" data-summary="snmp walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구" data-tags="go">
+        
+        
+        <a href="../projects/make-snmprec/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/8040448c0ba0808bd67e9bbf467690c2.svg" alt="make-snmprec thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/make-snmprec/">make-snmprec</a></h2>
+        <p class="meta">2025-06-24</p>
+        <p class="summary-text">SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/make-snmprec?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/make-snmprec" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/make-snmprec/" aria-label="프로젝트 make-snmprec 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="common-sdk" data-summary="프로젝트 공통 유틸/sdk 모음(로깅·설정·http·에러 처리)" data-tags="go">
+        
+        
+        <a href="../projects/common-sdk/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/b8ac5f4ce8781d5f44fc31d1085a53ac.svg" alt="common-sdk thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/common-sdk/">common-sdk</a></h2>
+        <p class="meta">2025-05-30</p>
+        <p class="summary-text">프로젝트 공통 유틸/SDK 모음(로깅·설정·HTTP·에러 처리)</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/common-sdk?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/common-sdk" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/common-sdk/" aria-label="프로젝트 common-sdk 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="system-broadcast-agent" data-summary="zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스" data-tags="go">
+        
+        
+        <a href="../projects/system-broadcast-agent/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/cebaf68358db3f98918faf2d1436a9ff.svg" alt="system-broadcast-agent thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/system-broadcast-agent/">system-broadcast-agent</a></h2>
+        <p class="meta">2025-05-23</p>
+        <p class="summary-text">Zeroconf 기반 에이전트 자동탐지/브로드캐스트 서비스</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/system-broadcast-agent?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/system-broadcast-agent" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/system-broadcast-agent/" aria-label="프로젝트 system-broadcast-agent 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="system-info-collector" data-summary="시스템 정보 수집 및 rest api·메트릭 노출 에이전트" data-tags="go,shell">
+        
+        
+        <a href="../projects/system-info-collector/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/a46da3c7bdff7f7970060c91276f93ed.svg" alt="system-Info-collector thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/system-info-collector/">system-Info-collector</a></h2>
+        <p class="meta">2025-04-02</p>
+        <p class="summary-text">시스템 정보 수집 및 REST API·메트릭 노출 에이전트</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/system-Info-collector?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/system-Info-collector" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li><li class="tag-pill">Shell</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/system-info-collector/" aria-label="프로젝트 system-Info-collector 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="apitestprogram" data-summary="오프라인/폐쇄망에서도 동작하는 경량 api 테스트 클라이언트" data-tags="go,shell">
+        
+        
+        <a href="../projects/apitestprogram/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/dab1aea7d11b393572b8160994ae5fd4.svg" alt="APITestProgram thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/apitestprogram/">APITestProgram</a></h2>
+        <p class="meta">2024-11-13</p>
+        <p class="summary-text">오프라인/폐쇄망에서도 동작하는 경량 API 테스트 클라이언트</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/APITestProgram?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/APITestProgram" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li><li class="tag-pill">Shell</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/apitestprogram/" aria-label="프로젝트 APITestProgram 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="go_crud" data-summary="rest api로 db 기본 crud를 제공하는 학습용 예제" data-tags="go,shell,batchfile">
+        
+        
+        <a href="../projects/go_crud/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/906b9ca06e07cfb76456a4281aa883cb.svg" alt="go_crud thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/go_crud/">go_crud</a></h2>
+        <p class="meta">2024-11-11</p>
+        <p class="summary-text">REST API로 DB 기본 CRUD를 제공하는 학습용 예제</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/go_crud?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/go_crud" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li><li class="tag-pill">Shell</li><li class="tag-pill">Batchfile</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/go_crud/" aria-label="프로젝트 go_crud 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="ssh_commend" data-summary="병렬 ssh로 다수 호스트의 시스템 메트릭 수집 도구" data-tags="go,shell">
+        
+        
+        <a href="../projects/ssh_commend/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/64654d81ee2c36b7ec254663050212ee.svg" alt="ssh_commend thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/ssh_commend/">ssh_commend</a></h2>
+        <p class="meta">2024-07-10</p>
+        <p class="summary-text">병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/ssh_commend?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/ssh_commend" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li><li class="tag-pill">Shell</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/ssh_commend/" aria-label="프로젝트 ssh_commend 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+      <article class="card" role="listitem" data-title="goplayground" data-summary="go 학습/실습을 위한 예제 모음(http·db·동시성 포함)" data-tags="go">
+        
+        
+        <a href="../projects/goplayground/">
+          
+            
+            
+            <img class="thumb" src="http://localhost:1313/gen/thumbs/3ed88c560057af37856367ddb998c821.svg" alt="Goplayground thumbnail" loading="lazy" decoding="async" width="640" height="360" sizes="(max-width: 700px) 100vw, 640px" />
+          
+        </a>
+        <h2><a href="../projects/goplayground/">Goplayground</a></h2>
+        <p class="meta">2024-02-26</p>
+        <p class="summary-text">Go 학습/실습을 위한 예제 모음(HTTP·DB·동시성 포함)</p>
+
+        
+          
+          
+          <div class="meta" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+            <img class="badge" alt="GitHub stars" src="https://img.shields.io/github/stars/swlee3306/Goplayground?style=social" loading="lazy" decoding="async">
+            <img class="badge" alt="Top language" src="https://img.shields.io/github/languages/top/swlee3306/Goplayground" loading="lazy" decoding="async">
+          </div>
+        
+        
+          <ul class="tags">
+            <li class="tag-pill">Go</li>
+          </ul>
+        
+        <div class="mt-4">
+          <a class="btn btn-primary" href="../projects/goplayground/" aria-label="프로젝트 Goplayground 자세히 보기">
+            자세히 보기
+            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+    
+  </div>
+
+  <nav class="pagination">
+    
+  </nav>
+</section>
+<script src="../js/projects-list.js" defer></script>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8">
+      <p class="text-sm text-muted-foreground">
+        © 2025 이상욱
+      </p>
+      <div class="flex items-center gap-4">
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

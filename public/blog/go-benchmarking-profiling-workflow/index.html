@@ -1,296 +1,550 @@
-<!doctype html><html lang=ko class=scroll-smooth><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw'Lee</title><meta name=description content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다."><link rel=canonical href=https://swlee3306.github.io/sulee_portfolio/blog/go-benchmarking-profiling-workflow/><meta name=theme-color content="#111111"><link rel=icon href=../../favicon.svg type=image/svg+xml><link rel=apple-touch-icon href=../../favicon.svg><meta name=author content="이상욱"><link rel=dns-prefetch href=//img.shields.io><link rel=preconnect href=https://img.shields.io crossorigin><meta property="og:type" content="article"><meta property="og:url" content="https://swlee3306.github.io/sulee_portfolio/blog/go-benchmarking-profiling-workflow/"><meta property="og:title" content="Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw'Lee"><meta property="og:description" content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다."><meta property="og:image" content="https://swlee3306.github.io/images/og-default.svg"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw'Lee"><meta name=twitter:description content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다."><meta name=twitter:image content="https://swlee3306.github.io/images/og-default.svg"><link rel=preload as=style href="../../css/styles.css?v=1758860447"><link rel=stylesheet href="../../css/styles.css?v=1758860447"><script type=application/ld+json>{"@context":"https://schema.org","@type":"Person","name":"이상욱","url":"https:\/\/swlee3306.github.io\/sulee_portfolio\/","sameAs":[]}</script></head><body class="min-h-screen bg-background font-sans antialiased"><a href=#main-content class=skip-link style=position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden>본문으로 건너뛰기</a><header class=site-header><div class="container nav"><a class=brand href=../../><span class="font-bold text-xl">Dev Note by sw'Lee</span></a><div class=header-controls><button id=dark-mode-toggle class=theme-toggle aria-label="다크모드 토글">
-<svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364-.707-.707M6.343 6.343l-.707-.707m12.728.0-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-<svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003.0 0012 21a9.003 9.003.0 008.354-5.646z"/></svg>
-</button>
-<button id=menu-toggle class=menu-toggle aria-label="메뉴 열기" aria-expanded=false>
-<svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-<svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 18 6M6 6l12 12"/></svg></button></div></div><nav id=main-navigation class="main-navigation hidden"><div class=nav-content><ul class=nav-list><li><a href=../../ class=nav-link>Home</a></li><li><a href=../../projects/ class=nav-link>Projects</a></li><li><a href=../../blog/ class=nav-link>Blog</a></li><li><a href=../../tags/ class=nav-link>Tags</a></li><li><a href=../../about/ class=nav-link>About</a></li><li><a href=../../contact/ class=nav-link>Contact</a></li></ul></div></nav></header><script src=../../js/navigation.js defer></script><main id=main-content role=main class=container><article class=article><img class=cover src=https://swlee3306.github.io/sulee_portfolio/gen/thumbs/72ea9dd7575694654d55bc80e456a0f9.svg alt="Go 벤치마킹과 프로파일링 워크플로우 cover" loading=lazy decoding=async width=1200 height=675 sizes="(max-width: 1200px) 100vw, 1200px"><h1>Go 벤치마킹과 프로파일링 워크플로우</h1><p class=meta>2025-01-15</p><ul class=tags><li>Go</li><li>Performance</li><li>Benchmarking</li><li>Profiling</li><li>Tutorial</li></ul><div class=content><h2 id=tldr>TL;DR</h2><ul><li><strong>목표</strong>: Go 애플리케이션의 성능을 체계적으로 측정하고 최적화</li><li><strong>도구</strong>: <code>go test -bench</code>, <code>pprof</code>, flamegraphs, 메모리 프로파일링</li><li><strong>결과</strong>: 3배 성능 향상, 50% 메모리 사용량 감소, 병목 지점 명확한 식별</li></ul><h2 id=context>Context</h2><p>Go로 백엔드 시스템을 개발하면서 가장 중요한 것은 <strong>성능</strong>입니다. 하지만 성능 최적화는 단순히 &ldquo;빠르게 만들기"가 아니라 <strong>체계적인 측정과 분석</strong>을 통해 이루어져야 합니다.</p><p>실제 운영 환경에서 경험한 성능 문제들:</p><ul><li><strong>CPU 집약적 작업</strong>: 데이터 처리 파이프라인에서 병목 발생</li><li><strong>메모리 누수</strong>: 장시간 실행 시 메모리 사용량 지속 증가</li><li><strong>GC 압박</strong>: 가비지 컬렉션으로 인한 응답 시간 지연</li><li><strong>동시성 문제</strong>: 고루틴 간 경합으로 인한 성능 저하</li></ul><h2 id=problem>Problem</h2><h3 id=성능-최적화의-일반적인-문제점>성능 최적화의 일반적인 문제점</h3><ol><li><strong>측정 없는 최적화</strong>: &ldquo;이게 더 빠를 것 같다"는 추측 기반 최적화</li><li><strong>부분적 분석</strong>: CPU만 보고 메모리나 I/O는 무시</li><li><strong>환경 차이</strong>: 로컬에서는 빠른데 프로덕션에서는 느림</li><li><strong>재현 불가능</strong>: 성능 문제가 간헐적으로 발생</li></ol><h3 id=기존-접근법의-한계>기존 접근법의 한계</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 잘못된 접근: 추측 기반 최적화</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ProcessData</span>(<span style=color:#a6e22e>data</span> []<span style=color:#66d9ef>string</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// &#34;이게 더 빠를 것 같다&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>string</span>, <span style=color:#ae81ff>0</span>, len(<span style=color:#a6e22e>data</span>))
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>item</span>) &gt; <span style=color:#ae81ff>5</span> {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>result</span> = append(<span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>ToUpper</span>(<span style=color:#a6e22e>item</span>))
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h2 id=solution>Solution</h2><h3 id=1-벤치마킹-기초>1. 벤치마킹 기초</h3><h4 id=벤치마크-함수-작성>벤치마크 함수 작성</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// benchmark_test.go</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;strings&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;testing&#34;</span>
-</span></span><span style=display:flex><span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkProcessData</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>generateTestData</span>(<span style=color:#ae81ff>1000</span>) <span style=color:#75715e>// 1000개 테스트 데이터</span>
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ResetTimer</span>() <span style=color:#75715e>// 타이머 리셋</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>ProcessData</span>(<span style=color:#a6e22e>data</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkProcessDataParallel</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>generateTestData</span>(<span style=color:#ae81ff>1000</span>)
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ResetTimer</span>()
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>RunParallel</span>(<span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>pb</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>PB</span>) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>pb</span>.<span style=color:#a6e22e>Next</span>() {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>ProcessData</span>(<span style=color:#a6e22e>data</span>)
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    })
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>generateTestData</span>(<span style=color:#a6e22e>size</span> <span style=color:#66d9ef>int</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>size</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>size</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>data</span>[<span style=color:#a6e22e>i</span>] = <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(<span style=color:#e6db74>&#34;item_%d&#34;</span>, <span style=color:#a6e22e>i</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>data</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h4 id=벤치마크-실행-및-분석>벤치마크 실행 및 분석</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 기본 벤치마크 실행</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>BenchmarkProcessData
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 상세 정보와 함께 실행</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>BenchmarkProcessData -benchmem -benchtime<span style=color:#f92672>=</span>10s
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># CPU 프로파일링과 함께 실행</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>BenchmarkProcessData -cpuprofile<span style=color:#f92672>=</span>cpu.prof
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 메모리 프로파일링과 함께 실행</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>BenchmarkProcessData -memprofile<span style=color:#f92672>=</span>mem.prof
-</span></span></code></pre></div><p><strong>벤치마크 결과 해석:</strong></p><pre tabindex=0><code>BenchmarkProcessData-8         1000    1234567 ns/op    1024 B/op    10 allocs/op
-</code></pre><ul><li><code>1000</code>: 실행 횟수</li><li><code>1234567 ns/op</code>: 평균 실행 시간 (나노초)</li><li><code>1024 B/op</code>: 평균 메모리 할당량 (바이트)</li><li><code>10 allocs/op</code>: 평균 할당 횟수</li></ul><h3 id=2-프로파일링-워크플로우>2. 프로파일링 워크플로우</h3><h4 id=cpu-프로파일링>CPU 프로파일링</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// main.go</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>main</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;log&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;net/http&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>_</span> <span style=color:#e6db74>&#34;net/http/pprof&#34;</span>
-</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;runtime&#34;</span>
-</span></span><span style=display:flex><span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// pprof 서버 시작</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>ListenAndServe</span>(<span style=color:#e6db74>&#34;localhost:6060&#34;</span>, <span style=color:#66d9ef>nil</span>))
-</span></span><span style=display:flex><span>    }()
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// 실제 애플리케이션 로직</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>runApplication</span>()
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>runApplication</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// CPU 집약적 작업</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#ae81ff>1000000</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>processData</span>()
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><strong>CPU 프로파일 수집:</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 프로파일 수집 (30초간)</span>
-</span></span><span style=display:flex><span>go tool pprof http://localhost:6060/debug/pprof/profile?seconds<span style=color:#f92672>=</span><span style=color:#ae81ff>30</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 또는 파일에서 직접</span>
-</span></span><span style=display:flex><span>go tool pprof cpu.prof
-</span></span></code></pre></div><h4 id=메모리-프로파일링>메모리 프로파일링</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// 메모리 프로파일 수집</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>collectMemoryProfile</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Create</span>(<span style=color:#e6db74>&#34;mem.prof&#34;</span>)
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>()
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GC</span>() <span style=color:#75715e>// 가비지 컬렉션 강제 실행</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>pprof</span>.<span style=color:#a6e22e>WriteHeapProfile</span>(<span style=color:#a6e22e>f</span>)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=3-pprof-활용법>3. pprof 활용법</h3><h4 id=대화형-프로파일링>대화형 프로파일링</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># CPU 프로파일 분석</span>
-</span></span><span style=display:flex><span>go tool pprof cpu.prof
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 주요 명령어들</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> top10          <span style=color:#75715e># 상위 10개 함수</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> list ProcessData <span style=color:#75715e># 특정 함수 상세 분석</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> web             <span style=color:#75715e># 웹 브라우저에서 시각화</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> png             <span style=color:#75715e># PNG 이미지로 저장</span>
-</span></span></code></pre></div><h4 id=웹-인터페이스-활용>웹 인터페이스 활용</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 웹 서버에서 직접 프로파일링</span>
-</span></span><span style=display:flex><span>go tool pprof http://localhost:6060/debug/pprof/profile?seconds<span style=color:#f92672>=</span><span style=color:#ae81ff>30</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 웹 인터페이스로 분석</span>
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> web
-</span></span></code></pre></div><h3 id=4-flamegraphs-생성>4. Flamegraphs 생성</h3><h4 id=flamegraph-도구-설치>Flamegraph 도구 설치</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># Flamegraph 도구 설치</span>
-</span></span><span style=display:flex><span>go install github.com/google/pprof@latest
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 또는 직접 다운로드</span>
-</span></span><span style=display:flex><span>wget https://github.com/brendangregg/FlameGraph/archive/master.zip
-</span></span><span style=display:flex><span>unzip master.zip
-</span></span></code></pre></div><h4 id=flamegraph-생성>Flamegraph 생성</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># CPU Flamegraph</span>
-</span></span><span style=display:flex><span>go tool pprof -http<span style=color:#f92672>=</span>:8080 cpu.prof
-</span></span><span style=display:flex><span><span style=color:#75715e># 브라우저에서 http://localhost:8080 접속</span>
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 또는 직접 Flamegraph 생성</span>
-</span></span><span style=display:flex><span>go tool pprof -raw cpu.prof | ./FlameGraph-master/flamegraph.pl &gt; cpu.svg
-</span></span></code></pre></div><h3 id=5-실제-최적화-예제>5. 실제 최적화 예제</h3><h4 id=before-비효율적인-코드>Before: 비효율적인 코드</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ProcessDataSlow</span>(<span style=color:#a6e22e>data</span> []<span style=color:#66d9ef>string</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> []<span style=color:#66d9ef>string</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>item</span>) &gt; <span style=color:#ae81ff>5</span> {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>result</span> = append(<span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>ToUpper</span>(<span style=color:#a6e22e>item</span>))
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><strong>벤치마크 결과:</strong></p><pre tabindex=0><code>BenchmarkProcessDataSlow-8    1000    2000000 ns/op    2048 B/op    20 allocs/op
-</code></pre><h4 id=after-최적화된-코드>After: 최적화된 코드</h4><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>ProcessDataFast</span>(<span style=color:#a6e22e>data</span> []<span style=color:#66d9ef>string</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// 미리 결과 슬라이스 크기 계산</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>count</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>item</span>) &gt; <span style=color:#ae81ff>5</span> {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>count</span><span style=color:#f92672>++</span>
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>string</span>, <span style=color:#ae81ff>0</span>, <span style=color:#a6e22e>count</span>) <span style=color:#75715e>// 용량 미리 할당</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>item</span>) &gt; <span style=color:#ae81ff>5</span> {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>result</span> = append(<span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>ToUpper</span>(<span style=color:#a6e22e>item</span>))
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><p><strong>벤치마크 결과:</strong></p><pre tabindex=0><code>BenchmarkProcessDataFast-8    3000     666667 ns/op     512 B/op     5 allocs/op
-</code></pre><p><strong>성능 개선:</strong></p><ul><li>실행 시간: 3배 향상 (2ms → 0.67ms)</li><li>메모리 사용량: 4배 감소 (2048B → 512B)</li><li>할당 횟수: 4배 감소 (20 → 5)</li></ul><h2 id=common-pitfalls>Common Pitfalls</h2><h3 id=1-벤치마크-오류>1. 벤치마크 오류</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 잘못된 벤치마크</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkWrong</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>generateTestData</span>(<span style=color:#ae81ff>1000</span>) <span style=color:#75715e>// 매번 데이터 생성</span>
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>ProcessData</span>(<span style=color:#a6e22e>data</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ 올바른 벤치마크</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>BenchmarkCorrect</span>(<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>B</span>) {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>data</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>generateTestData</span>(<span style=color:#ae81ff>1000</span>) <span style=color:#75715e>// 한 번만 생성</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>ResetTimer</span>()
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>N</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>ProcessData</span>(<span style=color:#a6e22e>data</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=2-프로파일링-환경-차이>2. 프로파일링 환경 차이</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 프로덕션과 다른 환경</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// 개발 환경에서만 프로파일링</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Getenv</span>(<span style=color:#e6db74>&#34;ENV&#34;</span>) <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;development&#34;</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>ListenAndServe</span>(<span style=color:#e6db74>&#34;localhost:6060&#34;</span>, <span style=color:#66d9ef>nil</span>))
-</span></span><span style=display:flex><span>        }()
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ 프로덕션에서도 안전한 프로파일링</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>main</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Getenv</span>(<span style=color:#e6db74>&#34;ENABLE_PPROF&#34;</span>) <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;true&#34;</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>() {
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#a6e22e>http</span>.<span style=color:#a6e22e>ListenAndServe</span>(<span style=color:#e6db74>&#34;localhost:6060&#34;</span>, <span style=color:#66d9ef>nil</span>))
-</span></span><span style=display:flex><span>        }()
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=3-메모리-프로파일링-오류>3. 메모리 프로파일링 오류</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ GC 전에 프로파일 수집</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>collectMemoryProfile</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Create</span>(<span style=color:#e6db74>&#34;mem.prof&#34;</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>pprof</span>.<span style=color:#a6e22e>WriteHeapProfile</span>(<span style=color:#a6e22e>f</span>) <span style=color:#75715e>// GC 없이 수집</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>()
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ GC 후 프로파일 수집</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>collectMemoryProfile</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>f</span>, <span style=color:#a6e22e>_</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>os</span>.<span style=color:#a6e22e>Create</span>(<span style=color:#e6db74>&#34;mem.prof&#34;</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>GC</span>() <span style=color:#75715e>// GC 강제 실행</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>pprof</span>.<span style=color:#a6e22e>WriteHeapProfile</span>(<span style=color:#a6e22e>f</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>f</span>.<span style=color:#a6e22e>Close</span>()
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h2 id=performance-optimization>Performance Optimization</h2><h3 id=1-메모리-할당-최적화>1. 메모리 할당 최적화</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 불필요한 할당</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>inefficient</span>() <span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>result</span> <span style=color:#66d9ef>string</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#ae81ff>1000</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>result</span> <span style=color:#f92672>+=</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(<span style=color:#e6db74>&#34;%d&#34;</span>, <span style=color:#a6e22e>i</span>) <span style=color:#75715e>// 매번 새 문자열 생성</span>
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ 효율적인 할당</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>efficient</span>() <span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>builder</span> <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>Builder</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>builder</span>.<span style=color:#a6e22e>Grow</span>(<span style=color:#ae81ff>4000</span>) <span style=color:#75715e>// 예상 크기만큼 미리 할당</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>i</span> &lt; <span style=color:#ae81ff>1000</span>; <span style=color:#a6e22e>i</span><span style=color:#f92672>++</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>builder</span>.<span style=color:#a6e22e>WriteString</span>(<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Sprintf</span>(<span style=color:#e6db74>&#34;%d&#34;</span>, <span style=color:#a6e22e>i</span>))
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>builder</span>.<span style=color:#a6e22e>String</span>()
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=2-동시성-최적화>2. 동시성 최적화</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 순차 처리</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>processSequential</span>(<span style=color:#a6e22e>data</span> []<span style=color:#66d9ef>string</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>string</span>, len(<span style=color:#a6e22e>data</span>))
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>result</span>[<span style=color:#a6e22e>i</span>] = <span style=color:#a6e22e>processItem</span>(<span style=color:#a6e22e>item</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ 병렬 처리</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>processParallel</span>(<span style=color:#a6e22e>data</span> []<span style=color:#66d9ef>string</span>) []<span style=color:#66d9ef>string</span> {
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span> <span style=color:#f92672>:=</span> make([]<span style=color:#66d9ef>string</span>, len(<span style=color:#a6e22e>data</span>))
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>wg</span> <span style=color:#a6e22e>sync</span>.<span style=color:#a6e22e>WaitGroup</span>
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> <span style=color:#a6e22e>i</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>data</span> {
-</span></span><span style=display:flex><span>        <span style=color:#a6e22e>wg</span>.<span style=color:#a6e22e>Add</span>(<span style=color:#ae81ff>1</span>)
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>go</span> <span style=color:#66d9ef>func</span>(<span style=color:#a6e22e>index</span> <span style=color:#66d9ef>int</span>, <span style=color:#a6e22e>value</span> <span style=color:#66d9ef>string</span>) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>wg</span>.<span style=color:#a6e22e>Done</span>()
-</span></span><span style=display:flex><span>            <span style=color:#a6e22e>result</span>[<span style=color:#a6e22e>index</span>] = <span style=color:#a6e22e>processItem</span>(<span style=color:#a6e22e>value</span>)
-</span></span><span style=display:flex><span>        }(<span style=color:#a6e22e>i</span>, <span style=color:#a6e22e>item</span>)
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>wg</span>.<span style=color:#a6e22e>Wait</span>()
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h3 id=3-캐싱-전략>3. 캐싱 전략</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ❌ 매번 계산</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>expensiveCalculation</span>(<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>int</span> {
-</span></span><span style=display:flex><span>    <span style=color:#75715e>// 복잡한 계산</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fibonacci</span>(<span style=color:#a6e22e>n</span>)
-</span></span><span style=display:flex><span>}
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>// ✅ 결과 캐싱</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>cache</span> = make(<span style=color:#66d9ef>map</span>[<span style=color:#66d9ef>int</span>]<span style=color:#66d9ef>int</span>)
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>cachedCalculation</span>(<span style=color:#a6e22e>n</span> <span style=color:#66d9ef>int</span>) <span style=color:#66d9ef>int</span> {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>result</span>, <span style=color:#a6e22e>exists</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>cache</span>[<span style=color:#a6e22e>n</span>]; <span style=color:#a6e22e>exists</span> {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>result</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fibonacci</span>(<span style=color:#a6e22e>n</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>cache</span>[<span style=color:#a6e22e>n</span>] = <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>result</span>
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h2 id=실전-워크플로우>실전 워크플로우</h2><h3 id=1-성능-측정--분석--최적화--검증>1. 성능 측정 → 분석 → 최적화 → 검증</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash><span style=display:flex><span><span style=color:#75715e># 1단계: 벤치마크 실행</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>. -benchmem &gt; benchmark_before.txt
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 2단계: CPU 프로파일 수집</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>BenchmarkProcessData -cpuprofile<span style=color:#f92672>=</span>cpu.prof
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 3단계: 프로파일 분석</span>
-</span></span><span style=display:flex><span>go tool pprof cpu.prof
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> top10
-</span></span><span style=display:flex><span><span style=color:#f92672>(</span>pprof<span style=color:#f92672>)</span> list ProcessData
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 4단계: 최적화 후 재측정</span>
-</span></span><span style=display:flex><span>go test -bench<span style=color:#f92672>=</span>. -benchmem &gt; benchmark_after.txt
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e># 5단계: 결과 비교</span>
-</span></span><span style=display:flex><span>benchstat benchmark_before.txt benchmark_after.txt
-</span></span></code></pre></div><h3 id=2-지속적인-성능-모니터링>2. 지속적인 성능 모니터링</h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// 성능 메트릭 수집</span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>collectMetrics</span>() {
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>var</span> <span style=color:#a6e22e>m</span> <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>MemStats</span>
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>runtime</span>.<span style=color:#a6e22e>ReadMemStats</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>m</span>)
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;Alloc = %d KB&#34;</span>, <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Alloc</span><span style=color:#f92672>/</span><span style=color:#ae81ff>1024</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;TotalAlloc = %d KB&#34;</span>, <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>TotalAlloc</span><span style=color:#f92672>/</span><span style=color:#ae81ff>1024</span>)
-</span></span><span style=display:flex><span>    <span style=color:#a6e22e>log</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;NumGC = %d&#34;</span>, <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>NumGC</span>)
-</span></span><span style=display:flex><span>}
-</span></span></code></pre></div><h2 id=further-work>Further Work</h2><h3 id=단기-개선-계획>단기 개선 계획</h3><ol><li><strong>자동화된 성능 테스트</strong>: CI/CD 파이프라인에 성능 회귀 테스트 추가</li><li><strong>실시간 모니터링</strong>: 프로덕션 환경에서 지속적인 성능 메트릭 수집</li><li><strong>성능 대시보드</strong>: Grafana를 활용한 성능 시각화</li></ol><h3 id=장기-비전>장기 비전</h3><ol><li><strong>머신러닝 기반 최적화</strong>: AI를 활용한 자동 성능 최적화</li><li><strong>예측적 성능 관리</strong>: 성능 저하 예측 및 사전 대응</li><li><strong>분산 성능 분석</strong>: 마이크로서비스 환경에서의 전체 성능 분석</li></ol><hr><p>이 워크플로우를 통해 Go 애플리케이션의 성능을 체계적으로 측정하고 최적화할 수 있습니다. 다음 포스트에서는 웹 성능 최적화를 위한 CLS(Cumulative Layout Shift) 제거 방법을 다루겠습니다.</p></div><nav class=pagination aria-label="이전/다음 글" style=margin-top:32px;gap:16px;display:flex;justify-content:space-between;flex-wrap:wrap><div class="flex-1 min-w-0"><a class="btn btn-ghost flex items-center gap-2" href=../../blog/hugo-subpath-safe-links-relref-guide/ aria-label="이전 글: Hugo GitHub Pages 서브패스 링크"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-<span class=truncate>Hugo GitHub Pages 서브패스 링크</span></a></div><div class="flex-1 min-w-0 text-right"><a class="btn btn-ghost flex items-center gap-2" href=../../blog/snmp-backend-engineers-guide/ aria-label="다음 글: 백엔드 엔지니어를 위한 SNMP"><span class=truncate>백엔드 엔지니어를 위한 SNMP</span>
-<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a></div></nav></article></main><footer class=site-footer><div class=container><div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8"><p class="text-sm text-muted-foreground">© 2025 이상욱</p><div class="flex items-center gap-4"></div></div></div></footer></body></html>
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw&#39;Lee</title>
+<meta name="description" content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다.">
+<link rel="canonical" href="http://localhost:1313/blog/go-benchmarking-profiling-workflow/">
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../../favicon.svg">
+
+<meta name="author" content="이상욱">
+
+
+<link rel="dns-prefetch" href="//img.shields.io">
+<link rel="preconnect" href="https://img.shields.io" crossorigin>
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://localhost:1313/blog/go-benchmarking-profiling-workflow/">
+<meta property="og:title" content="Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw&#39;Lee">
+<meta property="og:description" content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다.">
+<meta property="og:image" content="http://localhost:1313/images/og-default.svg">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Go 벤치마킹과 프로파일링 워크플로우 | Dev Note by sw&#39;Lee">
+<meta name="twitter:description" content="Go 애플리케이션의 성능을 체계적으로 측정하고 최적화하는 실전 워크플로우를 소개합니다. 벤치마킹부터 프로파일링까지 단계별 가이드입니다.">
+<meta name="twitter:image" content="http://localhost:1313/images/og-default.svg">
+
+
+
+<link rel="preload" as="style" href="../../css/styles.css?v=1758862512">
+<link rel="stylesheet" href="../../css/styles.css?v=1758862512">
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "이상욱",
+  "url": "http:\/\/localhost:1313\/",
+  "sameAs": []
+}
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  </head>
+  <body class="min-h-screen bg-background font-sans antialiased">
+    <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">본문으로 건너뛰기</a>
+    <header class="site-header">
+  <div class="container nav">
+    <a class="brand" href="../../">
+      <span class="font-bold text-xl">Dev Note by sw&#39;Lee</span>
+    </a>
+    
+    <div class="header-controls">
+      
+      <button id="dark-mode-toggle" class="theme-toggle" aria-label="다크모드 토글">
+        <svg class="sun-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        </svg>
+        <svg class="moon-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+      </button>
+      
+      
+      <button id="menu-toggle" class="menu-toggle" aria-label="메뉴 열기" aria-expanded="false">
+        <svg class="hamburger-icon w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg class="close-icon w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+  
+  
+  <nav id="main-navigation" class="main-navigation hidden">
+    <div class="nav-content">
+      <ul class="nav-list">
+        
+          <li><a href="../../" class="nav-link">Home</a></li>
+        
+          <li><a href="../../projects/" class="nav-link">Projects</a></li>
+        
+          <li><a href="../../blog/" class="nav-link">Blog</a></li>
+        
+          <li><a href="../../tags/" class="nav-link">Tags</a></li>
+        
+          <li><a href="../../about/" class="nav-link">About</a></li>
+        
+          <li><a href="../../contact/" class="nav-link">Contact</a></li>
+        
+      </ul>
+    </div>
+  </nav>
+</header>
+<script src="../../js/navigation.js" defer></script>
+<script src="../../js/mobile-menu.js" defer></script>
+
+    <main id="main-content" role="main" class="container">
+      
+<article class="article">
+  
+  
+  
+  
+  
+  
+    
+    
+    <img class="cover" src="http://localhost:1313/gen/thumbs/2ea971e1911da5c4bb35606f08eaa82e.svg" alt="Go 벤치마킹과 프로파일링 워크플로우 cover" loading="lazy" decoding="async" width="1200" height="675" sizes="(max-width: 1200px) 100vw, 1200px" />
+  
+
+  <h1>Go 벤치마킹과 프로파일링 워크플로우</h1>
+  <p class="meta">2025-01-15</p>
+  
+    <ul class="tags">
+      <li>Go</li><li>Performance</li><li>Benchmarking</li><li>Profiling</li><li>Tutorial</li>
+    </ul>
+  
+
+  <div class="content">
+    <h2 id="tldr">TL;DR</h2>
+<ul>
+<li><strong>목표</strong>: Go 애플리케이션의 성능을 체계적으로 측정하고 최적화</li>
+<li><strong>도구</strong>: <code>go test -bench</code>, <code>pprof</code>, flamegraphs, 메모리 프로파일링</li>
+<li><strong>결과</strong>: 3배 성능 향상, 50% 메모리 사용량 감소, 병목 지점 명확한 식별</li>
+</ul>
+<h2 id="context">Context</h2>
+<p>Go로 백엔드 시스템을 개발하면서 가장 중요한 것은 <strong>성능</strong>입니다. 하지만 성능 최적화는 단순히 &ldquo;빠르게 만들기&quot;가 아니라 <strong>체계적인 측정과 분석</strong>을 통해 이루어져야 합니다.</p>
+<p>실제 운영 환경에서 경험한 성능 문제들:</p>
+<ul>
+<li><strong>CPU 집약적 작업</strong>: 데이터 처리 파이프라인에서 병목 발생</li>
+<li><strong>메모리 누수</strong>: 장시간 실행 시 메모리 사용량 지속 증가</li>
+<li><strong>GC 압박</strong>: 가비지 컬렉션으로 인한 응답 시간 지연</li>
+<li><strong>동시성 문제</strong>: 고루틴 간 경합으로 인한 성능 저하</li>
+</ul>
+<h2 id="problem">Problem</h2>
+<h3 id="성능-최적화의-일반적인-문제점">성능 최적화의 일반적인 문제점</h3>
+<ol>
+<li><strong>측정 없는 최적화</strong>: &ldquo;이게 더 빠를 것 같다&quot;는 추측 기반 최적화</li>
+<li><strong>부분적 분석</strong>: CPU만 보고 메모리나 I/O는 무시</li>
+<li><strong>환경 차이</strong>: 로컬에서는 빠른데 프로덕션에서는 느림</li>
+<li><strong>재현 불가능</strong>: 성능 문제가 간헐적으로 발생</li>
+</ol>
+<h3 id="기존-접근법의-한계">기존 접근법의 한계</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 잘못된 접근: 추측 기반 최적화</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ProcessData</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// &#34;이게 더 빠를 것 같다&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">string</span>, <span style="color:#ae81ff">0</span>, len(<span style="color:#a6e22e">data</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">item</span>) &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">result</span> = append(<span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">ToUpper</span>(<span style="color:#a6e22e">item</span>))
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="solution">Solution</h2>
+<h3 id="1-벤치마킹-기초">1. 벤치마킹 기초</h3>
+<h4 id="벤치마크-함수-작성">벤치마크 함수 작성</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// benchmark_test.go</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;strings&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;testing&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkProcessData</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">generateTestData</span>(<span style="color:#ae81ff">1000</span>) <span style="color:#75715e">// 1000개 테스트 데이터</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">ResetTimer</span>() <span style="color:#75715e">// 타이머 리셋</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">N</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ProcessData</span>(<span style="color:#a6e22e">data</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkProcessDataParallel</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">generateTestData</span>(<span style="color:#ae81ff">1000</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">ResetTimer</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">RunParallel</span>(<span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">pb</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">PB</span>) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">pb</span>.<span style="color:#a6e22e">Next</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">ProcessData</span>(<span style="color:#a6e22e">data</span>)
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    })
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">generateTestData</span>(<span style="color:#a6e22e">size</span> <span style="color:#66d9ef">int</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">string</span>, <span style="color:#a6e22e">size</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">size</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">data</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;item_%d&#34;</span>, <span style="color:#a6e22e">i</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">data</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="벤치마크-실행-및-분석">벤치마크 실행 및 분석</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 기본 벤치마크 실행</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>BenchmarkProcessData
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 상세 정보와 함께 실행</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>BenchmarkProcessData -benchmem -benchtime<span style="color:#f92672">=</span>10s
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># CPU 프로파일링과 함께 실행</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>BenchmarkProcessData -cpuprofile<span style="color:#f92672">=</span>cpu.prof
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 메모리 프로파일링과 함께 실행</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>BenchmarkProcessData -memprofile<span style="color:#f92672">=</span>mem.prof
+</span></span></code></pre></div><p><strong>벤치마크 결과 해석:</strong></p>
+<pre tabindex="0"><code>BenchmarkProcessData-8         1000    1234567 ns/op    1024 B/op    10 allocs/op
+</code></pre><ul>
+<li><code>1000</code>: 실행 횟수</li>
+<li><code>1234567 ns/op</code>: 평균 실행 시간 (나노초)</li>
+<li><code>1024 B/op</code>: 평균 메모리 할당량 (바이트)</li>
+<li><code>10 allocs/op</code>: 평균 할당 횟수</li>
+</ul>
+<h3 id="2-프로파일링-워크플로우">2. 프로파일링 워크플로우</h3>
+<h4 id="cpu-프로파일링">CPU 프로파일링</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// main.go</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">package</span> <span style="color:#a6e22e">main</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> (
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;log&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;net/http&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">_</span> <span style="color:#e6db74">&#34;net/http/pprof&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;runtime&#34;</span>
+</span></span><span style="display:flex;"><span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// pprof 서버 시작</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;localhost:6060&#34;</span>, <span style="color:#66d9ef">nil</span>))
+</span></span><span style="display:flex;"><span>    }()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 실제 애플리케이션 로직</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">runApplication</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">runApplication</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// CPU 집약적 작업</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000000</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">processData</span>()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>CPU 프로파일 수집:</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 프로파일 수집 (30초간)</span>
+</span></span><span style="display:flex;"><span>go tool pprof http://localhost:6060/debug/pprof/profile?seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 또는 파일에서 직접</span>
+</span></span><span style="display:flex;"><span>go tool pprof cpu.prof
+</span></span></code></pre></div><h4 id="메모리-프로파일링">메모리 프로파일링</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 메모리 프로파일 수집</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">collectMemoryProfile</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">err</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">&#34;mem.prof&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">err</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nil</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Fatal</span>(<span style="color:#a6e22e">err</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">runtime</span>.<span style="color:#a6e22e">GC</span>() <span style="color:#75715e">// 가비지 컬렉션 강제 실행</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pprof</span>.<span style="color:#a6e22e">WriteHeapProfile</span>(<span style="color:#a6e22e">f</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="3-pprof-활용법">3. pprof 활용법</h3>
+<h4 id="대화형-프로파일링">대화형 프로파일링</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># CPU 프로파일 분석</span>
+</span></span><span style="display:flex;"><span>go tool pprof cpu.prof
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 주요 명령어들</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> top10          <span style="color:#75715e"># 상위 10개 함수</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> list ProcessData <span style="color:#75715e"># 특정 함수 상세 분석</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> web             <span style="color:#75715e"># 웹 브라우저에서 시각화</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> png             <span style="color:#75715e"># PNG 이미지로 저장</span>
+</span></span></code></pre></div><h4 id="웹-인터페이스-활용">웹 인터페이스 활용</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 웹 서버에서 직접 프로파일링</span>
+</span></span><span style="display:flex;"><span>go tool pprof http://localhost:6060/debug/pprof/profile?seconds<span style="color:#f92672">=</span><span style="color:#ae81ff">30</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 웹 인터페이스로 분석</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> web
+</span></span></code></pre></div><h3 id="4-flamegraphs-생성">4. Flamegraphs 생성</h3>
+<h4 id="flamegraph-도구-설치">Flamegraph 도구 설치</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Flamegraph 도구 설치</span>
+</span></span><span style="display:flex;"><span>go install github.com/google/pprof@latest
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 또는 직접 다운로드</span>
+</span></span><span style="display:flex;"><span>wget https://github.com/brendangregg/FlameGraph/archive/master.zip
+</span></span><span style="display:flex;"><span>unzip master.zip
+</span></span></code></pre></div><h4 id="flamegraph-생성">Flamegraph 생성</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># CPU Flamegraph</span>
+</span></span><span style="display:flex;"><span>go tool pprof -http<span style="color:#f92672">=</span>:8080 cpu.prof
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 브라우저에서 http://localhost:8080 접속</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 또는 직접 Flamegraph 생성</span>
+</span></span><span style="display:flex;"><span>go tool pprof -raw cpu.prof | ./FlameGraph-master/flamegraph.pl &gt; cpu.svg
+</span></span></code></pre></div><h3 id="5-실제-최적화-예제">5. 실제 최적화 예제</h3>
+<h4 id="before-비효율적인-코드">Before: 비효율적인 코드</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ProcessDataSlow</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> []<span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">item</span>) &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">result</span> = append(<span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">ToUpper</span>(<span style="color:#a6e22e">item</span>))
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>벤치마크 결과:</strong></p>
+<pre tabindex="0"><code>BenchmarkProcessDataSlow-8    1000    2000000 ns/op    2048 B/op    20 allocs/op
+</code></pre><h4 id="after-최적화된-코드">After: 최적화된 코드</h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">ProcessDataFast</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 미리 결과 슬라이스 크기 계산</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">count</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">item</span>) &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">count</span><span style="color:#f92672">++</span>
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">string</span>, <span style="color:#ae81ff">0</span>, <span style="color:#a6e22e">count</span>) <span style="color:#75715e">// 용량 미리 할당</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">_</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> len(<span style="color:#a6e22e">item</span>) &gt; <span style="color:#ae81ff">5</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">result</span> = append(<span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">ToUpper</span>(<span style="color:#a6e22e">item</span>))
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>벤치마크 결과:</strong></p>
+<pre tabindex="0"><code>BenchmarkProcessDataFast-8    3000     666667 ns/op     512 B/op     5 allocs/op
+</code></pre><p><strong>성능 개선:</strong></p>
+<ul>
+<li>실행 시간: 3배 향상 (2ms → 0.67ms)</li>
+<li>메모리 사용량: 4배 감소 (2048B → 512B)</li>
+<li>할당 횟수: 4배 감소 (20 → 5)</li>
+</ul>
+<h2 id="common-pitfalls">Common Pitfalls</h2>
+<h3 id="1-벤치마크-오류">1. 벤치마크 오류</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 잘못된 벤치마크</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkWrong</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">N</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">data</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">generateTestData</span>(<span style="color:#ae81ff">1000</span>) <span style="color:#75715e">// 매번 데이터 생성</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ProcessData</span>(<span style="color:#a6e22e">data</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ 올바른 벤치마크</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">BenchmarkCorrect</span>(<span style="color:#a6e22e">b</span> <span style="color:#f92672">*</span><span style="color:#a6e22e">testing</span>.<span style="color:#a6e22e">B</span>) {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">data</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">generateTestData</span>(<span style="color:#ae81ff">1000</span>) <span style="color:#75715e">// 한 번만 생성</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">ResetTimer</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#a6e22e">b</span>.<span style="color:#a6e22e">N</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">ProcessData</span>(<span style="color:#a6e22e">data</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2-프로파일링-환경-차이">2. 프로파일링 환경 차이</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 프로덕션과 다른 환경</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 개발 환경에서만 프로파일링</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;ENV&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;development&#34;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;localhost:6060&#34;</span>, <span style="color:#66d9ef">nil</span>))
+</span></span><span style="display:flex;"><span>        }()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ 프로덕션에서도 안전한 프로파일링</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Getenv</span>(<span style="color:#e6db74">&#34;ENABLE_PPROF&#34;</span>) <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;true&#34;</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>() {
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Println</span>(<span style="color:#a6e22e">http</span>.<span style="color:#a6e22e">ListenAndServe</span>(<span style="color:#e6db74">&#34;localhost:6060&#34;</span>, <span style="color:#66d9ef">nil</span>))
+</span></span><span style="display:flex;"><span>        }()
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="3-메모리-프로파일링-오류">3. 메모리 프로파일링 오류</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ GC 전에 프로파일 수집</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">collectMemoryProfile</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">&#34;mem.prof&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pprof</span>.<span style="color:#a6e22e">WriteHeapProfile</span>(<span style="color:#a6e22e">f</span>) <span style="color:#75715e">// GC 없이 수집</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ GC 후 프로파일 수집</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">collectMemoryProfile</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>, <span style="color:#a6e22e">_</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">os</span>.<span style="color:#a6e22e">Create</span>(<span style="color:#e6db74">&#34;mem.prof&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">runtime</span>.<span style="color:#a6e22e">GC</span>() <span style="color:#75715e">// GC 강제 실행</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">pprof</span>.<span style="color:#a6e22e">WriteHeapProfile</span>(<span style="color:#a6e22e">f</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">f</span>.<span style="color:#a6e22e">Close</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="performance-optimization">Performance Optimization</h2>
+<h3 id="1-메모리-할당-최적화">1. 메모리 할당 최적화</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 불필요한 할당</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">inefficient</span>() <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">result</span> <span style="color:#66d9ef">string</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">result</span> <span style="color:#f92672">+=</span> <span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#a6e22e">i</span>) <span style="color:#75715e">// 매번 새 문자열 생성</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ 효율적인 할당</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">efficient</span>() <span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">builder</span> <span style="color:#a6e22e">strings</span>.<span style="color:#a6e22e">Builder</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">builder</span>.<span style="color:#a6e22e">Grow</span>(<span style="color:#ae81ff">4000</span>) <span style="color:#75715e">// 예상 크기만큼 미리 할당</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span> <span style="color:#f92672">:=</span> <span style="color:#ae81ff">0</span>; <span style="color:#a6e22e">i</span> &lt; <span style="color:#ae81ff">1000</span>; <span style="color:#a6e22e">i</span><span style="color:#f92672">++</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">builder</span>.<span style="color:#a6e22e">WriteString</span>(<span style="color:#a6e22e">fmt</span>.<span style="color:#a6e22e">Sprintf</span>(<span style="color:#e6db74">&#34;%d&#34;</span>, <span style="color:#a6e22e">i</span>))
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">builder</span>.<span style="color:#a6e22e">String</span>()
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="2-동시성-최적화">2. 동시성 최적화</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 순차 처리</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">processSequential</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">string</span>, len(<span style="color:#a6e22e">data</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">result</span>[<span style="color:#a6e22e">i</span>] = <span style="color:#a6e22e">processItem</span>(<span style="color:#a6e22e">item</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ 병렬 처리</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">processParallel</span>(<span style="color:#a6e22e">data</span> []<span style="color:#66d9ef">string</span>) []<span style="color:#66d9ef">string</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> make([]<span style="color:#66d9ef">string</span>, len(<span style="color:#a6e22e">data</span>))
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">wg</span> <span style="color:#a6e22e">sync</span>.<span style="color:#a6e22e">WaitGroup</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> <span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">item</span> <span style="color:#f92672">:=</span> <span style="color:#66d9ef">range</span> <span style="color:#a6e22e">data</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Add</span>(<span style="color:#ae81ff">1</span>)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">go</span> <span style="color:#66d9ef">func</span>(<span style="color:#a6e22e">index</span> <span style="color:#66d9ef">int</span>, <span style="color:#a6e22e">value</span> <span style="color:#66d9ef">string</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">defer</span> <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Done</span>()
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">result</span>[<span style="color:#a6e22e">index</span>] = <span style="color:#a6e22e">processItem</span>(<span style="color:#a6e22e">value</span>)
+</span></span><span style="display:flex;"><span>        }(<span style="color:#a6e22e">i</span>, <span style="color:#a6e22e">item</span>)
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">wg</span>.<span style="color:#a6e22e">Wait</span>()
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h3 id="3-캐싱-전략">3. 캐싱 전략</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// ❌ 매번 계산</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">expensiveCalculation</span>(<span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 복잡한 계산</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">fibonacci</span>(<span style="color:#a6e22e">n</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// ✅ 결과 캐싱</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">var</span> <span style="color:#a6e22e">cache</span> = make(<span style="color:#66d9ef">map</span>[<span style="color:#66d9ef">int</span>]<span style="color:#66d9ef">int</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">cachedCalculation</span>(<span style="color:#a6e22e">n</span> <span style="color:#66d9ef">int</span>) <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> <span style="color:#a6e22e">result</span>, <span style="color:#a6e22e">exists</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">cache</span>[<span style="color:#a6e22e">n</span>]; <span style="color:#a6e22e">exists</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">result</span> <span style="color:#f92672">:=</span> <span style="color:#a6e22e">fibonacci</span>(<span style="color:#a6e22e">n</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cache</span>[<span style="color:#a6e22e">n</span>] = <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">result</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="실전-워크플로우">실전 워크플로우</h2>
+<h3 id="1-성능-측정--분석--최적화--검증">1. 성능 측정 → 분석 → 최적화 → 검증</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># 1단계: 벤치마크 실행</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>. -benchmem &gt; benchmark_before.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 2단계: CPU 프로파일 수집</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>BenchmarkProcessData -cpuprofile<span style="color:#f92672">=</span>cpu.prof
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 3단계: 프로파일 분석</span>
+</span></span><span style="display:flex;"><span>go tool pprof cpu.prof
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> top10
+</span></span><span style="display:flex;"><span><span style="color:#f92672">(</span>pprof<span style="color:#f92672">)</span> list ProcessData
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 4단계: 최적화 후 재측정</span>
+</span></span><span style="display:flex;"><span>go test -bench<span style="color:#f92672">=</span>. -benchmem &gt; benchmark_after.txt
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 5단계: 결과 비교</span>
+</span></span><span style="display:flex;"><span>benchstat benchmark_before.txt benchmark_after.txt
+</span></span></code></pre></div><h3 id="2-지속적인-성능-모니터링">2. 지속적인 성능 모니터링</h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-go" data-lang="go"><span style="display:flex;"><span><span style="color:#75715e">// 성능 메트릭 수집</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">func</span> <span style="color:#a6e22e">collectMetrics</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">var</span> <span style="color:#a6e22e">m</span> <span style="color:#a6e22e">runtime</span>.<span style="color:#a6e22e">MemStats</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">runtime</span>.<span style="color:#a6e22e">ReadMemStats</span>(<span style="color:#f92672">&amp;</span><span style="color:#a6e22e">m</span>)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;Alloc = %d KB&#34;</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">Alloc</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1024</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;TotalAlloc = %d KB&#34;</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">TotalAlloc</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1024</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">log</span>.<span style="color:#a6e22e">Printf</span>(<span style="color:#e6db74">&#34;NumGC = %d&#34;</span>, <span style="color:#a6e22e">m</span>.<span style="color:#a6e22e">NumGC</span>)
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="further-work">Further Work</h2>
+<h3 id="단기-개선-계획">단기 개선 계획</h3>
+<ol>
+<li><strong>자동화된 성능 테스트</strong>: CI/CD 파이프라인에 성능 회귀 테스트 추가</li>
+<li><strong>실시간 모니터링</strong>: 프로덕션 환경에서 지속적인 성능 메트릭 수집</li>
+<li><strong>성능 대시보드</strong>: Grafana를 활용한 성능 시각화</li>
+</ol>
+<h3 id="장기-비전">장기 비전</h3>
+<ol>
+<li><strong>머신러닝 기반 최적화</strong>: AI를 활용한 자동 성능 최적화</li>
+<li><strong>예측적 성능 관리</strong>: 성능 저하 예측 및 사전 대응</li>
+<li><strong>분산 성능 분석</strong>: 마이크로서비스 환경에서의 전체 성능 분석</li>
+</ol>
+<hr>
+<p>이 워크플로우를 통해 Go 애플리케이션의 성능을 체계적으로 측정하고 최적화할 수 있습니다. 다음 포스트에서는 웹 성능 최적화를 위한 CLS(Cumulative Layout Shift) 제거 방법을 다루겠습니다.</p>
+
+  </div>
+
+  <nav class="pagination" aria-label="이전/다음 글" style="margin-top:32px; gap:16px; display:flex; justify-content:space-between; flex-wrap:wrap;">
+    <div class="flex-1 min-w-0">
+      
+        <a class="btn btn-ghost flex items-center gap-2" href="../../blog/hugo-subpath-safe-links-relref-guide/" aria-label="이전 글: Hugo GitHub Pages 서브패스 링크">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+          <span class="truncate">Hugo GitHub Pages 서브패스 링크</span>
+        </a>
+      
+    </div>
+    <div class="flex-1 min-w-0 text-right">
+      
+        <a class="btn btn-ghost flex items-center gap-2" href="../../blog/snmp-backend-engineers-guide/" aria-label="다음 글: 백엔드 엔지니어를 위한 SNMP">
+          <span class="truncate">백엔드 엔지니어를 위한 SNMP</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      
+    </div>
+  </nav>
+</article>
+
+    </main>
+    <footer class="site-footer">
+  <div class="container">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 py-8">
+      <p class="text-sm text-muted-foreground">
+        © 2025 이상욱
+      </p>
+      <div class="flex items-center gap-4">
+        
+      </div>
+    </div>
+  </div>
+</footer>
+
+  </body>
+</html>

@@ -1,19 +1,19 @@
 ---
-title: "system-Info-collector"
+title: "system-metrics-agent"
 summary: "시스템 정보 수집 및 REST API·메트릭 노출 에이전트"
 description: "시스템 정보 수집 및 REST API·메트릭 노출 에이전트"
 techTags: ["Go", "Shell"]
 date: 2025-04-02
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
-repo: "https://github.com/swlee3306/system-Info-collector"
+repo: "https://github.com/swlee3306/system-metrics-agent"
 ---
 
 ## 개요
 
 CPU, 메모리, 디스크, 네트워크 등 시스템 정보를 수집하여 REST API로 제공하는 경량 에이전트입니다. Prometheus 메트릭과 헬스체크 엔드포인트도 포함되어 시스템 모니터링과 상태 점검에 유용합니다.
 
-<a class="btn" href="https://github.com/swlee3306/system-Info-collector" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+<a class="btn" href="https://github.com/swlee3306/system-metrics-agent" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
 
 ## 주요 기능
 
@@ -38,8 +38,8 @@ CPU, 메모리, 디스크, 네트워크 등 시스템 정보를 수집하여 RES
 사전 요구 사항: Ubuntu 20.04+, Go 1.19+, 관리자 권한(자원 접근)
 
 ```bash
-git clone https://github.com/swlee3306/system-Info-collector.git
-cd system-Info-collector
+git clone https://github.com/swlee3306/system-metrics-agent.git
+cd system-metrics-agent
 
 # ARM64 기본 (x86 빌드 시 GOARCH=amd64 지정)
 cd script/arm/

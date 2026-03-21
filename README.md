@@ -74,9 +74,9 @@ sulee_portfolio/
 ### 프로젝트 소개
 - **APITestProgram**: API 테스트 도구
 - **common-sdk**: 멀티캐스트 통신 라이브러리
-- **go_crud**: CRUD API 서버
+- **go-api-crud**: CRUD API 서버
 - **make-snmprec**: SNMP 데이터 수집 도구
-- **system-Info-collector**: 시스템 정보 수집기
+- **system-metrics-agent**: 시스템 정보 수집기
 - **system-broadcast-agent**: Zeroconf 기반 에이전트
 
 ## 🚀 배포 및 호스팅

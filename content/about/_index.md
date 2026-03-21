@@ -43,7 +43,7 @@ description: "소개 페이지"
   - Logstash→OpenSearch·MariaDB 적재, CSV·DB 이중 로그 수집/로테이션 및 웹 뷰 제공
   - Prometheus prompb 메시지 추출/퍼블리시 경로 구성으로 모니터링 연계성 확보
 
-자세한 프로젝트 목록과 코드는 {{< relref "/projects" >}}에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-Info-collector`, `APITestProgram` 등이 있습니다.
+자세한 프로젝트 목록과 코드는 {{< relref "/projects" >}}에서 확인하실 수 있습니다. 공개 가능한 샘플/학습 프로젝트로는 `make-snmprec`, `system-metrics-agent`, `APITestProgram` 등이 있습니다.
 
 ## 관심사와 가치
 - 운영 환경에 강한 도구와 서비스: 실패에 강하고 관측 가능한 시스템

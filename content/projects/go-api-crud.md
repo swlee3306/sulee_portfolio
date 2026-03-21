@@ -1,19 +1,19 @@
 ---
-title: "go_crud"
+title: "go-api-crud"
 summary: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
 description: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
 techTags: ["Go", "Shell", "Batchfile"]
 date: 2024-11-11
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
-repo: "https://github.com/swlee3306/go_crud"
+repo: "https://github.com/swlee3306/go-api-crud"
 ---
 
 ## 개요
 
-`go_crud`는 REST API를 통해 데이터베이스의 기본 CRUD(Create, Read, Update, Delete)를 제공하는 학습/예제 프로젝트입니다. 라우팅, 환경설정, DB 액세스 계층 분리를 통해 실전과 유사한 구조를 연습할 수 있습니다.
+`go-api-crud`는 REST API를 통해 데이터베이스의 기본 CRUD(Create, Read, Update, Delete)를 제공하는 학습/예제 프로젝트입니다. 라우팅, 환경설정, DB 액세스 계층 분리를 통해 실전과 유사한 구조를 연습할 수 있습니다.
 
-<a class="btn" href="https://github.com/swlee3306/go_crud" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+<a class="btn" href="https://github.com/swlee3306/go-api-crud" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
 
 ## 주요 기능
 
@@ -24,8 +24,8 @@ repo: "https://github.com/swlee3306/go_crud"
 ## 설치
 
 ```bash
-git clone https://github.com/swlee3306/go_crud.git
-cd go_crud
+git clone https://github.com/swlee3306/go-api-crud.git
+cd go-api-crud
 go mod tidy
 ```
 

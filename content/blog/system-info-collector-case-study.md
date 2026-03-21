@@ -1,5 +1,5 @@
 ---
-title: "system-Info-collector 케이스 스터디"
+title: "system-metrics-agent 케이스 스터디"
 date: 2025-01-15T10:00:00+09:00
 summary: "CPU/MEM/Disk 수집부터 신뢰성 확보까지: 샘플링, 백오프/재시도, CSV+DB 이중 로깅, 로테이션을 통한 호스트 관측성 구축 실전 가이드"
 cover: "/images/og-default.svg"
@@ -49,9 +49,9 @@ curl -s http://node-exporter:9100/metrics | prometheus
 ```mermaid
 graph TB
     subgraph "Host Layer"
-        A[Host 1] --> B[system-Info-collector]
-        C[Host 2] --> D[system-Info-collector]
-        E[Host N] --> F[system-Info-collector]
+        A[Host 1] --> B[system-metrics-agent]
+        C[Host 2] --> D[system-metrics-agent]
+        E[Host N] --> F[system-metrics-agent]
     end
     
     subgraph "Collection Layer"

@@ -16,7 +16,7 @@ Dev Note by sw'Lee. 운영 환경에서 안정적으로 동작하는 시스템 �
 - make-snmprec: SNMP 데이터를 수집해 시뮬레이션용 .snmprec 파일로 변환
 - system-Info-collector: 다양한 시스템 정보를 수집/저장하는 유틸리티
 - APITestProgram: 오프라인/폐쇄망에서도 가능한 API 테스트 도구
-- ssh_commend: 다수 VM에 SSH로 접속하여 CPU/메모리/디스크 메트릭 수집
+- vm-ssh-collector: 다수 VM에 SSH로 접속하여 CPU/메모리/디스크 메트릭 수집
 - go_crud: REST API 기반 CRUD 예제(학습/실험용)
 - Goplayground: Go 학습과 실험을 위한 코드 플레이그라운드
 

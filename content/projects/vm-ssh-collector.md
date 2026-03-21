@@ -1,19 +1,19 @@
 ---
-title: "ssh_commend"
+title: "vm-ssh-collector"
 summary: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 description: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
 techTags: ["Go", "Shell"]
 date: 2024-07-10
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
-repo: "https://github.com/swlee3306/ssh_commend"
+repo: "https://github.com/swlee3306/vm-ssh-collector"
 ---
 
 ## 개요
 
 여러 VM/서버에 SSH로 병렬 접속하여 CPU/메모리/디스크 등 시스템 데이터를 수집하는 프로그램입니다. 실패 재시도, 사용자 지정 명령, DB/원격 전송 등 확장성을 고려해 구성되어 있습니다.
 
-<a class="btn" href="https://github.com/swlee3306/ssh_commend" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+<a class="btn" href="https://github.com/swlee3306/vm-ssh-collector" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
 
 ## 주요 기능
 

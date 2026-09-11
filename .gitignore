@@ -44,7 +44,7 @@ Desktop.ini
 # Lighthouse results (generated files)
 LighthouseResult/
 
-# Go specific (for contrabass-collector)
+# Go build artifacts
 *.exe
 *.exe~
 *.dll
@@ -74,3 +74,5 @@ go.work.sum
 *.tar.gz
 *.rar
 *.7z
+# Raw resume extraction must remain local, not in public source.
+/.taskmaster/docs/resume_extracted.txt

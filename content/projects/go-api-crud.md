@@ -1,84 +1,19 @@
 ---
 title: "go-api-crud"
-summary: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
-description: "REST API로 DB 기본 CRUD를 제공하는 학습용 예제"
-techTags: ["Go", "Shell", "Batchfile"]
-date: 2024-11-11
+summary: "Go HTTP API와 인증 흐름 학습"
+description: "Go HTTP API와 인증 흐름 학습"
+techTags: ["Go"]
+date: 2025-01-01
+lastmod: 2026-09-11
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/go-api-crud"
 ---
 
-## 개요
+## 구현과 검증 범위
 
-`go-api-crud`는 REST API를 통해 데이터베이스의 기본 CRUD(Create, Read, Update, Delete)를 제공하는 학습/예제 프로젝트입니다. 라우팅, 환경설정, DB 액세스 계층 분리를 통해 실전과 유사한 구조를 연습할 수 있습니다.
+기본 인증·사용자 CRUD 흐름을 학습하는 Go 프로젝트입니다. 과거 데이터 모델이 존재한다는 사실을 현재 서비스 기능으로 확대하지 않습니다. 빌드를 확인했으며 데이터베이스 연동 실행은 별도 환경이 필요합니다.
 
-<a class="btn" href="https://github.com/swlee3306/go-api-crud" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+## 살펴보기
 
-## 주요 기능
-
-- Create/Read/Update/Delete API 제공
-- Go 모듈 기반 의존성 관리와 라우팅 유틸 정리
-- 환경파일(`setting.yml`)을 통한 설정 관리
-
-## 설치
-
-```bash
-git clone https://github.com/swlee3306/go-api-crud.git
-cd go-api-crud
-go mod tidy
-```
-
-DB 연결 설정(`config.yaml` 또는 설정 파일)에 DSN을 환경에 맞게 입력합니다.
-
-## 실행
-
-```bash
-go run main.go
-```
-
-기본 엔드포인트: `http://localhost:8080`
-
-## API 엔드포인트 예시
-
-### Create
-- Endpoint: `POST /api/v1/datastore/data/insert`
-- Request Body:
-```json
-{
-  "id": 0,
-  "ip": "1.1.1.2",
-  "hostname": "test7",
-  "user": "tst7",
-  "pwd": "12344",
-  "message": "hello7"
-}
-```
-
-### Read
-- Endpoint: `GET /api/v1/datastore/data/search`
-- Response:
-```json
-{ "id": 1 }
-```
-
-### Update
-- Endpoint: `PUT /api/v1/datastore/data/update`
-- Request Body:
-```json
-{
-  "id": 1,
-  "ip": "1.1.1.2",
-  "hostname": "test7",
-  "user": "tst7",
-  "pwd": "12344",
-  "message": "hello7"
-}
-```
-
-### Delete
-- Endpoint: `DELETE /api/v1/datastore/data/delete`
-- Response:
-```json
-{ "id": 1 }
-```
+실제 실행 명령과 제한 사항은 [최신 README](https://github.com/swlee3306/go-api-crud#readme)를 기준으로 확인해 주세요. 공개 코드로 확인할 수 없는 운영 성과나 성능 수치는 제시하지 않습니다.

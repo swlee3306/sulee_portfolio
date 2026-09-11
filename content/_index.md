@@ -1,23 +1,21 @@
 ---
 title: "홈"
-description: "Dev Note by sw'Lee — 경력, 프로젝트, 기술 노트를 빠르게 살펴보세요."
+description: "이상욱 — Go 백엔드, 클라우드 플랫폼, 운영 자동화 포트폴리오"
 ---
 
-Dev Note by sw'Lee. 운영 환경에서 안정적으로 동작하는 시스템 도구와 백엔드를 개발하며, Go를 중심으로 신뢰성·성능·관측 가능성을 중시합니다. 운영 요구사항을 코드로 해결하고, 반복 작업을 자동화하며, 로깅/테스트/벤치마크를 통해 품질을 관리합니다.
+# Go로 인프라의 반복 작업을 줄입니다
 
-<a class="btn" href="{{< relref "/projects" >}}">프로젝트 보러 가기</a> <a class="btn" href="{{< relref "/contact" >}}">연락처</a>
+클라우드 데이터를 수집하고, 인프라 작업을 추적하며, 배포와 코드 리뷰의 실패 조건을 다루는 개발자 이상욱입니다. 공개 코드에서 확인할 수 있는 설계와 실행 방법을 중심으로 작업을 소개합니다.
 
-## 핵심 역량
-- 시스템/인프라 지향 개발: 메트릭 수집, 시스템 정보 수집, 프로토콜(SNMP) 처리
-- API 백엔드: RESTful 설계, 성능/에러 모니터링, 배포 자동화(GitHub Actions)
-- 운영 품질: 장애 복원력, 가시성(로그/메트릭), 테스트 자동화
+## 대표 프로젝트
 
-## 주요 작업물 하이라이트
-- make-snmprec: SNMP 데이터를 수집해 시뮬레이션용 .snmprec 파일로 변환
-- system-metrics-agent: 다양한 시스템 정보를 수집/저장하는 유틸리티
-- APITestProgram: 오프라인/폐쇄망에서도 가능한 API 테스트 도구
-- vm-ssh-collector: 다수 VM에 SSH로 접속하여 CPU/메모리/디스크 메트릭 수집
-- go-api-crud: REST API 기반 CRUD 예제(학습/실험용)
-- Goplayground: Go 학습과 실험을 위한 코드 플레이그라운드
+- [infra-orch-studio](https://github.com/swlee3306/infra-orch-studio): 인프라 오케스트레이션과 작업 상태·실행 로그.
+- [network-collector](https://github.com/swlee3306/network-collector): OpenStack 네트워크 수집과 API.
+- [gitlab-mr-review-automation](https://github.com/swlee3306/gitlab-mr-review-automation): 읽기 전용 GitLab 입력과 안전한 리뷰 워크플로.
+- [gitops-deployment-guardrails](https://github.com/swlee3306/gitops-deployment-guardrails): Kubernetes 정책 검사와 변경 계획.
 
-프로젝트 전체 목록과 상세 설명은 `Projects` 에서 확인할 수 있습니다.
+## 살펴보는 순서
+
+프로젝트 README에서 해결하려는 문제를 확인하고, 코드 탐색 가이드와 테스트로 구현 범위를 확인해 주세요. 학습·실험 프로젝트는 대표 프로젝트와 구분해 소개합니다.
+
+[전체 프로젝트]({{< relref "/projects" >}}) · [소개]({{< relref "/about" >}}) · [GitHub](https://github.com/swlee3306)

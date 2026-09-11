@@ -1,42 +1,21 @@
 ---
 title: "make-snmprec"
-summary: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
-description: "SNMP Walk 결과를 시뮬레이터용 .snmprec 파일로 변환하는 도구"
-techTags: ["Go"]
+summary: "SNMP walk 결과를 반복 가능한 테스트 입력으로 변환하는 Go 도구"
+description: "SNMP PDU를 .snmprec 레코드로 변환"
+techTags: ["Go", "SNMP", "Testing"]
 date: 2025-06-24
+lastmod: 2026-09-11
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/make-snmprec"
 ---
 
-## 개요
+## 문제와 접근
 
-SNMP 장비로부터 데이터를 수집하여 시뮬레이터에서 사용할 수 있는 `.snmprec` 포맷으로 변환하는 도구입니다. 테스트/개발 환경에서 실제 장비 없이도 SNMP 응답을 재현할 수 있도록 도와줍니다.
+실제 장비에 계속 의존하지 않고 네트워크 도구를 테스트하기 위해 SNMP walk 결과를 OID·타입·값 레코드로 변환합니다. 공개 main.go에서 SNMP v2c 연결, PDU 타입 처리와 문자열 이스케이프를 살펴볼 수 있습니다.
 
-<a class="btn" href="https://github.com/swlee3306/make-snmprec" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+## 실행과 제한
 
-## .snmprec 이란?
+[README](https://github.com/swlee3306/make-snmprec#readme)의 소스 빌드 절차를 사용하고, 연결하기 전에 main.go의 실제 플래그를 확인해 주세요. 저장소에 남아 있는 기존 실행 파일은 현재 소스와 일치한다고 보장하지 않습니다.
 
-`.snmprec`는 Net-SNMP의 `snmpsimd.py` 등 시뮬레이터에서 사용되는 레코드 파일 형식입니다. OID와 값, 타입을 라인 단위로 기록해 시뮬레이터가 동일한 응답을 재현할 수 있게 합니다.
-
-## 주요 기능
-
-- 지정된 대상 장비/커뮤니티/버전으로 SNMP Walk 수행
-- 수집된 OID-값을 `.snmprec` 포맷으로 직렬화
-- 샘플/필터링 옵션(특정 OID 트리만 포함 등)
-
-## 사용 예시
-
-```bash
-# 대상 장비에서 walk → .snmprec 생성
-make-snmprec \
-  --target 192.168.0.10 \
-  --community public \
-  --version 2c \
-  --out device.snmprec
-
-# 시뮬레이터에서 device.snmprec 사용
-snmpsimd.py --data-dir=./ --agent-udpv4-endpoint=127.0.0.1:1161
-```
-
-프로젝트 README 미존재로 상세 사용법은 추후 보강 예정입니다.
+실제 장비 walk와 시뮬레이터 재생은 별도 검증이 필요합니다. 반드시 허가된 테스트 장비와 테스트용 community를 사용하고 실제 장비 정보가 포함된 캡처를 공개하지 마세요.

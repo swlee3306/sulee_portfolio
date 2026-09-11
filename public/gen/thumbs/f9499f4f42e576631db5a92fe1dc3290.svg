@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="make-snmprec 케이스 스터디 thumbnail">
+<svg width="640" height="360" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="make-snmprec: 재현 가능한 SNMP 테스트 입력 thumbnail">
   
   
   
@@ -20,7 +20,7 @@
   <rect x="16" y="16" width="608" height="328" rx="14" ry="14" fill="rgba(0,0,0,0.18)" />
 
   <text x="32" y="192" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="38" font-weight="800" fill="#ffffff">
-    make-snmprec 케이스 스터디
+    make-snmprec: 재현 가능한 SNMP 테스트 입력
   </text>
   <text x="32" y="230" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', 'Apple SD Gothic Neo', 'Malgun Gothic', Arial, sans-serif" font-size="16" font-weight="600" fill="#e2e8f0">
     Dev Note by sw'Lee

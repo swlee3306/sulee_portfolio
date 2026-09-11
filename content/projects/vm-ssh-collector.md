@@ -1,50 +1,19 @@
 ---
 title: "vm-ssh-collector"
-summary: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
-description: "병렬 SSH로 다수 호스트의 시스템 메트릭 수집 도구"
-techTags: ["Go", "Shell"]
-date: 2024-07-10
+summary: "SSH 기반 VM 정보 수집 실험"
+description: "SSH 기반 VM 정보 수집 실험"
+techTags: ["Go"]
+date: 2025-01-01
+lastmod: 2026-09-11
 thumbnail: "/images/og-default.svg"
 cover: "/images/og-default.svg"
 repo: "https://github.com/swlee3306/vm-ssh-collector"
 ---
 
-## 개요
+## 구현과 검증 범위
 
-여러 VM/서버에 SSH로 병렬 접속하여 CPU/메모리/디스크 등 시스템 데이터를 수집하는 프로그램입니다. 실패 재시도, 사용자 지정 명령, DB/원격 전송 등 확장성을 고려해 구성되어 있습니다.
+SSH 연결 및 명령 실행을 다루는 수집 도구입니다. 실제 원격 호스트에는 연결하지 않고 소스 빌드만 확인했습니다. 공개 설정은 가짜 값이며 원격 명령 인터페이스를 인증·접근 통제 없이 노출하면 안 됩니다.
 
-<a class="btn" href="https://github.com/swlee3306/vm-ssh-collector" target="_blank" rel="noopener">GitHub 저장소 열기 →</a>
+## 살펴보기
 
-## 주요 기능
-
-- 멀티 스레드로 여러 호스트 동시 수집
-- SSH 연결 실패 시 재시도 로직
-- 사용자 정의 명령으로 수집 항목 확장 가능
-- 로컬 저장 또는 원격 DB로 전송 아키텍처
-
-## 파일 구성(요약)
-
-```
-.
-├── collector/collector.go              # 수집 로직 엔트리
-├── internal/
-│   ├── dblinker/                       # DB 연결 및 모델
-│   ├── lslinker/                       # 외부 링크/메타 정의
-│   ├── ssh/                            # SSH 클라이언트/명령/디스크
-│   ├── sysdef/                         # 공통 상수/정의
-│   └── sysenv/                         # 환경 로딩
-├── utils/router/router.go              # 라우팅/유틸(있는 경우)
-├── main.go                             # 메인 실행부
-└── setting.yml                         # 환경설정
-```
-
-프로젝트 README에는 상세 디렉터리 트리와 구조도가 포함되어 있습니다.
-
-## 구성도
-
-저장소에 첨부된 구성도 이미지를 참고하세요.
-
-## 적용 사례 / 메모
-
-- 병렬 SSH 수집 시 커넥션 풀/타임아웃 튜닝이 중요
-- 호스트별 실패 분리와 재시도 백오프 전략이 안정성에 기여
+실제 실행 명령과 제한 사항은 [최신 README](https://github.com/swlee3306/vm-ssh-collector#readme)를 기준으로 확인해 주세요. 공개 코드로 확인할 수 없는 운영 성과나 성능 수치는 제시하지 않습니다.

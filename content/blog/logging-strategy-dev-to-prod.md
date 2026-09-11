@@ -43,7 +43,7 @@ The foundation of scalable logging is structured data. Here's a recommended sche
   "span_id": "def456-ghi789",
   "message": "User login successful",
   "user_id": "user_123",
-  "ip_address": "192.168.1.100",
+  "ip_address": "192.0.2.100",
   "duration_ms": 45,
   "metadata": {
     "request_id": "req_789",

@@ -167,7 +167,7 @@ func (c *SNMPClient) Walk(oid string, handler func(pdu gosnmp.SnmpPDU) error) er
 ```go
 func main() {
     // SNMP 클라이언트 생성
-    client := NewSNMPClient("192.168.1.1", "public")
+    client := NewSNMPClient("192.0.2.1", "public") // documentation address; use an authorized lab
     
     if err := client.Connect(); err != nil {
         log.Fatal("SNMP 연결 실패:", err)

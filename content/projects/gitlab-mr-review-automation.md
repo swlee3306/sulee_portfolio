@@ -35,7 +35,7 @@ python3 -m reviewflow demo
 python3 -m unittest discover -s tests -v
 ```
 
-2026-09-14 로컬 검증에서 데모는 `completed` → `duplicate`를 반환했고 테스트 31개가 통과했습니다.
+2026-09-14 로컬 검증에서 데모는 `completed` → `duplicate`를 반환했고 테스트 32개가 통과했습니다. HTTP 오류 응답을 닫는 회귀 테스트를 포함합니다.
 이는 공개 구현의 재현 결과이며 LLM 정확도, 운영 처리량, 전사 도입 실적을 의미하지 않습니다.
 
 [코드 탐색·실행 가이드](https://github.com/swlee3306/gitlab-mr-review-automation#readme)에서 구현 범위, 실행 명령과 검증 한계를 확인할 수 있습니다. 빌드나 합성 입력 테스트 성공을 실제 운영 안정성 또는 성능 수치로 확대하지 않습니다.
